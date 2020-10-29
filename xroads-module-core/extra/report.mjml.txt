@@ -1,0 +1,57 @@
+<mjml>
+  <mj-head>
+    <mj-style>
+      @media (max-width:480px) {
+        .hidden {
+          display: none;
+        }
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-image width="300px" src="/images/logo-xroads-esteso.png" alt="XRoads"></mj-image>
+        
+        <mj-divider border-color="#05457E"></mj-divider>
+        
+        <mj-text font-size="20px" color="#05457E" font-family="helvetica">Rewix Module Status</mj-text>
+		
+        <mj-table>
+          <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+            <th style="padding: 0 5px 0 0;">Component</th>
+            <th style="padding: 0 5px;">OK</th>
+            <th style="padding: 0 5px;">New</th>
+            <th style="padding: 0 5px;">Updates</th>
+            <th style="padding: 0 0 0 5px;">Errors</th>
+          </tr>
+          <tr>
+            <td style="padding: 0 5px 0 0;">Product</td>
+            <td style="padding: 0 5px;">29576 <span class="hidden">(100.00 %)</span></td>
+            <td style="padding: 0 5px;">0 <span class="hidden">(0.00 %)</span></td>
+            <td style="padding: 0 5px;">0 <span class="hidden">(100.00 %)</span></td>
+            <td style="padding: 0 0 0 5px;">0 <span class="hidden">(100.00 %)</span></td>
+          </tr>
+        </mj-table>
+                
+        <mj-divider border-color="#05457E"></mj-divider>
+
+        <mj-text font-size="20px" color="#05457E" font-family="helvetica">Rewix Module Last Errors</mj-text>
+				
+        <mj-table>
+          <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+            <th style="padding: 0 5px 0 0;">Component</th>
+            <th style="padding: 0 5px;">Date</th>
+            <th style="padding: 0 0 0 5px;">Error message</th>
+          </tr>
+          <tr>
+            <td style="padding: 0 5px 0 0;">Product</td>
+            <td style="padding: 0 5px;">2020-04-06 12:49</td>
+            <td style="padding: 0 0 0 5px;">Missing product 18199837</td>
+          </tr>
+        </mj-table>
+        
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

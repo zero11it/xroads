@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>it.zero11.xroads</groupId>
+    <artifactId>xroads</artifactId>
+    <version>2.0.0</version>
+    <packaging>pom</packaging>
+ 
+    <name>Xroads Parent</name>
+ 
+	<properties>
+		<javax.servlet.api.version>3.1.0</javax.servlet.api.version>
+		<vaadin.version>14.1.23</vaadin.version>
+		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
+		
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	
+	<repositories>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+	</repositories>
+	
+	<modules>
+	    <module>xroads-core</module>
+	    <module>xroads-server</module>
+	    <module>xroads-module-core</module>
+	    <module>xroads-module-rewix</module>
+	    <module>xroads-module-griffeshop</module>
+	    <module>xroads-module-atelier</module>
+	 	<module>xroads-module-griffati</module>
+  </modules>
+
+    <dependencies>
+     
+    </dependencies>
+</project>

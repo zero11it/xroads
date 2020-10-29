@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+	xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+	<persistence-unit name="it.zero11.xroads">
+		<properties>
+			<property name="hibernate.archive.autodetection" value="class" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="false" />
+
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<!-- <property name="hibernate.connection.release_mode" value="after_transaction" />  -->
+
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.jdbc.batch_size" value="200" />
+			
+			<!--  
+			<property name="hibernate.connection.datasource" value="java:/comp/env/jdbc/shopify" />			
+            <property name="hibernate.connection.url" value="jdbc:postgresql://192.168.0.72:5432/shopify" />
+            <property name="hibernate.connection.username" value="zero11" />
+            <property name="hibernate.connection.password" value="zero11" />
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver" / -->
+            
+            <property name="hibernate.jdbc.time_zone" value="UTC"/>
+		</properties>
+	</persistence-unit>
+
+
+</persistence>
