@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import it.zero11.xroads.modules.XRoadsModule;
@@ -14,6 +15,7 @@ public class XRoadsRestApplication extends ResourceConfig{
 	public XRoadsRestApplication() {
 		packages("it.zero11.xroads.webservices");
 		register(JacksonFeature.class);
+		register(MultiPartFeature.class);
 		
 		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(true);
 		for (XRoadsModule module : modulesList) {

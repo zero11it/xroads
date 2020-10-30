@@ -50,6 +50,13 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.30.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-multipart -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>2.30.1</version> <!-- Make sure the Jersey version matches the one you are currently using -->
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
