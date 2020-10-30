@@ -380,7 +380,7 @@ public Integer updateUserGroup(GroupBean groupBen) throws RewixAPIException, Pro
 	}
 }	
 
-public void updateAdress(String username, AddressBean adressBean) throws RewixAPIException, ProductNotFoundException{		
+public void updateAddress(String username, AddressBean adressBean) throws RewixAPIException, ProductNotFoundException{		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/address/" + username)
@@ -440,7 +440,7 @@ public void updateUserConsents(String username, UserConsentsBean uerConsentsaBea
 	}
 }
 
-public void createUser(UserCreateBean uerCreateBean) throws RewixAPIException, ProductNotFoundException{		
+public String createUser(UserCreateBean uerCreateBean) throws RewixAPIException, ProductNotFoundException{		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/create")
@@ -452,6 +452,8 @@ public void createUser(UserCreateBean uerCreateBean) throws RewixAPIException, P
 	final OperationResponseBean p = response.readEntity(OperationResponseBean.class);
 	if (!p.getStatus()) {
 		throw new RewixAPIException(200, p.getMessage());
+	}else {
+		return p.getMessage();
 	}
 }
 
