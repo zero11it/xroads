@@ -156,7 +156,7 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 
 		Map<String, List<String>> tagMap = new HashMap<>();
 		product.getTags().fields().forEachRemaining(tag -> {
-			if (! tag.getKey().equals("translations")) {
+			if (!tag.getKey().equals("translations") && !tag.getKey().equals("urlkeys")) {
 				List<String> values = new ArrayList<>();
 				JsonNode content = tag.getValue();
 				if (content.isArray()) {
