@@ -25,11 +25,12 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
 import it.zero11.xroads.model.AbstractEntity;
+import it.zero11.xroads.model.ModuleOrder;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
-import it.zero11.xroads.utils.modules.core.model.ModuleStatus;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
 public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends VerticalLayout {
@@ -65,7 +66,9 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 				query -> {
 					int offset = query.getOffset();
 					int limit = query.getLimit();
-					return EntityDao.getInstance().getFetchItems(typeParameterClass, offset, limit, query.getFilter().orElse(null), moduleComboBox.getValue()).stream();
+					return EntityDao.getInstance().getEntities(typeParameterClass, offset, limit, query.getFilter().orElse(null), (query.getFilter().orElse(null) != null ? 
+							(query.getFilter().get().equals(ModuleStatus.SYNC_ERRORS) || query.getFilter().get().equals(ModuleStatus.TO_SYNC) ?
+									ModuleOrder.LAST_ERROR_DATE : ModuleOrder.SOURCE_ID) : ModuleOrder.SOURCE_ID), moduleComboBox.getValue()).stream();
 				},
 				query -> EntityDao.getInstance().countItems(typeParameterClass, query.getFilter().orElse(null),  moduleComboBox.getValue())
 				);

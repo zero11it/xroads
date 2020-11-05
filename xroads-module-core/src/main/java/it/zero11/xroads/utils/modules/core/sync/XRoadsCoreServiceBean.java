@@ -19,6 +19,7 @@ import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.IParamType;
 import it.zero11.xroads.model.Model;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.model.Order;
 import it.zero11.xroads.model.Price;
 import it.zero11.xroads.model.Product;
@@ -219,6 +220,11 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	@Override
 	public <T extends AbstractProductGroupedEntity> Map<String, List<T>> getEntitiesByProductGroup(Class<T> entityClass, Collection<String> productIds) {
 		return EntityDao.getInstance().getEntitiesByProductGroup(entityClass, productIds);
+	}
+
+	@Override
+	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, ModuleStatus filter, XRoadsModule module) {
+		return EntityDao.getInstance().getEntities(class1, lastSourceId, limit, filter, module);
 	}
 	
 }

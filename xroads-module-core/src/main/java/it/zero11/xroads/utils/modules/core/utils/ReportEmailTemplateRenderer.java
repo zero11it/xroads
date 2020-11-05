@@ -6,6 +6,8 @@ import java.util.Map;
 
 import it.zero11.xroads.cron.CronSchedule;
 import it.zero11.xroads.model.AbstractEntity;
+import it.zero11.xroads.model.ModuleOrder;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
@@ -14,7 +16,6 @@ import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
 import it.zero11.xroads.utils.modules.core.dao.ParamDao;
 import it.zero11.xroads.utils.modules.core.model.EntityStatus;
-import it.zero11.xroads.utils.modules.core.model.ModuleStatus;
 import it.zero11.xroads.utils.modules.core.model.ParamType;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
@@ -346,7 +347,7 @@ public class ReportEmailTemplateRenderer {
 		emailReport.buffer.append(String.format(LASTERROR_HEAD, xRoadsModule.getName()));
 		for (Class<? extends AbstractEntity> entityClass : XRoadsUtils.ENTITIES_CLASSES) {
 			if (XRoadsUtils.moduleHasConsumer(xRoadsModule, entityClass)) {
-				EntityDao.getInstance().getFetchItems(entityClass, null, limit, ModuleStatus.SYNC_ERRORS, xRoadsModule).forEach(item -> {
+				EntityDao.getInstance().getEntities(entityClass, null, limit, ModuleStatus.SYNC_ERRORS, ModuleOrder.LAST_ERROR_DATE, xRoadsModule).forEach(item -> {
 					emailReport.buffer.append(String.format(LASTERROR_ROW, entityClass.getSimpleName(),
 							item.getSourceId(),
 							dateToStringFormatter.format(new Date(OffsetDateTime.parse(item.getExternalReferences().path(xRoadsModule.getName()).path(XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE).asText()).toInstant().toEpochMilli())),

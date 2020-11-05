@@ -26,6 +26,8 @@ import it.zero11.xroads.model.AbstractEntityRevision;
 import it.zero11.xroads.model.AbstractEntityRevisionPK;
 import it.zero11.xroads.model.AbstractModelGroupedEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
+import it.zero11.xroads.model.ModuleOrder;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.model.Product;
 import it.zero11.xroads.model.Stock;
 import it.zero11.xroads.modules.XRoadsModule;
@@ -34,7 +36,6 @@ import it.zero11.xroads.utils.EntityManagerUtils;
 import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.model.EntityStatus;
-import it.zero11.xroads.utils.modules.core.model.ModuleStatus;
 import it.zero11.xroads.utils.modules.core.model.ParamType;
 import it.zero11.xroads.utils.modules.core.utils.TransactionWrapper;
 import it.zero11.xroads.utils.modules.core.utils.XRoadsCoreUtils;
@@ -276,26 +277,23 @@ public class EntityDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractEntity> List<T> getFetchItems(Class<T> class1, Integer offset, Integer limit, ModuleStatus filter, XRoadsModule module) {
+	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, ModuleStatus filter, XRoadsModule module) {
 		EntityManager em = EntityManagerUtils.createEntityManager();
 		try {
 			Query sqlQuery; 
 			String stringQuey = "select * from " + getTableName(em, class1) + " e ";
 			if(filter != null) {
-				stringQuey += getFilter(filter, module); 
+				stringQuey += getFilter(filter); 
 			}
-			if (filter != null && filter.equals(ModuleStatus.TO_SYNC)) {
-				stringQuey += ("ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "' ASC NULLS FIRST");
-			}else if (filter != null && filter.equals(ModuleStatus.SYNC_ERRORS)) {
-				stringQuey += ("ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "' ASC NULLS FIRST");
-			} else {
-				stringQuey += ("ORDER BY source_id");
+			if(lastSourceId != null && !lastSourceId.isEmpty()) {
+				if(filter != null)
+					stringQuey += (" and source_id > :source_id");
+				else 
+					stringQuey += (" where source_id > :source_id");
 			}
+			stringQuey += " ORDER BY source_id";
 			if(limit != null) {
 				stringQuey += " LIMIT " + limit ;
-			}
-			if(offset != null) {
-				stringQuey += " OFFSET " + offset;
 			}
 			sqlQuery = em.createNativeQuery(stringQuey, class1);
 			if(filter != null)
@@ -305,8 +303,33 @@ public class EntityDao {
 			em.close();
 		}	
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, Integer offset, Integer limit, ModuleStatus filter, ModuleOrder orderBy, XRoadsModule module) {
+		EntityManager em = EntityManagerUtils.createEntityManager();
+		try {
+			Query sqlQuery; 
+			String stringQuey = "select * from " + getTableName(em, class1) + " e ";
+			if(filter != null) {
+				stringQuey += getFilter(filter); 
+			}
+			stringQuey += getOrder(orderBy);
+			if(limit != null) {
+				stringQuey += " LIMIT " + limit ;
+			}
+			if(offset != null) {
+				stringQuey += " OFFSET " + offset;
+			}
+			sqlQuery = em.createNativeQuery(stringQuey, class1);
+			if(filter != null || (orderBy != null && orderBy.equals(ModuleOrder.LAST_ERROR_DATE)))
+				sqlQuery.setParameter("moduleName", module.getName());
+			return  sqlQuery.getResultList();
+		}finally {
+			em.close();
+		}	
+	}
 
-	private String getFilter(ModuleStatus filterType, XRoadsModule module) {
+	private String getFilter(ModuleStatus filterType) {
 		switch (filterType) {
 		case SYNCED:
 			return " where CAST ((external_references -> (:moduleName) ->> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION + "') AS INTEGER) = version ";
@@ -318,7 +341,7 @@ public class EntityDao {
 			return " where CAST ((external_references-> (:moduleName) ->> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION + "') AS INTEGER) != version ";
 		case TO_SYNC:
 			//FIXME: add a constant for retry interval
-			OffsetDateTime retryTimeLimit = OffsetDateTime.now().minusMinutes(ParamDao.getInstance().getParameterAsInteger(XRoadsCoreModule.INSTANCE, ParamType.AUTO_RETRY_INTERVAL_MINUTES));
+			OffsetDateTime retryTimeLimit = OffsetDateTime.now().minusMinutes(0);
 			return " where ((external_references -> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "') IS NULL"  
 					+ "     or (external_references -> (:moduleName) ->> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "') < '" + retryTimeLimit.toString() + "') "
 					+ "and ((external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION + "') IS NULL"
@@ -331,6 +354,15 @@ public class EntityDao {
 			return "";
 		}
 	}
+	
+	private String getOrder(ModuleOrder orderBy) {
+		switch (orderBy != null ? orderBy : ModuleOrder.SOURCE_ID) {
+		case LAST_ERROR_DATE:
+			return "ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "' ASC NULLS FIRST";			
+		default:
+			return "ORDER BY source_id";
+		}
+	}
 
 	public <T extends AbstractEntity> Integer countItems(Class<T> entityClass, ModuleStatus filter,  XRoadsModule module) {
 		EntityManager em = EntityManagerUtils.createEntityManager();
@@ -338,7 +370,7 @@ public class EntityDao {
 			Query hqlQuery; 
 			String stringQuey = "select count(*) from " + getTableName(em, entityClass) + " e ";
 			if(filter != null) {
-				stringQuey += getFilter(filter, module);
+				stringQuey += getFilter(filter);
 			}
 			hqlQuery = em.createNativeQuery(stringQuey);
 			if(filter != null)

@@ -33,9 +33,6 @@
 	    <module>xroads-server</module>
 	    <module>xroads-module-core</module>
 	    <module>xroads-module-rewix</module>
-	    <module>xroads-module-griffeshop</module>
-	    <module>xroads-module-atelier</module>
-	 	<module>xroads-module-griffati</module>
   </modules>
 
     <dependencies>

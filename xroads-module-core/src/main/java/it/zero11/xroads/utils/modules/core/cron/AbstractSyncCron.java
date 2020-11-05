@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
+import it.zero11.xroads.model.ModuleOrder;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.EntityProductGroupedConsumer;
@@ -13,7 +15,6 @@ import it.zero11.xroads.sync.SyncException;
 import it.zero11.xroads.utils.XRoadsAsyncUtils;
 import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
-import it.zero11.xroads.utils.modules.core.model.ModuleStatus;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
 public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runnable {
@@ -50,7 +51,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 
 	@SuppressWarnings("unchecked")
 	private <TG extends AbstractProductGroupedEntity> boolean syncProductGroupedEntity(XRoadsModule module, EntityProductGroupedConsumer<TG> entityProductGroupedConsumer) {
-		List<TG> entities = EntityDao.getInstance().getFetchItems((Class<TG>) getEntity(), 0, PAGE_SIZE, ModuleStatus.TO_SYNC, module);
+		List<TG> entities = EntityDao.getInstance().getEntities((Class<TG>) getEntity(), 0, PAGE_SIZE, ModuleStatus.TO_SYNC, ModuleOrder.LAST_ERROR_DATE, module);
 		//We are reloading all cause we need to send all items even the one that may already be in sync
 		Map<String, List<TG>> entitiesGroupped = EntityDao.getInstance().getEntitiesByProductGroup((Class<TG>) getEntity(), entities.stream().map(TG::getProductSourceId).collect(Collectors.toSet()));
 		
@@ -72,7 +73,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 	}
 
 	private boolean syncEntity(XRoadsModule module, EntityConsumer<T> entityConsumer) {
-		List<T> entities = EntityDao.getInstance().getFetchItems(getEntity(), 0, PAGE_SIZE, ModuleStatus.TO_SYNC, module);
+		List<T> entities = EntityDao.getInstance().getEntities(getEntity(), 0, PAGE_SIZE, ModuleStatus.TO_SYNC, ModuleOrder.LAST_ERROR_DATE, module);
 
 		XRoadsAsyncUtils.getInstance().parallelExecuteAndWait(entities, entity -> {
 			try {

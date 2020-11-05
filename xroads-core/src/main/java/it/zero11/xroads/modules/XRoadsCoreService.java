@@ -16,6 +16,7 @@ import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractEntityRevision;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.IParamType;
+import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.sync.SyncException;
 
 public interface XRoadsCoreService {
@@ -38,6 +39,8 @@ public interface XRoadsCoreService {
 	<T extends AbstractProductGroupedEntity> Map<String, List<T>> getEntitiesByProductGroup(Class<T> entityClass, Collection<String> productIds);
 	
 	<T extends AbstractEntity> List<T> getActiveEntities(Class<T> entityClass, String lastSourceId, int limit );
+	
+	<T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, ModuleStatus filter, XRoadsModule module);
 	
 	<T extends AbstractEntity> String getEntityIdByModuleAndSourceId(Class<T> entityClass, XRoadsModule module, String sourceId);
 

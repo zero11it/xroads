@@ -1,4 +1,4 @@
-package it.zero11.xroads.utils.modules.core.model;
+package it.zero11.xroads.model;
 
 public enum ModuleStatus {
 	SYNCED("Synced"),
