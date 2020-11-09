@@ -1,6 +1,8 @@
 package it.zero11.xroads.modules.rewix.api;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -124,6 +126,24 @@ public class RewixAPI {
 			}
 		}
 		return restClient;
+	}
+	
+	public UserBean getUserByEmail(String platformUid, String email) throws RewixAPIException{
+		try {
+			final Response response = getRestClient()
+					.target(baseUrl)
+					.path("/restful/user/email/" + platformUid + "/" + URLEncoder.encode(email, StandardCharsets.UTF_8.name()))
+					.request()
+					.header("Authorization", getAuthorizationHeader())
+					.accept(MediaType.APPLICATION_XML)
+					.get();
+	
+			checkResponseStatus("getUserByEmail", response);	
+			final UserBean user = response.readEntity(UserBean.class);	
+			return user;
+		}catch (UnsupportedEncodingException e) {
+			throw new RewixAPIException(-1, e.getMessage());
+		}
 	}
 	
 	public OrderListBean getAllOrders(OrderFilterBean orderFilterBean) throws RewixAPIException {
