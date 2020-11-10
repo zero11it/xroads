@@ -340,8 +340,7 @@ public class EntityDao {
 		case DIFFERENT_VERSIONS:
 			return " where CAST ((external_references-> (:moduleName) ->> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION + "') AS INTEGER) != version ";
 		case TO_SYNC:
-			//FIXME: add a constant for retry interval
-			OffsetDateTime retryTimeLimit = OffsetDateTime.now().minusMinutes(0);
+			OffsetDateTime retryTimeLimit = OffsetDateTime.now().minusMinutes(ParamDao.getInstance().getParameterAsInteger(XRoadsCoreModule.INSTANCE, ParamType.AUTO_RETRY_INTERVAL_MINUTES));
 			return " where ((external_references -> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "') IS NULL"  
 					+ "     or (external_references -> (:moduleName) ->> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "') < '" + retryTimeLimit.toString() + "') "
 					+ "and ((external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION + "') IS NULL"
