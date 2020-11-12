@@ -487,6 +487,8 @@ public Integer getUserGroup(String platform, String name) throws RewixAPIExcepti
 			.get();	
 	checkResponseStatus("getUserGroup", response);
 	final GroupBean group = response.readEntity(GroupBean.class);
+	if(group == null)
+		return null;
 	return group.getId();
 }
 
