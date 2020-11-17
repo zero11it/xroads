@@ -9,6 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserCreateBean {
 	@XmlAttribute
+	private String username;
+	
+	@XmlAttribute
 	private String email;
 	
 	@XmlAttribute
@@ -40,6 +43,14 @@ public class UserCreateBean {
 	
 	public UserCreateBean() {
 		
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getEmail() {

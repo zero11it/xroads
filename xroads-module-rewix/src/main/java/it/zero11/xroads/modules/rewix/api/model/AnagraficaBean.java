@@ -64,6 +64,9 @@ public class AnagraficaBean {
 	@XmlAttribute
 	private String sdi;
 
+	@XmlAttribute
+	private String loyalityCard;
+
 	public Date getBirth() {
 		return birth;
 	}
@@ -206,5 +209,13 @@ public class AnagraficaBean {
 
 	public void setSdi(String sdi) {
 		this.sdi = sdi;
+	}
+
+	public String getLoyalityCard() {
+		return loyalityCard;
+	}
+
+	public void setLoyalityCard(String loyalityCard) {
+		this.loyalityCard = loyalityCard;
 	}
 }
