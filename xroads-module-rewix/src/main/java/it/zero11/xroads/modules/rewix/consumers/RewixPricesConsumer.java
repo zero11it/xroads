@@ -14,6 +14,7 @@ import it.zero11.xroads.modules.rewix.api.model.ProductTaxablesBean;
 import it.zero11.xroads.modules.rewix.utils.GroupSearchBean;
 import it.zero11.xroads.sync.EntityProductGroupedConsumer;
 import it.zero11.xroads.sync.SyncException;
+import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
 
 public class RewixPricesConsumer extends AbstractRewixConsumer implements EntityProductGroupedConsumer<Price> {
@@ -46,38 +47,33 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 
 		List<ProductTaxableBean> taxables = new ArrayList<>();
 
-		String platformsFlat = product.getData().path("platforms").asText();
-		if (platformsFlat == null || platformsFlat.length() == 0) {
-			throw new SyncException("No platform configured");
-		}
-
 		Set<GroupSearchBean> groups = new HashSet<>();
-		String[] platforms = platformsFlat.split(",");
-		for (String platform : platforms) {
-			for (Price price : prices) {
-				if (price.getListingGroup() != null)
-					groups.add(new GroupSearchBean(platform.trim(), price.getListingGroup()));												
-			}							
-		}
+		for (Price price : prices) {
+			if (price.getListingGroup() != null) {
+				String[] platforms = price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().split(",");
+				for(String platform : platforms) {
+					groups.add(new GroupSearchBean(platform.trim(), price.getListingGroup()));	
+				}
+			}
+		}							
 
 		Map<GroupSearchBean, Integer> gs = getOrCreateGroupIds(groups);
-		for (String platform : platforms) {
-			for (Price price : prices) {
-				String pricePlatforms = price.getData().path("platforms").asText();
-				if (pricePlatforms == null || pricePlatforms.length() == 0 || pricePlatforms.contains(platform)) {
-					ProductTaxableBean srewixPrice = new ProductTaxableBean();		
-					if (price.getListingGroup() != null)
-						srewixPrice.setGroupId(gs.get(new GroupSearchBean(platform.trim(), price.getListingGroup())));							
-					srewixPrice.setRetailPrice(price.getRetailPrice());
-					srewixPrice.setSuggestedPrice(price.getSuggestedPrice());
-					srewixPrice.setTaxable(price.getSellPrice());
-					srewixPrice.setPlatformUid(platform.trim());	
-					srewixPrice.setCountry(price.getCountry());	
-					srewixPrice.setMinimumQuantity(price.getMinQuantity());
-					taxables.add(srewixPrice);		
-				}
-			}							
-		}
+		for (Price price : prices) {
+			String[] platforms = price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().split(",");
+			for(String platform : platforms) {
+				ProductTaxableBean srewixPrice = new ProductTaxableBean();		
+				if (price.getListingGroup() != null)
+					srewixPrice.setGroupId(gs.get(new GroupSearchBean(platform.trim(), price.getListingGroup())));							
+				srewixPrice.setRetailPrice(price.getRetailPrice());
+				srewixPrice.setSuggestedPrice(price.getSuggestedPrice());
+				srewixPrice.setTaxable(price.getSellPrice());
+				srewixPrice.setPlatformUid(platform.trim());	
+				srewixPrice.setCountry(price.getCountry());	
+				srewixPrice.setMinimumQuantity(price.getMinQuantity());
+				taxables.add(srewixPrice);		
+			}
+		}					
+
 		rewixPrice.setProductTaxables(taxables);
 
 		api.updateProductTaxables(rewixPrice);
