@@ -1,5 +1,6 @@
 package it.zero11.xroads.modules.rewix.api;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URLEncoder;
@@ -598,6 +599,19 @@ public Integer getPaymentTerm(String name) throws RewixAPIException, Unsupported
 	if(paymentterm == null)
 		return null;
 	return paymentterm.getId();
+}
+
+public InputStream getCustomers(String startSyncDateTime) throws RewixAPIException {
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/export")
+			.queryParam("since", startSyncDateTime != null ? startSyncDateTime : "")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();	
+	checkResponseStatus("getCustomers", response);
+	return response.readEntity(InputStream.class);
 }
 
 } 

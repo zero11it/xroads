@@ -24,6 +24,7 @@ import it.zero11.xroads.modules.rewix.consumers.RewixOrderStatusConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixPricesConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixProductConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixStockConsumer;
+import it.zero11.xroads.modules.rewix.cron.RewixCustomerCron;
 import it.zero11.xroads.modules.rewix.cron.RewixOrderCron;
 import it.zero11.xroads.modules.rewix.model.RewixParamType;
 import it.zero11.xroads.modules.rewix.utils.RewixConfig;
@@ -35,7 +36,8 @@ import it.zero11.xroads.webservice.XRoadsWebservice;
 
 public class XRoadsRewixModule extends AbstractXRoadsModule {
 	private static final Map<String, Class<? extends Runnable>> CRON_INSTANCES = CronUtils.buildCronMap(
-			RewixOrderCron.class
+			RewixOrderCron.class,
+			RewixCustomerCron.class
 			);
 	protected RewixConfig configuration;
 	

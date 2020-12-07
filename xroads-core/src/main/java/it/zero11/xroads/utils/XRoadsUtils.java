@@ -107,6 +107,7 @@ public class XRoadsUtils {
 		customer.setPhone(OBJECT_MAPPER.createObjectNode());
 		customer.setAddresses(OBJECT_MAPPER.createObjectNode());
 		customer.setGroups(OBJECT_MAPPER.createObjectNode());
+		customer.setPaymentTerms(OBJECT_MAPPER.createObjectNode());
 		customer.setVersion(MODEL_VERSION);
 		
 		return customer;

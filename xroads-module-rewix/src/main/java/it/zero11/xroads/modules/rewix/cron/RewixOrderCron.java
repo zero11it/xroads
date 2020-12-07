@@ -21,6 +21,7 @@ import it.zero11.xroads.modules.rewix.api.model.OrderBean.PropertyData;
 import it.zero11.xroads.modules.rewix.api.model.OrderFilterBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderListBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderListBean.OrderStatusInfo;
+import it.zero11.xroads.modules.rewix.model.RewixParamType;
 import it.zero11.xroads.sync.SyncException;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
@@ -53,7 +54,7 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 
 
 	private void checkOrder(String platform) throws SyncException{
-		
+
 		log.info("Retrieving rewix orders ");
 
 		OrderFilterBean orderFilterBean = new OrderFilterBean();
@@ -89,15 +90,21 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 		}
 
 		Order order = getOrderFromOrderBean(platform, api.getOrder(Long.valueOf(info.getOrder_id())));
-		Customer customer = getCustomerFromOrder(order);
-		
+		Customer customer = null;
+		if(xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.ENABLE_EXPORT_CUSTOMERS)) {
+			customer = xRoadsModule.getXRoadsCoreService().getEntity(Customer.class, order.getCustomerSourceId());
+		}
+		customer = getOrUpdateCustomerFromOrder(order, customer);
+
 		xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, customer);
 		xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, order);
 	}
-	
-	private Customer getCustomerFromOrder(Order order) {
-		Customer customer = XRoadsUtils.getCustomerInstance();
-		customer.setSourceId(order.getCustomerSourceId());
+
+	private Customer getOrUpdateCustomerFromOrder(Order order, Customer customer) {
+		if(customer == null) {
+			customer = XRoadsUtils.getCustomerInstance();
+			customer.setSourceId(order.getCustomerSourceId());
+		}
 		customer.setEmail(order.getCustomerEmail());
 		customer.setFirstname(order.getAnagrafica().path(XRoadsJsonKeys.CUSTOMER_FISTNAME_KEY).asText());
 		customer.setLastname(order.getAnagrafica().path(XRoadsJsonKeys.CUSTOMER_LASTNAME_KEY).asText());
