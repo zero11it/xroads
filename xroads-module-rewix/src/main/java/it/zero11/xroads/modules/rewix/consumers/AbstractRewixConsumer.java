@@ -1,6 +1,9 @@
 package it.zero11.xroads.modules.rewix.consumers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +46,28 @@ public abstract class AbstractRewixConsumer {
 		return result;
 	}
 
+	protected Map<GroupSearchBean, Integer> getGroupIds(Set<GroupSearchBean> searchBeans) throws SyncException {
+		Map<GroupSearchBean, Integer> result = new HashMap<>();
+
+		for (GroupSearchBean bean : searchBeans) {
+			Integer groupId = getGroup(bean.getPlatform(), bean.getName());
+			if(groupId != null)
+				result.put(bean, groupId);	
+		}
+
+		return result;
+	}
+
+	protected Map<String, Integer> getPaymentTermsIds(List<String> searchPaymentTerms) throws SyncException, UnsupportedEncodingException {
+		Map<String, Integer> result = new HashMap<>();
+
+		for (String searchPaymentterm : searchPaymentTerms) {
+			Integer paymentTermId = getPaymentTerm(searchPaymentterm);
+			if(paymentTermId != null)
+				result.put(searchPaymentterm,paymentTermId);
+		}
+		return result;
+	}
 
 	private Integer getOrCreateGroup(String platform, String name) throws SyncException {
 		if (name == null) {
@@ -63,5 +88,12 @@ public abstract class AbstractRewixConsumer {
 			throw new SyncException("Group name mandatory");
 		}
 		return api.getUserGroup(platform, name);
+	}
+
+	public Integer getPaymentTerm(String name) throws SyncException, UnsupportedEncodingException {
+		if (name == null) {
+			throw new SyncException("Payment Term name mandatory");
+		}
+		return api.getPaymentTerm(name);
 	}
 }

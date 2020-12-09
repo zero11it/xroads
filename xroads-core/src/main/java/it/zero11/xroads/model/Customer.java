@@ -41,6 +41,10 @@ public class Customer extends AbstractEntity implements Serializable {
     @Column(columnDefinition = "jsonb", name="groups")
 	private JsonNode groups;
 
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="payment_terms")
+	private JsonNode paymentTerms;
+	
 	@Column(name="language_code")
 	private String languageCode;
 
@@ -161,4 +165,13 @@ public class Customer extends AbstractEntity implements Serializable {
 	public void setVatNumber(String vatNumber) {
 		this.vatNumber = vatNumber;
 	}
+
+	public JsonNode getPaymentTerms() {
+		return paymentTerms;
+	}
+
+	public void setPaymentTerms(JsonNode paymentTerms) {
+		this.paymentTerms = paymentTerms;
+	}
+	
 }

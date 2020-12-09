@@ -32,7 +32,7 @@ public enum RewixParamType implements IParamType{
 			"   \"textile\":65,\n" + 
 			"   \"composition\":66\n" + 
 			"}"), 
-	ENABLE_ORDER_STATUS_UPDATE("false"), 
+	ENABLE_ORDER_STATUS_UPDATE("false"),
 	;
 	
 	public final String defaultValue;

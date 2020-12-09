@@ -75,7 +75,7 @@ public class XRoadsCoreUtils {
 	public static boolean customerHasChanged(Customer p1, Customer p2){
 		return changedMethods(p1, p2, Customer::getAddresses, Customer::getCompany, Customer::getData, Customer::getDateOfBirth, Customer::getEmail, 
 				Customer::getFirstname, Customer::getFiscalCode, Customer::getGroups, Customer::getLanguageCode, Customer::getLastname, Customer::getPhone,
-				Customer::getSourceId, Customer::getUsername, Customer::getVatNumber);		
+				Customer::getSourceId, Customer::getUsername, Customer::getVatNumber, Customer::getPaymentTerms);		
 	}
 
 	public static boolean setExternalReferenceMarkForRetryInAllModules(AbstractEntity entity) {

@@ -1,8 +1,36 @@
 package it.zero11.xroads.modules.rewix.consumers;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.RandomStringUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import it.zero11.xroads.model.Customer;
+import it.zero11.xroads.model.CustomerRevision;
 import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
+import it.zero11.xroads.modules.rewix.api.ProductNotFoundException;
+import it.zero11.xroads.modules.rewix.api.RewixAPIException;
+import it.zero11.xroads.modules.rewix.api.model.AddressBean;
+import it.zero11.xroads.modules.rewix.api.model.AnagraficaBean;
+import it.zero11.xroads.modules.rewix.api.model.UserBean;
+import it.zero11.xroads.modules.rewix.api.model.UserConsentBean;
+import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
+import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
+import it.zero11.xroads.modules.rewix.api.model.UserListBean;
+import it.zero11.xroads.modules.rewix.utils.GroupSearchBean;
 import it.zero11.xroads.sync.EntityConsumer;
+import it.zero11.xroads.sync.SyncException;
+import it.zero11.xroads.sync.XRoadsJsonKeys;
+import it.zero11.xroads.utils.XRoadsUtils;
 
 public class RewixCustomerConsumer extends AbstractRewixConsumer implements EntityConsumer<Customer> {
 
@@ -11,196 +39,93 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 	}
 
 	@Override
-	public void consume(Customer t) {
-		/*
-		final Customer customer = MessageUtils.getMessageBodyAs(message, Customer.class);
-		final CustomerRevision customerRevision = MessageUtils.getMessageRevisionAs(message, CustomerRevision.class);
+	public void consume(Customer customer) throws SyncException {
 
-		RewixCustomerApiClient client = new RewixCustomerApiClient(verticle.getVertx(), verticle.getEcomService(), verticle.getWebClient(), verticle.getRewixConfig());	
-		verticle.getEcomService().getCustomer(customer.getSourceId(), json -> {
-			if (json.succeeded()) {				
-				if (json == null || ! isAlreadyCustomer(json.result())) {
-					if (isEnabledCustomer(json.result())) {
-						String platform = json.result().getJsonObject("data").getString(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY);
-						boolean sendEmail = verticle.getRewixConfig().isSendEmailOnNewUsers();
-						client.createCustomer(platform, customer, sendEmail, h -> {
-							if (h.succeeded()) {
-								Customer c = h.result();
-								log.debug("createCustomer completed" + message.body());																					
-								client.updateCustomer(c, null, h2 -> {
-									if (h2.failed()) 
-										LogUtils.logError(log, "updateCustomer", message, h2.cause());
-									else
-										log.debug("updateCustomer completed" + message.body());//																			
-								});		
-							}										
-							else
-								LogUtils.logError(log, "createCustomer", message, h.cause());																		
-						});	
-					}										
-				} else if (!customer.getVersion().equals(XroadsUtils.getExternalReferenceVersion(customer.getExternalReferences(), xRoadsModule.getName()))) {
-					if (verticle.getRewixConfig().isUpdateCustomers()) {
-						client.updateCustomer(customer, customerRevision, h -> {
-							if (h.succeeded())
-								log.debug("updateCustomer completed" + message.body());
-							else
-								LogUtils.logError(log, "updateCustomer", message, h.cause());							
-						});			
-					}else {
-						final String id = XroadsUtils.getExternalReferenceId(customer.getExternalReferences(), xRoadsModule.getName());
-						verticle.getEcomService().updateExternalReference(Customer.class.getSimpleName(), customer.getSourceId(), xRoadsModule.getName(), id, hx -> {
-							log.debug("External ref updated");
-							XroadsUtils.setExternalReference(customer.getExternalReferences(), xRoadsModule.getName(), id, customer.getVersion());
-						});	
-					}
-				}
-			} else
-				log.error("processCustomer " + message.body() + " --> " + json.cause().getMessage());
-		});
-		*/
-	}
-/*
-	private boolean isAlreadyCustomer(JsonNode customer) {
-		return customer.get("external_references").has(xRoadsModule.getName());
-	}
+		final CustomerRevision revision = getXRoadsModule().getXRoadsCoreService().getEntityRevision(CustomerRevision.class,
+				customer.getSourceId(),
+				XRoadsUtils.getExternalReferenceVersion(customer, xRoadsModule));
 
-	private boolean isEnabledCustomer(JsonNode customer) {
-		return customer.get("data").get("enabled") == null || customer.get("data").get("enabled").asBoolean();
-	}
+		boolean sendEmail = xRoadsModule.getConfiguration().isSendEmailOnNewUsers();
+
+		String rewixId = XRoadsUtils.getExternalReferenceId(customer, xRoadsModule);
+		if (rewixId == null) {
+			if (isEnabledCustomer(customer)) {
+				rewixId = createCustomer(customer, sendEmail);
+			}
+		}
+		if(rewixId != null) {
+
+			log.debug("Updating rewix customer external reference " + " --> " + rewixId);
+			getXRoadsModule().getXRoadsCoreService().updateExternalReferenceIdAndVersion(xRoadsModule, customer, rewixId, -1);
 
 
-	public void updateCustomer(Customer customer, CustomerRevision revision, Handler<AsyncResult<Void>> handler) {
-		log.info("Updating rewix customer " + customer.getSourceId());
-
-		Future<Void> future = Future.future();
-		future.setHandler(handler);
-
-		Future<String> customerFuture = updateCustomerHead(customer);		
-		customerFuture
-		.compose(v -> {
-			Future<Void> f = Future.future();
-			log.debug("Updating rewix customer address " + customer.getSourceId());
-			updateCustomerAddresses(customer).setHandler(f.completer());			
-			return f;
-		})
-		.compose(v -> {
-			Future<Void> f = Future.future();
-			log.debug("Updating rewix customer registry " + customer.getSourceId());
-			updateCustomerData(customer).setHandler(f.completer());		
-			return f;
-		})
-		.compose(v -> {
-			Future<Void> f = Future.future();
-			log.debug("Updating rewix customer groups " + customer.getSourceId());				
-			updateCustomerGroups(customer).setHandler(f.completer());		
-			return f;
-		})	
-		.compose(v -> {
-			Future<Void> f = Future.future();
-			log.debug("Updating rewix customer optional groups " + customer.getSourceId());				
-			updateCustomerOptionalGroups(customer).setHandler(f.completer());
-			return f;
-		})
-		.compose(v -> {
-			Future<Void> f = Future.future();
-			log.debug("Updating rewix consents " + customer.getSourceId());				
-			updateCustomerConsents(customer, revision).setHandler(f.completer());
-			return f;
-		})
-		.compose(v -> {	//Aggiorno la versione	
-			final String id = XroadsUtils.getExternalReferenceId(customer.getExternalReferences(), xRoadsModule.getName());			
-			ecomService.updateExternalReference(Customer.class.getSimpleName(), customer.getSourceId(), xRoadsModule.getName(), id, hx -> {
-				log.debug("External ref updated");
-				XroadsUtils.setExternalReference(customer.getExternalReferences(), xRoadsModule.getName(), id, customer.getVersion());
-				future.complete();
-			});			
-		}, future); 
-
-
-	}
-
-	protected Future<Void> updateCustomerAddresses(Customer customer) {
-		Future<Void> future = Future.future();
-
-		List<JsonNode> addresses = new ArrayList<>();
-		customer.getAddresses().fields().forEachRemaining(customerr -> {
-			addresses.add(customerr.getValue());
-		});
-
-		if (addresses.size() > 0) {
-			if (addresses.size() == 1) {
-				JsonNode address = addresses.get(0);
-				JsonNode invoice = address.deepCopy();
-				((ObjectNode)invoice).put("type", "invoice");
-				addresses.add(invoice);
-				JsonNode dispatch = address.deepCopy();
-				((ObjectNode)dispatch).put("type", "dispatch");
-				addresses.add(dispatch);
-			} else {
-				JsonNode address = addresses.get(0);
-				JsonNode invoice = address.deepCopy();
-				((ObjectNode)invoice).put("type", "invoice");
-				addresses.add(invoice);
-				address = addresses.get(1);
-				JsonNode dispatch = address.deepCopy();
-				((ObjectNode)dispatch).put("type", "dispatch");
-				addresses.add(dispatch);
+			if (revision == null || !revision.getEmail().equals(customer.getEmail()) || !revision.getLanguageCode().equals(customer.getLanguageCode())
+					|| !revision.getData().equals(customer.getData())) {
+				updateCustomerHead(customer, rewixId);		
 			}
 
-			@SuppressWarnings("rawtypes")
-			List<Future> futures = new ArrayList<>();			
-			for (JsonNode address : addresses) {			
-				futures.add(updateCustomerAddress(customer, address));			
+			if(revision == null || !revision.getAddresses().equals(customer.getAddresses())) {
+				updateCustomerAddresses(customer, rewixId);			
 			}
-			CompositeFuture.all(futures)		
-			.setHandler(x -> {
-				if (x.succeeded()) {							
-					future.complete();
-				} else
-					future.fail(x.cause());						
-			});	
-		} else
-			future.complete();
 
-		return future;
+			if(revision == null || !revision.getPhone().equals(customer.getPhone()) || !revision.getVatNumber().equals(customer.getVatNumber())) {
+				updateCustomerData(customer, rewixId);		
+			}
+
+			// FIXME 
+			if(revision == null || !revision.getGroups().equals(customer.getGroups()) || !revision.getData().equals(customer.getData())) {
+				updateCustomerGroups(customer, rewixId);
+				updateCustomerOptionalGroups(customer, rewixId);
+				removeCustomerGroups(customer, revision, rewixId);
+			}
+
+			if(revision == null || !revision.getPaymentTerms().equals(customer.getPaymentTerms())) {
+				updateCustomerPaymentTerms(customer, rewixId);
+				removeCustomerPaymentTerms(customer, revision, rewixId);
+			}
+
+			if(revision == null || !revision.getData().equals(customer.getData())) {
+				updateCustomerConsents(customer, rewixId);
+			}
+
+			getXRoadsModule().getXRoadsCoreService().updateExternalReferenceId(xRoadsModule, customer, rewixId);
+		}
 	}
 
-	protected Future<Void> updateCustomerAddress(Customer customer, JsonNode jsonAddress) {
+	private boolean isEnabledCustomer(Customer customer) {
+		return customer.getData().path("enabled").asBoolean(true);
+	}
+
+	protected void updateCustomerAddresses(Customer customer, String rewixId) throws RewixAPIException {
+
+		Iterator<Map.Entry<String, JsonNode>> addresses = customer.getAddresses().fields();
+		while(addresses.hasNext()) {
+			Map.Entry<String,JsonNode> address = addresses.next();
+			updateCustomerAddress(customer, address.getValue(), address.getKey(), rewixId);
+		}
+	}
+
+	protected void updateCustomerAddress(Customer customer, JsonNode jsonAddress, String addressType, String rewixId) throws RewixAPIException {
 		log.debug("Updating address for rewix customer" + customer.getSourceId());
-		Future<Void> future = Future.future();
 
 		AddressBean address = new AddressBean();
-		address.setType(jsonAddress.get("type").asText());
-		address.setAddressee(jsonAddress.get("addressee").asText());
-		address.setCareOf(jsonAddress.get("careOf").asText());
-		address.setStreet(jsonAddress.get("street").asText());
-		address.setNumber(jsonAddress.get("number").asText());
-		address.setZip(jsonAddress.get("zip").asText());
-		address.setCity(jsonAddress.get("city").asText());
-		address.setProvince(jsonAddress.get("province").asText());
-		address.setCountryCode(jsonAddress.get("countryCode").asText());
+		address.setType(addressType);
+		address.setAddressee(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESSEE_KEY).asText());
+		address.setCareOf(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_CARE_OF_KEY).asText());
+		address.setStreet(jsonAddress.path("street").asText());
+		address.setNumber(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_NUMBER_KEY).asText());
+		address.setZip(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY).asText());
+		address.setCity(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY).asText());
+		address.setProvince(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_PROVINCE_KEY).asText());
+		address.setCountryCode(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY).asText());		
+		address.setMobilePhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).asText());
+		address.setMobilePhone(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).asText());
 
-		String phone = (jsonAddress.get("mobilePhone").asText() != null ? 
-				jsonAddress.get("mobilePhone").asText() :
-					customer.getPhone().get("mobile").asText());
-
-		if (phone != null) {
-			if (phone.contains(" ")) {
-				String[] p = phone.split(" ", 2);
-				address.setMobilePhonePrefix(p[0]);
-				address.setMobilePhone(p[1]);
-			} else
-				address.setMobilePhone(phone);
-		}
-		final String id = XroadsUtils.getExternalReferenceId(customer, xRoadsModule.getName());
-
-		api.updateAdress(id, address);
-		return future;
+		api.updateAddress(rewixId, address);
 	}
 
-	protected Future<String> updateCustomerHead(Customer customer) {
+	protected void updateCustomerHead(Customer customer, String rewixId) throws RewixAPIException {
 		log.debug("Updating head for rewix customer " + customer.getSourceId());
-		Future<String> future = Future.future();
 
 		UserBean user = new UserBean();
 		user.setEmail(customer.getEmail());		
@@ -209,7 +134,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setIgnoreRestrinctions(false);
 		user.setLocaleCode(customer.getLanguageCode());			
 		user.setPermanentDiscount(new BigDecimal(0));
-		Boolean online = customer.getData().get(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).asBoolean();
+		Boolean online = customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).asBoolean();
 		if (online != null)
 			user.setStatus(online ? 2 : 3);
 
@@ -225,136 +150,189 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY))
 			user.setTradeAgentUsername(customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY).asText());
 
-		final String id = XroadsUtils.getExternalReferenceId(customer, xRoadsModule.getName());
-		api.updateUserHead(id, user);
-		return future;
+		api.updateUserHead(rewixId, user);
 	}
 
-	protected Future<Void> updateCustomerOptionalGroups(Customer customer) {
-		final Future<Void> future = Future.future();
-		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText(); //.split(",");
+	protected void updateCustomerOptionalGroups(Customer customer, String rewixId) throws RewixAPIException, SyncException {
+
+		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText(); 
 		Set<GroupSearchBean> groups = new HashSet<>();
-		customer.getGroups().fields().forEachRemaining(customerItem -> {
-			if (! customerItem.getValue().asBoolean())
-				groups.add(new GroupSearchBean(platform, customerItem.getKey()));
-		});
+		if(customer.getGroups() != null) {
+			JsonNode customerGroups = customer.getGroups().path(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
+			if(!customerGroups.isMissingNode() && customerGroups.isArray()) {
+				for(JsonNode customerGroup : customerGroups) {
+					groups.add(new GroupSearchBean(platform, customerGroup.asText()));
+				}
+			}
+		}
 
 		if (groups.size() > 0) {
-			getGroupIds(groups).setHandler(groupIds -> {
-				if (groupIds.succeeded()) { 
-					Map<GroupSearchBean, Integer> map = groupIds.result();
-					@SuppressWarnings("rawtypes")
-					List<Future> futures = new ArrayList<>();
-					if (map.size() > 0)
-						for(GroupSearchBean group : map.keySet()) {
-							if (map.get(group) != null) {
-								UserListBean users = new UserListBean();
-								users.addUser(XroadsUtils.getExternalReferenceId(customer.getExternalReferences(), xRoadsModule.getName()));						
-								futures.add(addToGroupById(users, map.get(group)));									
-								CompositeFuture.all(futures)		
-								.setHandler(x -> {
-									if (x.succeeded()) {							
-										future.complete();
-									} else
-										future.fail(x.cause());						
-								});	
-							} else
-								future.complete();
-						}
-					else
-						future.complete();
-				} else
-					future.fail(groupIds.cause());
-			});	
-		} else
-			future.complete();
+			if (groups.size() > 0) {
+				for(Map.Entry<GroupSearchBean, Integer> group : getGroupIds(groups).entrySet()) {
+					UserListBean users = new UserListBean();
+					users.setUsers(new ArrayList<String>());
+					users.getUsers().add(rewixId);
+					api.addUsersToGroup(users, group.getValue());
+				}
+			}
 
-		return future;		
+		}	
 	}
 
-	protected Future<Void> updateCustomerGroups(Customer customer) {
-		Future<Void> future = Future.future();
-		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();//.split(",");
+	protected void updateCustomerGroups(Customer customer, String rewixId) throws SyncException {
+
+		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
 		Set<GroupSearchBean> groups = new HashSet<>();
-		customer.getGroups().fields().forEachRemaining(customerItem -> {
-			if (customerItem.getValue().asBoolean())
-				groups.add(new GroupSearchBean(platform, customerItem.getKey()));
-		});
+
+		if(customer.getGroups() != null) {
+			JsonNode customerGroups = customer.getGroups().path(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
+			if(!customerGroups.isMissingNode() && customerGroups.isArray()) {
+				for(JsonNode customerGroup : customerGroups) {
+					groups.add(new GroupSearchBean(platform, customerGroup.asText()));
+				}
+			}
+		}
 
 		if (groups.size() > 0) {
-			getOrCreateGroupIds(groups).setHandler(groupIds -> {
-				if (groupIds.succeeded()) { 
-					Map<GroupSearchBean, Integer> map = groupIds.result();
-					@SuppressWarnings("rawtypes")
-					List<Future> futures = new ArrayList<>();
-					for(GroupSearchBean group : map.keySet()) {			
-						UserListBean users = new UserListBean();
-						users.addUser(XroadsUtils.getExternalReferenceId(customer.getExternalReferences(), xRoadsModule.getName()));						
-						futures.add(addToGroupById(users, map.get(group)));									
-						CompositeFuture.all(futures)		
-						.setHandler(x -> {
-							if (x.succeeded()) {							
-								future.complete();
-							} else
-								future.fail(x.cause());						
-						});	
+			for(Map.Entry<GroupSearchBean, Integer> group : getOrCreateGroupIds(groups).entrySet()) {
+				UserListBean users = new UserListBean();
+				users.setUsers(new ArrayList<String>());
+				users.getUsers().add(rewixId);
+				api.addUsersToGroup(users, group.getValue());
+			}
+		}	
+	}
+
+	protected void removeCustomerGroups(Customer customer, CustomerRevision customerRevision, String rewixId) throws SyncException {
+		if(customerRevision != null) {
+			Set<String> customerRevisionGroups = new HashSet<>();
+			if(customerRevision.getGroups() != null) {
+				JsonNode oldCustomerGroups = customerRevision.getGroups().get(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
+				if(oldCustomerGroups != null) {
+					for(JsonNode customerGroup : oldCustomerGroups) {
+						customerRevisionGroups.add(customerGroup.asText());
 					}
-				} else
-					future.fail(groupIds.cause());
-			});	
-		} else
-			future.complete();
-
-		return future;		
+				}
+				JsonNode newCustomerGroups = customer.getGroups().get(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
+				if(newCustomerGroups != null && newCustomerGroups.isArray() && customerRevisionGroups.size() > 0) {
+					for(JsonNode customerGroup : newCustomerGroups) {
+						customerRevisionGroups.remove(customerGroup.asText());
+					}
+				}
+			}
+			if(customerRevisionGroups.size() > 0) {
+				Set<GroupSearchBean> groupsToremove = new HashSet<>();
+				String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
+				customerRevisionGroups.forEach(groupToRemove -> {
+					groupsToremove.add(new GroupSearchBean(platform, groupToRemove));
+				});
+				if (groupsToremove.size() > 0) {
+					for(Map.Entry<GroupSearchBean, Integer> groupToRemoveBean : getGroupIds(groupsToremove).entrySet()) {
+						UserListBean users = new UserListBean();
+						users.setUsers(new ArrayList<String>());
+						users.getUsers().add(rewixId);
+						api.removeUsersFromGroup(users, groupToRemoveBean.getValue());
+					}
+				}
+			}
+		}
 	}
 
-	protected Future<Void> updateCustomerData(Customer customer) {
+	protected void updateCustomerPaymentTerms(Customer customer, String rewixId) throws SyncException {
+		if(customer.getPaymentTerms() != null) {		
+			Map<String, Integer> paymentTermsMap = null;
+			if(customer.getPaymentTerms() != null) {
+				JsonNode paymentTermsNode =  customer.getPaymentTerms().path(XRoadsJsonKeys.CUSTOMER_PAYMENT_TERMS_KEY);
+				if(!paymentTermsNode.isMissingNode() && paymentTermsNode.isArray()) {
+					List<String> paymenttermsList = new ArrayList<String>();
+					for(JsonNode paymentTerm : paymentTermsNode) {
+						paymenttermsList.add(paymentTerm.asText());
+					}
+					try {
+						paymentTermsMap = getPaymentTermsIds(paymenttermsList);
+					} catch (UnsupportedEncodingException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+			if (paymentTermsMap != null && paymentTermsMap.size() > 0) {
+				for(Map.Entry<String, Integer> paymentTerm : paymentTermsMap.entrySet()) {
+					UserListBean users = new UserListBean();
+					users.setUsers(new ArrayList<String>());
+					users.getUsers().add(rewixId);
+					api.addUsersToPaymentTerm(users, paymentTerm.getValue());
+				}
+			}	
+		}
+	}
+
+	protected void removeCustomerPaymentTerms(Customer customer, CustomerRevision customerRevision, String rewixId) throws SyncException {
+		if(customerRevision != null) {
+			Set<String> customerRevisionPaymentTerms = new HashSet<>();
+			if(customerRevision.getPaymentTerms() != null) {
+				JsonNode oldCustomerPaymentTerms = customerRevision.getPaymentTerms().get(XRoadsJsonKeys.CUSTOMER_PAYMENT_TERMS_KEY);
+				if(oldCustomerPaymentTerms != null && oldCustomerPaymentTerms.isArray()) {
+					for(JsonNode oldCustomerPaymentTerm : oldCustomerPaymentTerms) {
+						customerRevisionPaymentTerms.add(oldCustomerPaymentTerm.asText());
+					}
+				}
+			}
+			if(customer.getPaymentTerms() != null) {
+				JsonNode newCustomerPaymentTerms = customer.getPaymentTerms().path(XRoadsJsonKeys.CUSTOMER_PAYMENT_TERMS_KEY);
+				if(newCustomerPaymentTerms != null && newCustomerPaymentTerms.isArray() && customerRevisionPaymentTerms.size() > 0) {
+					for(JsonNode newCustomerPaymentTerm : newCustomerPaymentTerms) {
+						customerRevisionPaymentTerms.remove(newCustomerPaymentTerm.asText());
+					}
+				}
+			}
+			if(customerRevisionPaymentTerms.size() > 0) {
+				Map<String, Integer> paymentTermsMap;
+				try {
+					paymentTermsMap = getPaymentTermsIds(new ArrayList<String>(customerRevisionPaymentTerms));
+				} catch (UnsupportedEncodingException e) {
+					throw new RuntimeException(e);
+				}	
+				for(Map.Entry<String, Integer> paymentTerm : paymentTermsMap.entrySet()) {
+					UserListBean users = new UserListBean();
+					users.setUsers(new ArrayList<String>());
+					users.getUsers().add(rewixId);		
+					api.removeUsersFromPaymentTerm(users, paymentTerm.getValue());
+				}
+
+			}
+		}
+	}
+
+	protected void updateCustomerData(Customer customer, String rewixId) throws RewixAPIException, ProductNotFoundException {
 		log.debug("Updating registry for rewix customer" + customer.getSourceId());
-		Future<Void> future = Future.future();
 
 		AnagraficaBean registry = new AnagraficaBean();
 		registry.setBusinessName(customer.getCompany());
-		if (customer.getPhone().get("mobile") != null) {
-			if (customer.getPhone().get("mobile").asText().contains(" ")) {
-				String[] p = customer.getPhone().get("mobile").asText().split(" ", 2);
-				registry.setMobilePhonePrefix(p[0]);
-				registry.setMobilePhone(p[1]);
-			} else
-				registry.setMobilePhone(customer.getPhone().get("mobile").asText());
+		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).isMissingNode()) {
+			registry.setMobilePhone(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).asText());
 		}
-		if (customer.getPhone().get("phone") != null) {
-			if (customer.getPhone().get("phone").asText().contains(" ")) {
-				String[] p = customer.getPhone().get("phone").asText().split(" ", 2);
-				registry.setPhonePrefix(p[0]);
-				registry.setPhone(p[1]);
-			} else
-				registry.setPhone(customer.getPhone().get("phone").asText());
+		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).isMissingNode()) {
+			registry.setMobilePhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).asText());
 		}
+
+		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).isMissingNode()) {
+			registry.setPhone(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_TELL_KEY).asText());
+		}
+		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).isMissingNode()) {
+			registry.setPhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_TELL_PREFIX_KEY).asText());
+		}
+
 		registry.setVatNumber(customer.getVatNumber());
 
-		final String id = XroadsUtils.getExternalReferenceId(customer, xRoadsModule.getName());
+		api.updateUserAnagrafica(rewixId, registry);
 
-		api.updateUserAnagrafica(id, registry);
-
-		return future;
 	}
 
-	public Future<Void> updateCustomerConsents(Customer customer, CustomerRevision revision) {
+	public void updateCustomerConsents(Customer customer, String rewixId) throws RewixAPIException, ProductNotFoundException {
 		log.debug("Updating customer consents for rewix customer" + customer.getSourceId());
-		Future<Void> future = Future.future();
 
 		if (! customer.getData().has("consents")) { 
-			future.complete();
-			return future;
-		}
-
-		if (revision != null) {
-			JsonNode consentsJson = customer.getData().get("consents");
-			JsonNode consentsJsonRevision = revision.getData().get("consents");
-			if (consentsJson.equals(consentsJsonRevision)) {
-				future.complete();
-				return future;
-			}				
+			return;
 		}
 
 		UserConsentsBean consents = new UserConsentsBean();
@@ -368,23 +346,23 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 			consents.getUserConsents().add(bean);
 		});
 
-		final String id = XroadsUtils.getExternalReferenceId(customer, xRoadsModule.getName());
-		api.updateUserConsents(id, consents);
-		return future;
+		api.updateUserConsents(rewixId, consents);
 	}
 
-	public void createCustomer(String platform, Customer customer, boolean sendEmail, Handler<AsyncResult<Customer>> handler) {
+	public String createCustomer(Customer customer, boolean sendEmail) throws RewixAPIException {
 		log.info("Creating rewix customer " + customer.getSourceId());			
 
 		UserCreateBean rewixUser = new UserCreateBean();
 		rewixUser.setEmail(customer.getEmail());			
-		rewixUser.setPassword(generatePassword(8));
+		rewixUser.setPassword(RandomStringUtils.random(8, true, true));
 		rewixUser.setClausola1("on");			
 		rewixUser.setLocaleCode(customer.getLanguageCode());			
-		rewixUser.setPlatformUid(platform);
-		rewixUser.setCountryCode(customer.getData().get("countryCode").asText());
+		rewixUser.setPlatformUid(customer.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText());
+		String countryCode = customer.getData().path(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY).asText();
+		if(!countryCode.isEmpty())
+			rewixUser.setCountryCode(countryCode);
 		rewixUser.setSendActivationEmail(sendEmail);
 
-		api.createUser(rewixUser);		
-	}*/
+		return api.createUser(rewixUser);		
+	}
 }

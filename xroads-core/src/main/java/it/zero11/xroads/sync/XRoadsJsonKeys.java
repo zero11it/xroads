@@ -42,12 +42,15 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_TELL_KEY = "tel";
 	
 	public static final String CUSTOMER_ENABLED_KEY = "enabled";
+	public static final String CUSTOMER_ADDRESS_TYPE_KEY = "type";
 	public final static String CUSTOMER_ADDRESS_BILLING_KEY = "billing" ;
 	public final static String CUSTOMER_ADDRESS_SHIPPING_KEY = "shipping" ;;
 	public final static String CUSTOMER_ADDRESS_PERSONAL_KEY = "personal";	
 	public final static String CUSTOMER_ADDRESS_NAME_KEY = "address";
 	public final static String CUSTOMER_ADDRESS_ZIP_KEY = "zip";
+	public final static String CUSTOMER_ADDRESS_NUMBER_KEY = "number";
 	public final static String CUSTOMER_ADDRESS_CITY_KEY = "city";
+	public final static String CUSTOMER_ADDRESS_PROVINCE_KEY = "province";
 	public final static String CUSTOMER_ADDRESS_REGION_KEY = "region";
 	public final static String CUSTOMER_ADDRESS_COUNTRY_KEY = "country";	
 	public final static String CUSTOMER_VAT_NUMBER_KEY = "vatNumber";
@@ -60,6 +63,8 @@ public class XRoadsJsonKeys {
 	public final static String COSTOMER_SDI_KEY = "sdi";
 	public final static String CUSTOMER_CARE_OF_KEY = "careOf";
 	public final static String CUSTOMER_ADDRESSEE_KEY = "addressee";
+	public final static String CUSTOMER_GROUPS_KEY = "groups";
+	public final static String CUSTOMER_PAYMENT_TERMS_KEY = "payment_terms";
 	
 	public final static String ORDER_NOTES_KEY = "notes";
 	public final static String ORDER_ADMIN_NOTES_KEY ="admin_notes";

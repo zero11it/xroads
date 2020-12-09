@@ -10,6 +10,7 @@ import java.util.Set;
 
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
+import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.IParamType;
 import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.Order;
@@ -17,6 +18,7 @@ import it.zero11.xroads.model.Price;
 import it.zero11.xroads.model.Product;
 import it.zero11.xroads.model.Stock;
 import it.zero11.xroads.modules.AbstractXRoadsModule;
+import it.zero11.xroads.modules.rewix.consumers.RewixCustomerConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixModelConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixOrderStatusConsumer;
 import it.zero11.xroads.modules.rewix.consumers.RewixPricesConsumer;
@@ -72,6 +74,8 @@ public class XRoadsRewixModule extends AbstractXRoadsModule {
 				return (EntityConsumer<T>) new RewixStockConsumer(this);
 			} else if(Order.class.equals(entityClass) && getXRoadsCoreService().getParameterAsBoolean(this, RewixParamType.ENABLE_ORDER_STATUS_UPDATE)) {
 				return (EntityConsumer<T>) new RewixOrderStatusConsumer(this);
+			} else if(Customer.class.equals(entityClass) && getXRoadsCoreService().getParameterAsBoolean(this, RewixParamType.IS_UPDATE_CUSTOMERS)) {
+				return (EntityConsumer<T>) new RewixCustomerConsumer(this);
 			}
 		
 		}

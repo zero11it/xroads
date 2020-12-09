@@ -25,7 +25,6 @@ public class RewixConfig {
 	private Integer orderFrequencyMin = 60;
 	private Integer checkNewModelsFrequencyMin = 60;
 	private boolean sendEmailOnNewUsers = false;
-	private boolean isUpdateCustomers = false;
 	private boolean ignoreMissingImages = false;
 	private List<Integer> orderStatusToSync = new ArrayList<>();
 	private List<Integer> orderSubStatusToSync = new ArrayList<>();
@@ -37,7 +36,6 @@ public class RewixConfig {
 		password = module.getXRoadsCoreService().getParameter(module, RewixParamType.PASSWORD);
 		timeout = module.getXRoadsCoreService().getParameterAsInteger(module, RewixParamType.TIMEOUT);
 		sendEmailOnNewUsers = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.SEND_EMAIL_ON_NEW_USERS);
-		isUpdateCustomers = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.IS_UPDATE_CUSTOMERS);
 		ignoreMissingImages = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.IGNORE_MISSING_IMAGES);
 		module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.SUPPLIERS).fields().forEachRemaining((Map.Entry<String, JsonNode> entry ) -> {
 			suppliers.put(entry.getKey(), entry.getValue().asInt());
@@ -152,14 +150,6 @@ public class RewixConfig {
 
 	public void setSendEmailOnNewUsers(boolean sendEmailOnNewUsers) {
 		this.sendEmailOnNewUsers = sendEmailOnNewUsers;
-	}
-
-	public boolean isUpdateCustomers() {
-		return isUpdateCustomers;
-	}
-
-	public void setUpdateCustomers(boolean isUpdateCustomers) {
-		this.isUpdateCustomers = isUpdateCustomers;
 	}
 
 	public List<Integer> getOrderStatusToSync() {

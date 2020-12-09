@@ -36,6 +36,8 @@ import it.zero11.xroads.modules.rewix.api.model.OrderBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderFilterBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderListBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderStatusInfo;
+import it.zero11.xroads.modules.rewix.api.model.PaymentTermBean;
+import it.zero11.xroads.modules.rewix.api.model.PaymentTermsBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductImagesBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelBean;
@@ -49,6 +51,7 @@ import it.zero11.xroads.modules.rewix.api.model.UpdateDropshippingOrderStatusBea
 import it.zero11.xroads.modules.rewix.api.model.UserBean;
 import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
+import it.zero11.xroads.modules.rewix.api.model.UserListBean;
 import it.zero11.xroads.modules.rewix.api.model.ValueWithKey;
 
 
@@ -400,7 +403,7 @@ public Integer updateUserGroup(GroupBean groupBen) throws RewixAPIException, Pro
 	}
 }	
 
-public void updateAddress(String username, AddressBean adressBean) throws RewixAPIException, ProductNotFoundException{		
+public void updateAddress(String username, AddressBean adressBean) throws RewixAPIException{		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/address/" + username)
@@ -415,10 +418,10 @@ public void updateAddress(String username, AddressBean adressBean) throws RewixA
 	}
 }	
 
-public void updateUserHead(String username, UserBean userBean) throws RewixAPIException, ProductNotFoundException{		
+public void updateUserHead(String username, UserBean userBean) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
-			.path("/restful/user/user/username" + username)
+			.path("/restful/user/user/" + username)
 			.request()
 			.header("Authorization", getAuthorizationHeader())
 			.accept(MediaType.APPLICATION_XML)
@@ -430,7 +433,7 @@ public void updateUserHead(String username, UserBean userBean) throws RewixAPIEx
 	}
 }
 
-public void updateUserAnagrafica(String username, AnagraficaBean anagraficaBean) throws RewixAPIException, ProductNotFoundException{		
+public void updateUserAnagrafica(String username, AnagraficaBean anagraficaBean) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/anagrafica/" + username)
@@ -445,7 +448,7 @@ public void updateUserAnagrafica(String username, AnagraficaBean anagraficaBean)
 	}
 }
 
-public void updateUserConsents(String username, UserConsentsBean uerConsentsaBean) throws RewixAPIException, ProductNotFoundException{		
+public void updateUserConsents(String username, UserConsentsBean uerConsentsaBean) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/consent/update/" + username)
@@ -460,7 +463,7 @@ public void updateUserConsents(String username, UserConsentsBean uerConsentsaBea
 	}
 }
 
-public String createUser(UserCreateBean uerCreateBean) throws RewixAPIException, ProductNotFoundException{		
+public String createUser(UserCreateBean uerCreateBean) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/create")
@@ -477,7 +480,7 @@ public String createUser(UserCreateBean uerCreateBean) throws RewixAPIException,
 	}
 }
 
-public Integer getUserGroup(String platform, String name) throws RewixAPIException, ProductNotFoundException{		
+public Integer getUserGroup(String platform, String name) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/group/get/" + platform + "/" + name)
@@ -490,6 +493,28 @@ public Integer getUserGroup(String platform, String name) throws RewixAPIExcepti
 	if(group == null)
 		return null;
 	return group.getId();
+}
+
+public void addUsersToGroup(UserListBean users, Integer group) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/group/id/" + group + "/add")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(users));		
+	checkResponseStatus("addUsersToGroup", response);
+}
+
+public void removeUsersFromGroup(UserListBean users, Integer group) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/group/id/" + group + "/remove")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(users));		
+	checkResponseStatus("removeUsersToGroup", response);
 }
 
 public void updateProductTranslations(ProductTranslationsBean productTranslationsBean) throws RewixAPIException, ProductNotFoundException{		
@@ -506,6 +531,73 @@ public void updateProductTranslations(ProductTranslationsBean productTranslation
 	if (!p.getStatus()) {
 		throw new RewixAPIException(200, p.getMessage());
 	}
+}
+
+public void updatePaymentTerm(PaymentTermBean paymentTermsBean) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/paymentterm/update")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(paymentTermsBean));
+
+	checkResponseStatus("updatePaymentTermn", response);
+	final OperationResponseBean p = response.readEntity(OperationResponseBean.class);
+	if (!p.getStatus()) {
+		throw new RewixAPIException(200, p.getMessage());
+	}
+}
+
+public PaymentTermsBean getPaymentTerms(String name) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/paymentterm/list")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();	
+	checkResponseStatus("getPaymentTerms", response);
+	final PaymentTermsBean paymentTerms = response.readEntity(PaymentTermsBean.class);
+	return paymentTerms;
+}
+
+public void addUsersToPaymentTerm(UserListBean users, Integer payment_term_id) throws RewixAPIException {
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/paymentterm/id/" + payment_term_id + "/add")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(users));		
+	checkResponseStatus("addUserToPaymentTerm", response);
+}
+
+public void removeUsersFromPaymentTerm(UserListBean users, Integer payment_term_id) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/paymentterm/id/" + payment_term_id + "/remove")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(users));		
+	checkResponseStatus("removeUsersFromPaymentTerm", response);
+}
+
+public Integer getPaymentTerm(String name) throws RewixAPIException, UnsupportedEncodingException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/user/paymentterm/get/" + name)
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();	
+	
+	checkResponseStatus("getPaymentTerm", response);
+	final PaymentTermBean paymentterm = response.readEntity(PaymentTermBean.class);
+	if(paymentterm == null)
+		return null;
+	return paymentterm.getId();
 }
 
 } 
