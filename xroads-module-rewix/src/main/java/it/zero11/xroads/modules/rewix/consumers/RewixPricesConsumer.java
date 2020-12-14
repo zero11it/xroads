@@ -46,7 +46,8 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 		}
 
 		List<ProductTaxableBean> taxables = new ArrayList<>();
-
+		List<String> pricePlatforms = new ArrayList<String>(xRoadsModule.getConfiguration().getOrderPlatforms());
+		
 		Set<GroupSearchBean> groups = new HashSet<>();
 		for (Price price : prices) {
 			if (price.getListingGroup() != null) {
@@ -70,9 +71,20 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				srewixPrice.setPlatformUid(platform.trim());	
 				srewixPrice.setCountry(price.getCountry());	
 				srewixPrice.setMinimumQuantity(price.getMinQuantity());
-				taxables.add(srewixPrice);		
+				taxables.add(srewixPrice);
+				pricePlatforms.remove(platform);
 			}
-		}					
+		}
+
+		//create null price for platforms that have not price (to prevent case 
+		for(String platform : pricePlatforms) {
+			ProductTaxableBean srewixPrice = new ProductTaxableBean();								
+			srewixPrice.setRetailPrice(null);
+			srewixPrice.setSuggestedPrice(null);
+			srewixPrice.setTaxable(null);
+			srewixPrice.setPlatformUid(platform.trim());
+			taxables.add(srewixPrice);
+		}
 
 		rewixPrice.setProductTaxables(taxables);
 
