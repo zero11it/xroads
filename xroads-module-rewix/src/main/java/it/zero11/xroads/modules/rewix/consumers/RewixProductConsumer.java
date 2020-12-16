@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,12 +22,15 @@ import it.zero11.xroads.modules.rewix.api.RewixAPIException;
 import it.zero11.xroads.modules.rewix.api.model.ProductBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductImageBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductImagesBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductRestrictionBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductRestrictionsBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagMetaBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagMetasBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagsBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTranslationBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTranslationsBean;
+import it.zero11.xroads.modules.rewix.utils.GroupSearchBean;
 import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.SyncException;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
@@ -79,7 +83,15 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 			if (revision == null || !revision.getImages().equals(product.getImages())) {
 				updateProductImages(rewixId, product);		
 			}
-			
+
+			if (revision == null || !revision.getRestrictions().equals(product.getRestrictions())) {
+				updateProductRestrictions(rewixId, product);		
+			} 
+			if (revision != null && !revision.getRestrictions().equals(product.getRestrictions())) {
+				removeProductRestrictions(rewixId, product);
+			}
+
+
 			failed = false;
 		}finally {
 			//If we have some exception, for example while importing some image, we set the product offline
@@ -329,7 +341,118 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 			}
 		} 
 	}
-	
+
+	protected void updateProductRestrictions(Integer rewixId, Product product) throws SyncException {
+		
+		if(product.getRestrictions().isEmpty())
+			return;
+		
+		List<ProductRestrictionBean> productVisibleRestrictionsList = null;
+		List<ProductRestrictionBean> productHiddenRestrictionsList = null;
+		JsonNode visible = product.getRestrictions().path("visible");
+		JsonNode hidden = product.getRestrictions().path("hidden");
+
+		Set<GroupSearchBean> groupsToSearch = new HashSet<>();
+
+		if(!visible.isMissingNode()) {
+			Iterator<Map.Entry<String, JsonNode>> iter = visible.fields();
+			while (iter.hasNext()) {
+				Map.Entry<String, JsonNode> groups = iter.next();
+				String platform = groups.getKey();
+				if(!platform.equals("countries")) {
+					JsonNode groupList = groups.getValue();
+					if(!groupList.isMissingNode() && groupList.isArray()) {
+						for(JsonNode groupName : groupList) {
+							groupsToSearch.add(new GroupSearchBean(platform, groupName.asText()));
+						}
+					}
+				}
+			}
+		}
+		if(!hidden.isMissingNode()) {
+			Iterator<Map.Entry<String, JsonNode>> iter = hidden.fields();
+			while (iter.hasNext()) {
+				Map.Entry<String, JsonNode> groups = iter.next();
+				String platform = groups.getKey();
+				if(!platform.equals("countries")) {
+					JsonNode groupList = groups.getValue();
+					if(!groupList.isMissingNode() && groupList.isArray()) {
+						for(JsonNode groupName : groupList) {
+							groupsToSearch.add(new GroupSearchBean(platform, groupName.asText()));
+						}
+					}
+				}
+			}
+		}
+
+		Map<GroupSearchBean, Integer> groupsId = getGroupIds(groupsToSearch);
+		
+		if(!visible.isMissingNode()) {
+			productVisibleRestrictionsList = new ArrayList<ProductRestrictionBean>();
+			JsonNode countryList = visible.path("countries");
+			if(!countryList.isMissingNode() && countryList.isArray()) {
+				for(JsonNode country : countryList) {
+					ProductRestrictionBean p = new ProductRestrictionBean();
+					p.setCountryCode(country.asText());
+					productVisibleRestrictionsList.add(p);
+				}
+			}
+			Iterator<Map.Entry<String, JsonNode>> iter = visible.fields();
+			while (iter.hasNext()) {
+				Map.Entry<String, JsonNode> groups = iter.next();
+				String platform = groups.getKey();
+				if(!platform.equals("countries")) {
+					JsonNode groupList = groups.getValue();
+					if(!groupList.isMissingNode() && groupList.isArray()) {
+						for(JsonNode groupName : groupList) {				
+							ProductRestrictionBean p = new ProductRestrictionBean();
+							p.setGroupId(groupsId.get(new GroupSearchBean(platform, groupName.asText())));
+							productVisibleRestrictionsList.add(p);
+						}
+					}
+				}
+			}
+		}
+		if(!hidden.isMissingNode()) {
+			productHiddenRestrictionsList = new ArrayList<ProductRestrictionBean>();
+			JsonNode countryList = hidden.path("countries");
+			if(!countryList.isMissingNode() && countryList.isArray()) {
+				for(JsonNode country : countryList) {
+					ProductRestrictionBean p = new ProductRestrictionBean();
+					p.setCountryCode(country.asText());
+					productHiddenRestrictionsList.add(p);
+				}
+			}
+			Iterator<Map.Entry<String, JsonNode>> iter = hidden.fields();
+			while (iter.hasNext()) {
+				Map.Entry<String, JsonNode> groups = iter.next();
+				String platform = groups.getKey();
+				if(!platform.equals("countries")) {
+					JsonNode groupList = groups.getValue();
+					if(!groupList.isMissingNode() && groupList.isArray()) {
+						for(JsonNode groupName : groupList) {				
+							ProductRestrictionBean p = new ProductRestrictionBean();
+							p.setGroupId(groupsId.get(new GroupSearchBean(platform, groupName.asText())));
+							productHiddenRestrictionsList.add(p);
+						}
+					}
+				}
+			}
+		}
+
+		if(productVisibleRestrictionsList != null || productHiddenRestrictionsList != null) {
+			ProductRestrictionsBean productRestrictionsBean = new ProductRestrictionsBean();
+			productRestrictionsBean.setStockProductId(rewixId);
+			productRestrictionsBean.setProductRestrictionsHidden(productHiddenRestrictionsList);
+			productRestrictionsBean.setProductRestrictionsVisible(productHiddenRestrictionsList);
+			api.updateProductRestrictions(productRestrictionsBean);
+		}
+	}
+
+	protected void removeProductRestrictions(Integer rewixId, Product product) {
+
+	}
+
 	private static String encodeUrlKey(String translation) {
         return translation
                         .toLowerCase()

@@ -44,6 +44,7 @@ import it.zero11.xroads.modules.rewix.api.model.ProductImagesBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelLotBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelUpdateProductBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductRestrictionsBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagMetasBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTagsBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTaxablesBean;
@@ -612,6 +613,22 @@ public InputStream getCustomers(String startSyncDateTime) throws RewixAPIExcepti
 			.get();	
 	checkResponseStatus("getCustomers", response);
 	return response.readEntity(InputStream.class);
+}
+
+public void updateProductRestrictions(ProductRestrictionsBean productRestrictionsBean) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/product/restrictions/update")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(productRestrictionsBean));
+
+	checkResponseStatus("updateProductRestrictions", response);
+	final OperationResponseBean p = response.readEntity(OperationResponseBean.class);
+	if (!p.getStatus()) {
+		throw new RewixAPIException(200, p.getMessage());
+	}
 }
 
 } 

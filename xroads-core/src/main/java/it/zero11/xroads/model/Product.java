@@ -53,6 +53,10 @@ public class Product extends AbstractEntity {
 
 	private float weight;
 
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="restrictions")
+	private JsonNode restrictions;
+	
 	public String getBrand() {
 		return this.brand;
 	}
@@ -163,6 +167,14 @@ public class Product extends AbstractEntity {
 
 	public void setWeight(float weight) {
 		this.weight = weight;
+	}
+
+	public JsonNode getRestrictions() {
+		return restrictions;
+	}
+
+	public void setRestrictions(JsonNode restrictions) {
+		this.restrictions = restrictions;
 	}
 
 }
