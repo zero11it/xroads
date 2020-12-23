@@ -37,6 +37,7 @@ import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.model.EntityStatus;
 import it.zero11.xroads.utils.modules.core.model.ParamType;
+import it.zero11.xroads.utils.modules.core.model.WrapFilter;
 import it.zero11.xroads.utils.modules.core.utils.TransactionWrapper;
 import it.zero11.xroads.utils.modules.core.utils.XRoadsCoreUtils;
 
@@ -277,26 +278,33 @@ public class EntityDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, ModuleStatus filter, XRoadsModule module) {
+	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, WrapFilter filter, XRoadsModule module) {
 		EntityManager em = EntityManagerUtils.createEntityManager();
 		try {
 			Query sqlQuery; 
 			String stringQuey = "select * from " + getTableName(em, class1) + " e ";
-			if(filter != null) {
-				stringQuey += getFilter(filter); 
+			if(filter.getModuleStatus() != null) {
+				stringQuey += getFilter(filter.getModuleStatus()); 
 			}
 			if(lastSourceId != null && !lastSourceId.isEmpty()) {
-				if(filter != null)
+				if(filter.getModuleStatus() != null)
 					stringQuey += (" and source_id > :source_id");
 				else 
 					stringQuey += (" where source_id > :source_id");
+			if(filter.getSearchKey() != null) {
+				if(filter.getModuleStatus() == null)	{
+					stringQuey += " where source_id LIKE :searchKey ";
+				} else {
+					stringQuey += " and source_id LIKE :searchKey ";
+				}
+			}
 			}
 			stringQuey += " ORDER BY source_id";
 			if(limit != null) {
 				stringQuey += " LIMIT " + limit ;
 			}
 			sqlQuery = em.createNativeQuery(stringQuey, class1);
-			if(filter != null)
+			if(filter.getModuleStatus() != null)
 				sqlQuery.setParameter("moduleName", module.getName());
 			if(lastSourceId != null && !lastSourceId.isEmpty()) {
 				sqlQuery.setParameter("source_id", lastSourceId);
@@ -308,13 +316,20 @@ public class EntityDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, Integer offset, Integer limit, ModuleStatus filter, ModuleOrder orderBy, XRoadsModule module) {
+	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, Integer offset, Integer limit, WrapFilter filter, ModuleOrder orderBy, XRoadsModule module) {
 		EntityManager em = EntityManagerUtils.createEntityManager();
 		try {
 			Query sqlQuery; 
 			String stringQuey = "select * from " + getTableName(em, class1) + " e ";
-			if(filter != null) {
-				stringQuey += getFilter(filter); 
+			if(filter != null && filter.getModuleStatus() != null) {
+				stringQuey += getFilter(filter.getModuleStatus()); 
+			}
+			if(filter != null && filter.getSearchKey() != null) {
+				if(filter.getModuleStatus() == null)	{
+					stringQuey += " where source_id LIKE :searchKey ";
+				} else {
+					stringQuey += " and source_id LIKE :searchKey ";
+				}
 			}
 			stringQuey += getOrder(orderBy);
 			if(limit != null) {
@@ -324,8 +339,10 @@ public class EntityDao {
 				stringQuey += " OFFSET " + offset;
 			}
 			sqlQuery = em.createNativeQuery(stringQuey, class1);
-			if(filter != null || (orderBy != null && orderBy.equals(ModuleOrder.LAST_ERROR_DATE)))
+			if(filter != null && filter.getModuleStatus() != null || (orderBy != null && orderBy.equals(ModuleOrder.LAST_ERROR_DATE)))
 				sqlQuery.setParameter("moduleName", module.getName());
+			if(filter != null && filter.getSearchKey() != null)
+				sqlQuery.setParameter("searchKey", "%" + filter.getSearchKey() + "%");
 			return  sqlQuery.getResultList();
 		}finally {
 			em.close();
@@ -366,17 +383,26 @@ public class EntityDao {
 		}
 	}
 
-	public <T extends AbstractEntity> Integer countItems(Class<T> entityClass, ModuleStatus filter,  XRoadsModule module) {
+	public <T extends AbstractEntity> Integer countItems(Class<T> entityClass, WrapFilter filter,  XRoadsModule module) {
 		EntityManager em = EntityManagerUtils.createEntityManager();
 		try {
 			Query hqlQuery; 
 			String stringQuey = "select count(*) from " + getTableName(em, entityClass) + " e ";
-			if(filter != null) {
-				stringQuey += getFilter(filter);
+			if(filter != null && filter.getModuleStatus() != null) {
+				stringQuey += getFilter(filter.getModuleStatus());
+			}
+			if(filter != null && filter.getSearchKey() != null) {
+				if(filter.getModuleStatus() == null)	{
+					stringQuey += " where source_id LIKE :searchKey";
+				} else {
+					stringQuey += " and source_id LIKE :searchKey";
+				}
 			}
 			hqlQuery = em.createNativeQuery(stringQuey);
-			if(filter != null)
+			if(filter != null && filter.getModuleStatus() != null)
 				hqlQuery.setParameter("moduleName", module.getName());
+			if(filter != null && filter.getSearchKey() != null)
+				hqlQuery.setParameter("searchKey", "%" + filter.getSearchKey() + "%");
 			return  ((BigInteger) hqlQuery.getSingleResult()).intValue();
 		}finally {
 			em.close();

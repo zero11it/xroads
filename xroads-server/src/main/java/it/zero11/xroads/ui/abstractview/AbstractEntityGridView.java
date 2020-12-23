@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -31,6 +30,7 @@ import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
+import it.zero11.xroads.utils.modules.core.model.WrapFilter;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
 public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends VerticalLayout {
@@ -41,14 +41,15 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 	private HorizontalLayout topBar;
 	private Select<ModuleStatus> filterSelect;
 	protected ComboBox<XRoadsModule> moduleComboBox;
-	private DataProvider<T, ModuleStatus> dataProvider;
-	private ConfigurableFilterDataProvider<T, Void, ModuleStatus> configurableDataProvider;
+	private DataProvider<T, WrapFilter> dataProvider;
+	private ConfigurableFilterDataProvider<T, Void, WrapFilter> configurableDataProvider;
 	private TextField searchBar;
 	private SimpleDateFormat stringToDateFormatter;
 	private SimpleDateFormat dateToStringFormatter;
-
+	private static WrapFilter filters;
 
 	public AbstractEntityGridView(Class<T> typeParameterClass) {
+		filters = new WrapFilter();
 		this.typeParameterClass = typeParameterClass;
 		stringToDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		dateToStringFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -66,14 +67,18 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 				query -> {
 					int offset = query.getOffset();
 					int limit = query.getLimit();
-					return EntityDao.getInstance().getEntities(typeParameterClass, offset, limit, query.getFilter().orElse(null), (query.getFilter().orElse(null) != null ? 
-							(query.getFilter().get().equals(ModuleStatus.SYNC_ERRORS) || query.getFilter().get().equals(ModuleStatus.TO_SYNC) ?
+					return EntityDao.getInstance().getEntities(typeParameterClass, offset, limit, query.getFilter().orElse(null),
+							(query.getFilter().orElse(null) != null ?
+									(((query.getFilter().get().getModuleStatus() != null && query.getFilter().get().getModuleStatus().equals(ModuleStatus.SYNC_ERRORS)) 
+									|| (query.getFilter().get().getModuleStatus() != null && query.getFilter().get().getModuleStatus().equals(ModuleStatus.TO_SYNC))) ?
 									ModuleOrder.LAST_ERROR_DATE : ModuleOrder.SOURCE_ID) : ModuleOrder.SOURCE_ID), moduleComboBox.getValue()).stream();
 				},
 				query -> EntityDao.getInstance().countItems(typeParameterClass, query.getFilter().orElse(null),  moduleComboBox.getValue())
 				);
 		configurableDataProvider = dataProvider.withConfigurableFilter();
-
+		// set filter object to evict nullpointer when filter not exist
+		configurableDataProvider.setFilter(filters);
+		
 		topBar = new HorizontalLayout();
 		refreshButton = new Button("Refresh", event -> {
 			dataProvider.refreshAll();
@@ -85,7 +90,8 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 		searchBar.setLabel("Search");
 		searchBar.setValueChangeMode(ValueChangeMode.LAZY);
 		searchBar.addValueChangeListener(event -> {
-			//FIXME
+			filters.setSearchKey(event.getValue());
+			configurableDataProvider.setFilter(filters);
 		});
 		
 		
@@ -97,7 +103,8 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 			return moduleStatus.getName();
 		});
 		filterSelect.addValueChangeListener((event) -> {
-			configurableDataProvider.setFilter(event.getValue());
+			filters.setModuleStatus(event.getValue());
+			configurableDataProvider.setFilter(filters);
 		});
 
 		moduleComboBox = new ComboBox<>();

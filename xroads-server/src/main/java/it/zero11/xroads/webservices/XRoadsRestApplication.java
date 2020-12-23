@@ -1,6 +1,5 @@
 package it.zero11.xroads.webservices;
 
-import java.util.List;
 import java.util.Set;
 
 import org.glassfish.jersey.jackson.JacksonFeature;

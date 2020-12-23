@@ -38,6 +38,7 @@ import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
 import it.zero11.xroads.utils.modules.core.dao.ParamDao;
 import it.zero11.xroads.utils.modules.core.model.ParamType;
+import it.zero11.xroads.utils.modules.core.model.WrapFilter;
 import it.zero11.xroads.utils.modules.core.utils.LocalCache;
 import it.zero11.xroads.utils.modules.core.utils.XRoadsCoreUtils;
 
@@ -225,7 +226,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 
 	@Override
 	public <T extends AbstractEntity> List<T> getEntities(Class<T> class1, String lastSourceId, Integer limit, ModuleStatus filter, XRoadsModule module) {
-		return EntityDao.getInstance().getEntities(class1, lastSourceId, limit, filter, module);
+		return EntityDao.getInstance().getEntities(class1, lastSourceId, limit, new WrapFilter(filter), module);
 	}
 	
 }
