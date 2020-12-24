@@ -26,6 +26,8 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
 import it.zero11.xroads.modules.rewix.api.model.AddressBean;
 import it.zero11.xroads.modules.rewix.api.model.AnagraficaBean;
@@ -115,9 +117,7 @@ public class RewixAPI {
 						
 						if (debugHttpRequests){
 							try{
-								Class<?> clazz = Class.forName("org.glassfish.jersey.filter.LoggingFilter");
-								Constructor<?> contructor = clazz.getConstructor(Logger.class, boolean.class);
-								client.register(contructor.newInstance(Logger.getLogger("it.zero11.rewix.sync"), true));
+								client.register(new LoggingFeature(Logger.getLogger("it.zero11.rewix.sync"), Level.INFO, Verbosity.PAYLOAD_ANY, null));
 							}catch(Exception e){
 								e.printStackTrace();
 							}
