@@ -70,6 +70,7 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_NOTES_KEY = "notes";
 	public final static String CUSTOMER_WEBSITE_KEY = "website";
 	public final static String CUSTOMER_SKYPE_KEY = "skype";
+	public final static String CUSTOMER_LOYALITY_CARD = "loyalityCard";
 	
 	public final static String ORDER_NOTES_KEY = "notes";
 	public final static String ORDER_ADMIN_NOTES_KEY ="admin_notes";

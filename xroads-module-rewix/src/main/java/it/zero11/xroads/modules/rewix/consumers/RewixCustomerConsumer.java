@@ -12,7 +12,6 @@ import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.CustomerRevision;
@@ -321,6 +320,10 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		}
 		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).isMissingNode()) {
 			registry.setPhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_TELL_PREFIX_KEY).asText());
+		}
+		
+		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD).asText().isEmpty()) {
+			registry.setLoyalityCard(customer.getData().path(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD).asText());
 		}
 
 		registry.setVatNumber(customer.getVatNumber());

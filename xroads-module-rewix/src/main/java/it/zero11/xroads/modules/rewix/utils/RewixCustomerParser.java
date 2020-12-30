@@ -98,13 +98,16 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "skype":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_SKYPE_KEY, attributeValue);
 					break;
+				case "loyality_card":
+					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD, attributeValue);
+					break;
+				case "status":
+					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, attributeValue.equals("3") ? false : true);
+					break;
 					//					case "title":
 					//
 					//						break;
 					//					case "fax":
-					//
-					//						break;
-					//					case "loyality_card":
 					//
 					//						break;
 					//					case "channel":
@@ -146,6 +149,10 @@ public class RewixCustomerParser extends DefaultHandler{
 						((ObjectNode) currentCustomer.getAddresses()).set(XRoadsJsonKeys.CUSTOMER_ADDRESS_SHIPPING_KEY, address);
 					}
 				} else {
+					attributeValue.replace("countrycode", "country");
+					attributeValue.replace("prov", XRoadsJsonKeys.CUSTOMER_ADDRESS_PROVINCE_KEY);
+					attributeValue.replace("careof", XRoadsJsonKeys.CUSTOMER_CARE_OF_KEY);
+					attributeValue.replace("cel_prefix", XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY);
 					address.put(attributeName, attributeValue);
 				}
 			}
