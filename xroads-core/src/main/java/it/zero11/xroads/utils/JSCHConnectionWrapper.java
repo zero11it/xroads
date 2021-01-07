@@ -1,5 +1,7 @@
 package it.zero11.xroads.utils;
 
+import java.io.File;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -21,7 +23,9 @@ public class JSCHConnectionWrapper implements AutoCloseable {
 			session.setConfig("StrictHostKeyChecking", "no");
 			session.setPassword(password);
 			jsch.setKnownHosts("~/.ssh/known_hosts");
-			jsch.addIdentity("~/.ssh/id_rsa");
+			if (new File("~/.ssh/id_rsa").exists()) {
+				jsch.addIdentity("~/.ssh/id_rsa");
+			}
 			try {
 				session.connect();
 				return;
