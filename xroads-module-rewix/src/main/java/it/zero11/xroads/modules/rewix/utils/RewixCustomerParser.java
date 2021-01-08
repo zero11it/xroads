@@ -149,10 +149,22 @@ public class RewixCustomerParser extends DefaultHandler{
 						((ObjectNode) currentCustomer.getAddresses()).set(XRoadsJsonKeys.CUSTOMER_ADDRESS_SHIPPING_KEY, address);
 					}
 				} else {
-					attributeValue.replace("countrycode", "country");
-					attributeValue.replace("prov", XRoadsJsonKeys.CUSTOMER_ADDRESS_PROVINCE_KEY);
-					attributeValue.replace("careof", XRoadsJsonKeys.CUSTOMER_CARE_OF_KEY);
-					attributeValue.replace("cel_prefix", XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY);
+					switch (attributeName) {
+					case "countrycode":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY;
+						break;
+					case "prov":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_PROVINCE_KEY;
+						break;
+					case "careof":
+						attributeName = XRoadsJsonKeys.CUSTOMER_CARE_OF_KEY;
+						break;
+					case "cel_prefix":
+						attributeName = XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY;
+						break;
+					default:
+						break;
+					}
 					address.put(attributeName, attributeValue);
 				}
 			}
