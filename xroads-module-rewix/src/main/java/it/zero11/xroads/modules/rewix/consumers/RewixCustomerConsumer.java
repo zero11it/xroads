@@ -134,9 +134,10 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setIgnoreRestrinctions(false);
 		user.setLocaleCode(customer.getLanguageCode());			
 		user.setPermanentDiscount(new BigDecimal(0));
-		Boolean online = customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).asBoolean();
-		if (online != null)
-			user.setStatus(online ? 2 : 3);
+
+		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).isMissingNode()) {
+			user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).asBoolean() ? 2 : 3);
+		}
 
 		List<String> tags = new ArrayList<>();
 		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TAGS_KEY)) {
@@ -155,7 +156,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 
 	protected void updateCustomerOptionalGroups(Customer customer, String rewixId) throws RewixAPIException, SyncException {
 
-		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText(); 
+		String platform = customer.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText(); 
 		Set<GroupSearchBean> groups = new HashSet<>();
 		if(customer.getGroups() != null) {
 			JsonNode customerGroups = customer.getGroups().path(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
@@ -181,7 +182,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 
 	protected void updateCustomerGroups(Customer customer, String rewixId) throws SyncException {
 
-		String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
+		String platform = customer.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
 		Set<GroupSearchBean> groups = new HashSet<>();
 
 		if(customer.getGroups() != null) {
@@ -222,7 +223,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 			}
 			if(customerRevisionGroups.size() > 0) {
 				Set<GroupSearchBean> groupsToremove = new HashSet<>();
-				String platform = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
+				String platform = customer.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText();
 				customerRevisionGroups.forEach(groupToRemove -> {
 					groupsToremove.add(new GroupSearchBean(platform, groupToRemove));
 				});
