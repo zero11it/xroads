@@ -1,6 +1,7 @@
 package it.zero11.xroads.modules.rewix.consumers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 		}
 
 		List<ProductTaxableBean> taxables = new ArrayList<>();
-		List<String> pricePlatforms = new ArrayList<String>(xRoadsModule.getConfiguration().getOrderPlatforms());
+		List<String> platformsWithoutPrice = new ArrayList<String>(xRoadsModule.getConfiguration().getOrderPlatforms());
 		
 		Set<GroupSearchBean> groups = new HashSet<>();
 		for (Price price : prices) {
@@ -60,8 +61,13 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 
 		Map<GroupSearchBean, Integer> gs = getOrCreateGroupIds(groups);
 		for (Price price : prices) {
-			String[] platforms = price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().split(",");
-			for(String platform : platforms) {
+			List<String> pricePlatforms;
+			if(!price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().trim().isEmpty()) {
+				pricePlatforms = Arrays.asList(price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().split(","));
+			}else {
+				pricePlatforms = xRoadsModule.getConfiguration().getOrderPlatforms();
+			}
+			for(String platform : pricePlatforms) {
 				ProductTaxableBean srewixPrice = new ProductTaxableBean();		
 				if (price.getListingGroup() != null)
 					srewixPrice.setGroupId(gs.get(new GroupSearchBean(platform.trim(), price.getListingGroup())));							
@@ -72,12 +78,12 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				srewixPrice.setCountry(price.getCountry());	
 				srewixPrice.setMinimumQuantity(price.getMinQuantity());
 				taxables.add(srewixPrice);
-				pricePlatforms.remove(platform);
+				platformsWithoutPrice.remove(platform);
 			}
 		}
 
-		//create null price for platforms that have not price (to prevent case 
-		for(String platform : pricePlatforms) {
+		//create null price for platforms that have not price
+		for(String platform : platformsWithoutPrice) {
 			ProductTaxableBean srewixPrice = new ProductTaxableBean();								
 			srewixPrice.setRetailPrice(null);
 			srewixPrice.setSuggestedPrice(null);
