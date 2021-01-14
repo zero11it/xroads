@@ -291,6 +291,7 @@ public class EntityDao {
 					stringQuey += (" and source_id > :source_id");
 				else 
 					stringQuey += (" where source_id > :source_id");
+			}
 			if(filter.getSearchKey() != null) {
 				if(filter.getModuleStatus() == null)	{
 					stringQuey += " where source_id LIKE :searchKey ";
@@ -298,21 +299,25 @@ public class EntityDao {
 					stringQuey += " and source_id LIKE :searchKey ";
 				}
 			}
-			}
 			stringQuey += " ORDER BY source_id";
 			if(limit != null) {
 				stringQuey += " LIMIT " + limit ;
 			}
 			sqlQuery = em.createNativeQuery(stringQuey, class1);
-			if(filter.getModuleStatus() != null)
+			if(filter.getModuleStatus() != null) {
 				sqlQuery.setParameter("moduleName", module.getName());
+			}
 			if(lastSourceId != null && !lastSourceId.isEmpty()) {
 				sqlQuery.setParameter("source_id", lastSourceId);
+			}
+			if(filter != null && filter.getSearchKey() != null) {
+				sqlQuery.setParameter("searchKey", "%" + filter.getSearchKey() + "%");
 			}
 			return  sqlQuery.getResultList();
 		}finally {
 			em.close();
 		}	
+		
 	}
 	
 	@SuppressWarnings("unchecked")
