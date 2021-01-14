@@ -298,6 +298,9 @@ public class EntityDao {
 			sqlQuery = em.createNativeQuery(stringQuey, class1);
 			if(filter != null)
 				sqlQuery.setParameter("moduleName", module.getName());
+			if(lastSourceId != null && !lastSourceId.isEmpty()) {
+				sqlQuery.setParameter("source_id", lastSourceId);
+			}
 			return  sqlQuery.getResultList();
 		}finally {
 			em.close();
