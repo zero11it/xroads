@@ -3,7 +3,6 @@ package it.zero11.xroads.modules.rewix.api.model;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

@@ -176,7 +176,7 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY, orderBean.getAnagrafica().getZip());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY, orderBean.getAnagrafica().getCity());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_REGION_KEY, orderBean.getAnagrafica().getProv());
-			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY, orderBean.getAnagrafica().getCountry());
+			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY, orderBean.getAnagrafica().getCountryCode());
 		}
 		order.setAnagrafica(anagrafica);
 

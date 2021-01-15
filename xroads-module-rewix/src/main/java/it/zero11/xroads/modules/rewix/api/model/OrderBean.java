@@ -11,7 +11,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import it.zero11.xroads.modules.rewix.utils.JAXBStringURLEncodedToArray;
 
 @XmlRootElement(name = "order")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -36,6 +38,7 @@ public class OrderBean implements Serializable {
 	private Integer itemsCount;
 	private String currency;
 	private String paymentGateway;
+	private String paymentReference;
 	
 	private BigDecimal total;
 	private BigDecimal totaltaxable, totprediscount,totprediscountTaxable, totprediscountVatAmount, discountused, ecredit;
@@ -44,6 +47,8 @@ public class OrderBean implements Serializable {
 	private BigDecimal totalItems;
 	
 	private List<OrderVat> vatAmounts;
+	
+	private Integer vatReliefId;
 
 	private BigDecimal dispatchFixed, dispatchWeight;
 	private BigDecimal dispatchFixedTaxable, dispatchWeightTaxable;
@@ -57,6 +62,10 @@ public class OrderBean implements Serializable {
 	private List<OrderAttachmentBean> attachments;
 	
 	private String notes, adminNotes;
+	
+	private Date lastUpdate;
+	
+	private Date expireDate;
 	
 	public OrderBean(){}
 	
@@ -184,6 +193,14 @@ public class OrderBean implements Serializable {
 			this.country = country;
 		}
 
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		public void setCountryCode(String countryCode) {
+			this.countryCode = countryCode;
+		}
+
 		public String getAddressType() {
 			return addressType;
 		}
@@ -230,14 +247,6 @@ public class OrderBean implements Serializable {
 
 		public void setCountryId(Integer countryId) {
 			this.countryId = countryId;
-		}
-		
-		public String getCountryCode() {
-			return countryCode;
-		}
-
-		public void setCountryCode(String countryCode) {
-			this.countryCode = countryCode;
 		}
 
 		public String getCel() {
@@ -288,6 +297,7 @@ public class OrderBean implements Serializable {
 		private String city;
 		private String prov;
 		private String country;
+		private String countryCode;
 		private Integer countryId;
 		
 		public AnagraficaData(){}
@@ -452,6 +462,14 @@ public class OrderBean implements Serializable {
 			this.country = country;
 		}
 
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		public void setCountryCode(String countryCode) {
+			this.countryCode = countryCode;
+		}
+
 		public Integer getCountryId() {
 			return countryId;
 		}
@@ -475,6 +493,7 @@ public class OrderBean implements Serializable {
 		private String city;
 		private String prov;
 		private String country;
+		private String countryCode;
 		private Integer countryId;
 		private String paymentInfo;
 		
@@ -524,6 +543,15 @@ public class OrderBean implements Serializable {
 		public void setCountry(String country) {
 			this.country = country;
 		}
+		
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		public void setCountryCode(String countryCode) {
+			this.countryCode = countryCode;
+		}
+
 		public Integer getCountryId() {
 			return countryId;
 		}
@@ -660,6 +688,7 @@ public class OrderBean implements Serializable {
 		private String color;
 		private String size;
 		private String barcode;
+		private String[] additionalBarcodes;
 		private String madein;
 		private String intra;
 
@@ -680,6 +709,12 @@ public class OrderBean implements Serializable {
 		private Integer refundedQuantity;
 		
 		private String imageURL;
+		
+		private List<ProductTag> tags;
+
+		private ProductLocalizations productLocalizations;
+		
+		private ModelLocalizations modelLocalizations;
 		
 		public OrderItemBean(){}
 
@@ -881,6 +916,15 @@ public class OrderBean implements Serializable {
 			this.barcode = barcode;
 		}
 
+		@XmlJavaTypeAdapter(value=JAXBStringURLEncodedToArray.class)
+		public String[] getAdditionalBarcodes() {
+			return additionalBarcodes;
+		}
+
+		public void setAdditionalBarcodes(String[] additionalBarcodes) {
+			this.additionalBarcodes = additionalBarcodes;
+		}
+
 		public BigDecimal getTotalDiscount() {
 			return totalDiscount;
 		}
@@ -903,6 +947,30 @@ public class OrderBean implements Serializable {
 
 		public void setIntra(String intra) {
 			this.intra = intra;
+		}
+
+		public List<ProductTag> getTags() {
+			return tags;
+		}
+
+		public void setTags(List<ProductTag> tags) {
+			this.tags = tags;
+		}
+
+		public ProductLocalizations getProductLocalizations() {
+			return productLocalizations;
+		}
+
+		public void setProductLocalizations(ProductLocalizations productLocalizations) {
+			this.productLocalizations = productLocalizations;
+		}
+
+		public ModelLocalizations getModelLocalizations() {
+			return modelLocalizations;
+		}
+
+		public void setModelLocalizations(ModelLocalizations modelLocalizations) {
+			this.modelLocalizations = modelLocalizations;
 		}
 	}
 	
@@ -951,7 +1019,6 @@ public class OrderBean implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public OrderVat(){}
-		
 
 		private BigDecimal vat;
 		private Integer vatId;
@@ -1172,6 +1239,14 @@ public class OrderBean implements Serializable {
 		this.vat_amount = vat_amount;
 	}
 	
+	public Integer getVatReliefId() {
+		return vatReliefId;
+	}
+
+	public void setVatReliefId(Integer vatReliefId) {
+		this.vatReliefId = vatReliefId;
+	}
+
 	public Integer getItemsCount() {
 		return itemsCount;
 	}
@@ -1307,6 +1382,14 @@ public class OrderBean implements Serializable {
 		this.paymentGateway = paymentGateway;
 	}
 
+	public String getPaymentReference() {
+		return paymentReference;
+	}
+
+	public void setPaymentReference(String paymentReference) {
+		this.paymentReference = paymentReference;
+	}
+
 	@XmlElementWrapper(name="creditNotes")
 	@XmlElement(name="creditNote")
 	public List<InvoiceData> getCreditNotes() {
@@ -1362,5 +1445,20 @@ public class OrderBean implements Serializable {
 	public void setPackages(List<OrderPackageBean> packages) {
 		this.packages = packages;
 	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
 	
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+	
+	public Date getExpireDate() {
+		return expireDate;
+	}
+	
+	public void setExpireDate(Date expireDate) {
+		this.expireDate = expireDate;
+	}
 }
