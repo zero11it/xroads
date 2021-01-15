@@ -51,8 +51,6 @@ public class Product extends AbstractEntity {
 
 	private Boolean virtual;
 
-	private float weight;
-
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="restrictions")
 	private JsonNode restrictions;
@@ -159,14 +157,6 @@ public class Product extends AbstractEntity {
 
 	public void setVirtual(Boolean virtual) {
 		this.virtual = virtual;
-	}
-
-	public float getWeight() {
-		return this.weight;
-	}
-
-	public void setWeight(float weight) {
-		this.weight = weight;
 	}
 
 	public JsonNode getRestrictions() {

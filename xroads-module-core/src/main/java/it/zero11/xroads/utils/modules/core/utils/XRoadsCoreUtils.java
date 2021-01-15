@@ -48,12 +48,12 @@ public class XRoadsCoreUtils {
 	public static boolean productHasChanged(Product p1, Product p2) {
 		return changedMethods(p1, p2, Product::getBrand, Product::getCost, Product::getData, Product::getDescriptions, Product::getEan, 
 				Product::getImages, Product::getName, Product::getNames, Product::getSku, Product::getSourceId, Product::getSupplier,
-				Product::getTags, Product::getVirtual, Product::getWeight, Product::getOnline);		
+				Product::getTags, Product::getVirtual, Product::getOnline);		
 	}
 	
 	public static boolean modelHasChanged(Model m1, Model m2){
 		return changedMethods(m1, m2, Model::getAvailability, Model::getData, Model::getEan, Model::getName, Model::getOptions, 
-				Model::getProductSourceId, Model::getSku, Model::getSourceId, Model::getTags) || changedMethodsArray(m1, m2, Model::getAdditionalBarcode);				
+				Model::getProductSourceId, Model::getSku, Model::getSourceId, Model::getTags, Model::getWeight) || changedMethodsArray(m1, m2, Model::getAdditionalBarcode);				
 	}
 	
 	public static boolean priceHasChanged(Price p1, Price p2){

@@ -49,8 +49,6 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 	private JsonNode tags;
 
 	private Boolean virtual;
-
-	private float weight;
 	
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="restrictions")
@@ -150,14 +148,6 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 
 	public void setVirtual(Boolean virtual) {
 		this.virtual = virtual;
-	}
-
-	public float getWeight() {
-		return this.weight;
-	}
-
-	public void setWeight(float weight) {
-		this.weight = weight;
 	}
 
 	public JsonNode getRestrictions() {

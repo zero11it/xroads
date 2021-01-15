@@ -127,7 +127,7 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		rewixModel.setStockProductId(rewixProductId);			
 		rewixModel.setBackorder(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_UNLIMITED_KEY).asBoolean());
 		rewixModel.setPriority(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_INDEX_KEY).asInt());
-		rewixModel.setWeight(product.getWeight());
+		rewixModel.setWeight(model.getWeight() != null ? model.getWeight().floatValue() : null);
 		return api.updateProductVariant(rewixModel);
 
 	}

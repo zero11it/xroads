@@ -131,4 +131,12 @@ public class Model extends AbstractProductGroupedEntity {
 		this.tags = tags;
 	}
 
+	public BigDecimal getWeight() {
+		return weight;
+	}
+
+	public void setWeight(BigDecimal weight) {
+		this.weight = weight;
+	}
+
 }
