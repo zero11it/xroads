@@ -59,7 +59,7 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 	protected void onAttach(AttachEvent attachEvent) {
 		super.onAttach(attachEvent);
 
-		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(false).stream().filter(xRoadsModule -> XRoadsUtils.moduleHasConsumer(xRoadsModule, typeParameterClass)).collect(Collectors.toList());
+		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values().stream().filter(xRoadsModule -> XRoadsUtils.moduleHasConsumer(xRoadsModule, typeParameterClass)).collect(Collectors.toList());
 
 		genericGrid = new Grid<>();
 		dataProvider = DataProvider.fromFilteringCallbacks(

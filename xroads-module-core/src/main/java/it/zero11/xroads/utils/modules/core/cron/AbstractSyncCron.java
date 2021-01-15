@@ -23,7 +23,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 	@Override
 	public void run() {
 		boolean hasEntityToProcess = false;
-		for (XRoadsModule module : XRoadsCoreServiceBean.getInstance().getEnabledModules(false)) {
+		for (XRoadsModule module : XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values()) {
 			hasEntityToProcess |= !sync(module);
 		}
 		

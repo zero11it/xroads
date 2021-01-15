@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +30,6 @@ public class DashboardView extends VerticalLayout {
 	private static final long serialVersionUID = 1L;
 	
 	private HorizontalLayout topBar;
-	private List<XRoadsModule> modulesList;
 	private Grid<EntityStatus> grid;
 	private Deque<Map<Class<?>, EntityStatus>> historyData = new LinkedList<>();
 	
@@ -42,9 +40,7 @@ public class DashboardView extends VerticalLayout {
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
 		super.onAttach(attachEvent);
-		
-		modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(false);
-		
+
 		topBar = new HorizontalLayout();
 		topBar.setWidth("100%");
 		topBar.setAlignItems(Alignment.BASELINE);
@@ -97,7 +93,7 @@ public class DashboardView extends VerticalLayout {
 	private void refreshData() {
 		getUI().ifPresent((ui) -> {
 			LinkedHashMap<Class<?>, EntityStatus> data = new LinkedHashMap<>();
-			for(XRoadsModule xRoadsModule : modulesList) {
+			for(XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values()) {
 				for (Class<? extends AbstractEntity> entityClass: XRoadsUtils.ENTITIES_CLASSES) {
 					if (XRoadsUtils.moduleHasConsumer(xRoadsModule, entityClass)) {
 						EntityStatus status = EntityDao.getInstance().getStatuses(entityClass, xRoadsModule);

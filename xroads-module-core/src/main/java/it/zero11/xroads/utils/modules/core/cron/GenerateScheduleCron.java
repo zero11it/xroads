@@ -28,7 +28,7 @@ public class GenerateScheduleCron implements Runnable{
 		}
 		Date scheduleTo = new Date(now.getTime() + CronScheduler.SCHEDULE_AHEAD);
 
-		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true)) {
+		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()) {
 			for (Map.Entry<String, Class<? extends Runnable>> entry: xRoadsModule.getCrons().entrySet()){
 				CronSchedule cronSchedule = entry.getValue().getAnnotation(CronSchedule.class);
 				Date nextSchedule = getNextSchedule(cronSchedule, scheduleFrom, scheduleTo);

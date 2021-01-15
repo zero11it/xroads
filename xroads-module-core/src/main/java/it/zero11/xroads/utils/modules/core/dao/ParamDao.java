@@ -150,7 +150,7 @@ public class ParamDao {
 	public void syncDB(){
 		try (TransactionWrapper etw = new TransactionWrapper()){
 			Set<String> allParamsNames = new TreeSet<>();
-			for (XRoadsModule module : XRoadsCoreServiceBean.getInstance().getEnabledModules(true)){
+			for (XRoadsModule module : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()){
 				allParamsNames.addAll(createParams(etw, module, module.getParamTypes()));
 			}
 

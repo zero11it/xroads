@@ -17,8 +17,7 @@ public class XRoadsRestApplication extends ResourceConfig{
 		register(JacksonFeature.class);
 		register(MultiPartFeature.class);
 		
-		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(true);
-		for (XRoadsModule module : modulesList) {
+		for (XRoadsModule module : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()) {
 			Set<Class<? extends XRoadsWebservice<?>>> webservices = module.getWebservices();
 			for (Class<? extends XRoadsWebservice<?>> webservice : webservices) {
 				try {

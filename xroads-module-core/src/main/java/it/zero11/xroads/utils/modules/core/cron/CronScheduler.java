@@ -124,7 +124,7 @@ public class CronScheduler extends Thread {
 	   
 	@Override
 	public void run() {
-		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true)) {
+		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()) {
 			for (Map.Entry<String, Class<? extends Runnable>> entry:xRoadsModule.getCrons().entrySet()){
 				CronSchedule cronSchedule = entry.getValue().getAnnotation(CronSchedule.class);
 				if (cronSchedule.onDeploy()){
@@ -205,7 +205,7 @@ public class CronScheduler extends Thread {
 	}
 
 	private Entry<XRoadsModule, Class<? extends Runnable>> getCronEntry(String name) {
-		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true)) {
+		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()) {
 			Class<? extends Runnable> cronClass = xRoadsModule.getCrons().get(name);
 			if (cronClass != null) {
 				return new AbstractMap.SimpleEntry<>(xRoadsModule, cronClass);

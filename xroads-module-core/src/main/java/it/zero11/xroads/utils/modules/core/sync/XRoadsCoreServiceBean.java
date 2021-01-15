@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -55,18 +55,19 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 		return instance;
 	}
 
-	public List<XRoadsModule> getEnabledModules(boolean includeCore){
+	public Map<String, XRoadsModule> getEnabledModules(boolean includeCore){
 		return LocalCache.getInstance().getOrGenerate("XROADSMODULES" + includeCore, LocalCache.LONG_CACHE_TIME, ()->{
-			List<XRoadsModule> enabledModules = new ArrayList<XRoadsModule>();
+			Map<String, XRoadsModule> enabledModules = new HashMap<String, XRoadsModule>();
 			if (includeCore) {
-				enabledModules.add(XRoadsCoreModule.INSTANCE);
+				XRoadsCoreModule core = XRoadsCoreModule.INSTANCE;
+				enabledModules.put(core.getName(), core);
 			}
 			JsonNode modules = ParamDao.getInstance().getParameterAsJsonNode(XRoadsCoreModule.INSTANCE, ParamType.MODULES);
 			modules.fields().forEachRemaining((Map.Entry<String, JsonNode> entry) -> {
 				try {
 					XRoadsModule xRoadsModule = (XRoadsModule) Class.forName(entry.getValue().asText()).newInstance();
 					xRoadsModule.configure(entry.getKey(), XRoadsCoreServiceBean.getInstance());
-					enabledModules.add(xRoadsModule);
+					enabledModules.put(xRoadsModule.getName(), xRoadsModule);
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 					throw new RuntimeException(e);
 				}
@@ -200,7 +201,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	@Override
 	public InputStream getResource(URI url) throws SyncException, IOException {
 		if (url.getScheme().equals("xroads")){
-			for (XRoadsModule module : getEnabledModules(false)) {
+			for(XRoadsModule module : getEnabledModules(false).values()) {
 				if (module.getName().equals(url.getHost())) {
 					return module.getResource(url);
 				}

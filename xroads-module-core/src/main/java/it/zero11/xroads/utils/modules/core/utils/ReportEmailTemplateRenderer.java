@@ -309,14 +309,14 @@ public class ReportEmailTemplateRenderer {
 		EmailReport emailReport = new EmailReport(); 
 		emailReport.buffer.append(String.format(HEAD));
 
-		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).forEach(module -> {
+		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values().forEach(module -> {
 			buildStatusReport(emailReport, module);
 		});
-		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).forEach(module -> {
+		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values().forEach(module -> {
 			buildErrorReport(emailReport, module, 50);
 		});
 		
-		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).forEach(module -> {
+		XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values().forEach(module -> {
 			buildErrorCronReport(emailReport, module, 50);
 		});
 		

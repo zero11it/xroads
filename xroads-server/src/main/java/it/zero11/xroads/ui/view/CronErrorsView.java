@@ -36,10 +36,8 @@ public class CronErrorsView   extends VerticalLayout {
 	protected void onAttach(AttachEvent attachEvent) {
 		super.onAttach(attachEvent);
 		errorGrid = new Grid<>();
-		
-		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(false).stream().collect(Collectors.toList());
 		cronErrorList = new ArrayList<Cron>();
-		for (XRoadsModule xroadsModule : modulesList) {
+		for (XRoadsModule xroadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values()) {
 			Set<String> cronNames = xroadsModule.getCrons().keySet();
 			for(String cronName : cronNames) {
 				cronErrorList.addAll(CronDao.getInstance().getErrors(cronName, 100));
