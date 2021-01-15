@@ -98,6 +98,9 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "skype":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_SKYPE_KEY, attributeValue);
 					break;
+				case "roles":
+					((ObjectNode) currentCustomer.getData()).put("roles", attributeValue);
+					break;
 				case "loyality_card":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD, attributeValue);
 					break;
