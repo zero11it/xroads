@@ -18,6 +18,7 @@ import it.zero11.xroads.model.AbstractEntityRevision;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.IParamType;
+import it.zero11.xroads.model.Invoice;
 import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.model.Order;
@@ -172,6 +173,10 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 			if (EntityDao.getInstance().consume(module, (Order) entity, XRoadsCoreUtils::orderkHasChanged)) {
 				//FIXME add cron here
 				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncOrderCron.class.getSimpleName());
+			}
+		}else if(entity instanceof Invoice) {	
+			if (EntityDao.getInstance().consume(module, (Invoice) entity, XRoadsCoreUtils::invoiceHasChanged)) {
+				//FIXME add cron here
 			}
 			
 		}else {

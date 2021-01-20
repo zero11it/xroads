@@ -368,6 +368,7 @@ public class InvoiceBean implements Serializable {
 	private String billNo;
 	private String billTo;
 	private String vatNumber;
+	private String fiscalCode;
 	private String address;
 	private String zip;
 	private String city;
@@ -386,6 +387,9 @@ public class InvoiceBean implements Serializable {
 	private List<InvoiceAttachmentBean> attachments;
 	private List<InvoiceItemBean> items;
 	private Integer itemsCount;
+	
+	private List<Integer> orderIds;
+	
 	private String currency;
 
 	private BigDecimal taxableTotal;
@@ -469,6 +473,12 @@ public class InvoiceBean implements Serializable {
 
 	public Integer getItemsCount() {
 		return itemsCount;
+	}
+
+	@XmlElementWrapper(name = "orderIds")
+	@XmlElement(name="orderId")
+	public List<Integer> getOrderIds() {
+		return orderIds;
 	}
 
 	public Integer getPaymentGatewayId() {
@@ -569,6 +579,10 @@ public class InvoiceBean implements Serializable {
 		this.itemsCount = itemsCount;
 	}
 
+	public void setOrderIds(List<Integer> orderIds) {
+		this.orderIds = orderIds;
+	}
+
 	public void setPaymentGatewayId(Integer paymentGatewayId) {
 		this.paymentGatewayId = paymentGatewayId;
 	}
@@ -603,6 +617,14 @@ public class InvoiceBean implements Serializable {
 
 	public void setVatNumber(String vatNumber) {
 		this.vatNumber = vatNumber;
+	}
+
+	public String getFiscalCode() {
+		return fiscalCode;
+	}
+
+	public void setFiscalCode(String fiscalCode) {
+		this.fiscalCode = fiscalCode;
 	}
 
 	public void setZip(String zip) {

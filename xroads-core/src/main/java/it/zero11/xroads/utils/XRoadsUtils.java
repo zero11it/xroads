@@ -14,6 +14,7 @@ import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.Customdata;
 import it.zero11.xroads.model.Customer;
+import it.zero11.xroads.model.Invoice;
 import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.Order;
 import it.zero11.xroads.model.Price;
@@ -90,6 +91,16 @@ public class XRoadsUtils {
 		order.setExternalReferences(OBJECT_MAPPER.createObjectNode());
 		order.setVersion(MODEL_VERSION);
 		return order;
+	}
+	
+	public static Invoice getInvoiceInstance() {
+		final Invoice invoice = new Invoice();
+		invoice.setLineItems(OBJECT_MAPPER.createObjectNode());
+		invoice.setTotals(OBJECT_MAPPER.createObjectNode());				
+		invoice.setData(OBJECT_MAPPER.createObjectNode());
+		invoice.setExternalReferences(OBJECT_MAPPER.createObjectNode());
+		invoice.setVersion(MODEL_VERSION);
+		return invoice;
 	}
 	
 	public static Stock getStockInstance() {

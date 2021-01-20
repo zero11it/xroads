@@ -71,6 +71,7 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_WEBSITE_KEY = "website";
 	public final static String CUSTOMER_SKYPE_KEY = "skype";
 	public final static String CUSTOMER_LOYALITY_CARD = "loyalityCard";
+	public final static String CUSTOMER_FISCAL_CODE = "fiscalCode";
 	
 	public final static String ORDER_NOTES_KEY = "notes";
 	public final static String ORDER_ADMIN_NOTES_KEY ="admin_notes";
@@ -88,5 +89,10 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_ITEM_TAX_KEY = "tax";
 	public final static String ORDER_ITEM_MODEL_ID_KEY = "model_id";
 	
-		
+	public final static String PAYMENT_GATEWAY = "paymentGateway";
+	
+	public final static String INVOICE_TOTAL = "total";
+	public final static String INVOICE_VAT_TOTAL = "vatTotal";
+	public final static String INVOICE_ITEM_DISCOUNT = "discount";
+	public final static String INVOICE_ORDER_IDS = "orderIds";
 }

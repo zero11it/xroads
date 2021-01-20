@@ -2,7 +2,6 @@ package it.zero11.xroads.modules.rewix.api;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -19,6 +18,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
@@ -32,6 +34,9 @@ import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 import it.zero11.xroads.modules.rewix.api.model.AddressBean;
 import it.zero11.xroads.modules.rewix.api.model.AnagraficaBean;
 import it.zero11.xroads.modules.rewix.api.model.GroupBean;
+import it.zero11.xroads.modules.rewix.api.model.InvoiceBean;
+import it.zero11.xroads.modules.rewix.api.model.InvoiceFilterBean;
+import it.zero11.xroads.modules.rewix.api.model.InvoiceListBean;
 import it.zero11.xroads.modules.rewix.api.model.JAXBGenericWrapper;
 import it.zero11.xroads.modules.rewix.api.model.OperationResponseBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderAttachmentsBean;
@@ -629,6 +634,32 @@ public void updateProductRestrictions(ProductRestrictionsBean productRestriction
 	if (!p.getStatus()) {
 		throw new RewixAPIException(200, p.getMessage());
 	}
+}
+
+public InvoiceBean getInvoice(Integer id) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/billing/invoice/get/" + id)
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();	
+	checkResponseStatus("getInvoice", response);
+	final InvoiceBean invoiceBean = response.readEntity(InvoiceBean.class);
+	return invoiceBean;
+}
+
+public InvoiceListBean getInvoiceList(InvoiceFilterBean filterBean) throws RewixAPIException {		
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/billing/list")
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.post(Entity.xml(filterBean));	
+	checkResponseStatus("getInvoiceList", response);
+	final InvoiceListBean invoiceListBean = response.readEntity(InvoiceListBean.class);
+	return invoiceListBean;
 }
 
 } 

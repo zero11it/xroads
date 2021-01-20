@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.Customer;
+import it.zero11.xroads.model.Invoice;
 import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.Order;
 import it.zero11.xroads.model.Price;
@@ -76,6 +77,11 @@ public class XRoadsCoreUtils {
 		return changedMethods(p1, p2, Customer::getAddresses, Customer::getCompany, Customer::getData, Customer::getDateOfBirth, Customer::getEmail, 
 				Customer::getFirstname, Customer::getFiscalCode, Customer::getGroups, Customer::getLanguageCode, Customer::getLastname, Customer::getPhone,
 				Customer::getSourceId, Customer::getUsername, Customer::getVatNumber, Customer::getPaymentTerms);		
+	}
+
+	public static boolean invoiceHasChanged(Invoice p1, Invoice p2){
+		return changedMethods(p1, p2, Invoice::getData, Invoice::getSourceId, Invoice::getDocumentType, Invoice::getCustomerSourceId, Invoice::getInvoiceNumber, 
+				Invoice::getVatNumber, Invoice::getYear, Invoice::getTotals, Invoice::getLineItems);		
 	}
 
 	public static boolean setExternalReferenceMarkForRetryInAllModules(AbstractEntity entity) {

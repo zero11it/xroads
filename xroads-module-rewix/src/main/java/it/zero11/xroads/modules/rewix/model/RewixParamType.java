@@ -34,6 +34,7 @@ public enum RewixParamType implements IParamType{
 			"}"), 
 	ENABLE_ORDER_STATUS_UPDATE("false"), 
 	ENABLE_EXPORT_CUSTOMERS("false"),
+	ENABLE_EXPORT_INVOICES("false"),
 	LAST_CUSTOMERS_SWYNC(""),
 	;
 	
