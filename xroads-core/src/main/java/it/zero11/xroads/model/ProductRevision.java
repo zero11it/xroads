@@ -53,6 +53,10 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="restrictions")
 	private JsonNode restrictions;
+	
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="urlkeys")
+	private JsonNode urlkeys;
 
 	public String getBrand() {
 		return this.brand;
@@ -156,6 +160,14 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 
 	public void setRestrictions(JsonNode restrictions) {
 		this.restrictions = restrictions;
+	}
+	
+	public JsonNode getUrlkeys() {
+		return urlkeys;
+	}
+
+	public void setUrlkeys(JsonNode urlkeys) {
+		this.urlkeys = urlkeys;
 	}
 
 }

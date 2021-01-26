@@ -65,7 +65,8 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		
 		boolean failed = true;
 		try {
-			if (revision == null || !revision.getDescriptions().equals(product.getDescriptions()) || !revision.getNames().equals(product.getNames())) {
+			if (revision == null || !revision.getDescriptions().equals(product.getDescriptions()) 
+					|| !revision.getNames().equals(product.getNames()) || !revision.getUrlkeys().equals(product.getUrlkeys())) {
 				log.debug("Updating rewix product translations " + product.getSku());
 				updateProductTranslations(rewixId, product);
 			}
@@ -334,6 +335,35 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 			if (namesMap.size() > 0)
 				beans.add(translations);
 		}
+		
+		Map<String, Map<String, String>> urlKeysMap = new HashMap<>(); //LANG CODE -> PLATFORM:DESCRIPTION
+		{
+			product.getUrlkeys().fields().forEachRemaining(urlkey -> {
+				Map<String, String> platforms = new HashMap<>();
+				urlkey.getValue().fields().forEachRemaining(platform -> {
+					platforms.put(platform.getKey(), urlkey.getValue().path(platform.getKey()).asText());
+				});
+				urlKeysMap.put(urlkey.getKey(), platforms);
+			});
+			ProductTranslationsBean translations = new ProductTranslationsBean();
+			translations.setType(7); // URLkey
+			translations.setValue(null);
+			translations.setStockProductId(rewixId);
+			List<ProductTranslationBean> productTranslations = new ArrayList<>();
+			for (String lang : urlKeysMap.keySet()) {
+				for (String platform : urlKeysMap.get(lang).keySet()) {
+					ProductTranslationBean translation = new ProductTranslationBean();
+					translation.setLocaleCode(lang);
+					translation.setTranslation(urlKeysMap.get(lang).get(platform));
+					translation.setPlatformUid(platform);
+					productTranslations.add(translation);					
+				}
+			}
+			translations.setProductTranslations(productTranslations);
+			if (urlKeysMap.size() > 0)
+				beans.add(translations);
+		}
+		
 
 		if (beans.size() > 0) {			
 			for (ProductTranslationsBean bean : beans) {

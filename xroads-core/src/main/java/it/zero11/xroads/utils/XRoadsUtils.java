@@ -49,6 +49,7 @@ public class XRoadsUtils {
 		product.setData(OBJECT_MAPPER.createObjectNode());
 		product.setNames(OBJECT_MAPPER.createObjectNode());
 		product.setRestrictions(OBJECT_MAPPER.createObjectNode());
+		product.setUrlkeys(OBJECT_MAPPER.createObjectNode());
 		return product;
 	}
 	
