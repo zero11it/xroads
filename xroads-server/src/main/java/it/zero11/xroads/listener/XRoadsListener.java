@@ -10,7 +10,10 @@ import javax.servlet.annotation.WebListener;
 import org.apache.log4j.Logger;
 
 import it.zero11.xroads.utils.EntityManagerUtils;
+import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.cron.CronScheduler;
+import it.zero11.xroads.utils.modules.core.dao.ParamDao;
+import it.zero11.xroads.utils.modules.core.model.ParamType;
 import it.zero11.xroads.utils.modules.core.utils.ClusterSettingsUtils;
 import it.zero11.xroads.utils.modules.core.utils.LocalCache;
 import it.zero11.xroads.utils.modules.core.utils.LocalCacheMulticastListener;
@@ -49,7 +52,7 @@ public class XRoadsListener implements ServletContextListener {
 		
 		ClusterSettingsUtils.INSTANCE_NAME = ((System.getProperty("nodename") != null) ? System.getProperty("nodename") : "Default") + name;
 		
-		CronScheduler.start(name);
+		CronScheduler.start(ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.NAME) + "-" + name);
 	}
 
 	@Override
