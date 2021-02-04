@@ -166,7 +166,7 @@ public class CronScheduler extends Thread {
 
 									if (sendNotification) {
 										SMTPUtils.sendMessage(ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.WARNING_NOTIFICATION_EMAILS).split(","),
-											"XRoads - Cron " + cronEntry.getValue().getSimpleName() + " failed",
+											ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.NAME) + " - Cron " + cronEntry.getValue().getSimpleName() + " failed",
 											error);
 									}
 								}finally {

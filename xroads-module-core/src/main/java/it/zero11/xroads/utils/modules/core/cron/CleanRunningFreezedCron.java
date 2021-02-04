@@ -20,8 +20,8 @@ public class CleanRunningFreezedCron implements Runnable {
 
 		if (CronDao.getInstance().cleanRunningFreezedCron(ClusterSettingsUtils.INSTANCE_NAME, CronScheduler.CLEAN_RUNNING_FREEZED) > 0){
 			SMTPUtils.sendMessage(ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.WARNING_NOTIFICATION_EMAILS).split(","),
-					"XRoads - Found some freezed cron !",
-					"XRoads - Found some freezed cron !");
+					ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.NAME) + " - Found some freezed cron !",
+					ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.NAME) + " - Found some freezed cron !");
 		}
 		
 		log.info("End clean freezed cron");
