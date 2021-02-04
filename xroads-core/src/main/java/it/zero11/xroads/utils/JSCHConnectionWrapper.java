@@ -27,7 +27,7 @@ public class JSCHConnectionWrapper implements AutoCloseable {
 				jsch.addIdentity("~/.ssh/id_rsa");
 			}
 			try {
-				session.connect();
+				session.connect(60000);
 				return;
 			}catch(JSchException e){
 				if ("Auth fail".equals(e.getMessage())){
@@ -45,7 +45,7 @@ public class JSCHConnectionWrapper implements AutoCloseable {
 		if (sftpChannel != null)
 			return sftpChannel;
 		Channel channel = session.openChannel("sftp");
-		channel.connect();
+		channel.connect(60000);
 		sftpChannel = (ChannelSftp) channel;
 		return sftpChannel;
 	}
