@@ -441,12 +441,13 @@ public class EntityDao {
 		boolean changed = false;
 		try(TransactionWrapper tw = new TransactionWrapper()){
 			T existingEntity = tw.getEm().find(entityClass, entity.getSourceId(), LockModeType.PESSIMISTIC_WRITE);
-			entity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 			if (existingEntity == null) {
+				entity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 				XRoadsCoreUtils.setExternalReference(entity, module.getName(), entity.getSourceId(), entity.getVersion());
 				tw.getEm().persist(entity);
 				changed = true;
 			}else if (hasChangesFuction.apply(existingEntity, entity)) {
+				entity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 				entity.setVersion(existingEntity.getVersion() + 1);
 				entity.setExternalReferences(existingEntity.getExternalReferences());
 				String sourceId = XRoadsUtils.getExternalReferenceId(entity, module);
@@ -455,7 +456,9 @@ public class EntityDao {
 				changed = true;
 			}
 			
-			tw.commit();
+			if (changed) {
+				tw.commit();
+			}
 		}
 		
 		return changed;
