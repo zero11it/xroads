@@ -1,6 +1,6 @@
 package it.zero11.xroads.modules.rewix.cron;
 
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.apache.log4j.Logger;
@@ -36,11 +36,11 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 		log.info("Start Import Invoices");
 		if(xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.ENABLE_EXPORT_INVOICES)) {
 			api = new RewixAPI(xRoadsModule.getConfiguration().getUsername(), xRoadsModule.getConfiguration().getPassword(), xRoadsModule.getConfiguration().getEndpoint());
-
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 				InvoiceListBean invoiceList = api.getInvoiceList(new InvoiceFilterBean());
 				for(Integer invoiceId : invoiceList.getInvoices()) {
-					importRewixInvoice(api.getInvoice(invoiceId));
+					importRewixInvoice(api.getInvoice(invoiceId), df);
 				}
 			} catch (SyncException e1) {
 				log.error("An error ocuring during invoice sync cron : " + e1.getMessage());
@@ -51,8 +51,8 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 		log.info("End import Invoices");
 	}
 
-	private void importRewixInvoice(InvoiceBean rewixInvoice) throws SyncException {
-		
+	private void importRewixInvoice(InvoiceBean rewixInvoice, SimpleDateFormat df) throws SyncException {
+
 		Invoice invoice = XRoadsUtils.getInvoiceInstance();
 		invoice.setSourceId(rewixInvoice.getBillId().toString());
 		invoice.setVatNumber(rewixInvoice.getVatNumber());
@@ -93,12 +93,16 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 		((ObjectNode)invoice.getData()).put(XRoadsJsonKeys.PAYMENT_GATEWAY, rewixInvoice.getPaymentGatewayId());
 		((ObjectNode)invoice.getData()).set(XRoadsJsonKeys.INVOICE_ORDER_IDS, XRoadsUtils.OBJECT_MAPPER.valueToTree(rewixInvoice.getOrderIds()));
 		((ObjectNode)invoice.getData()).put(XRoadsJsonKeys.CUSTOMER_FISCAL_CODE, rewixInvoice.getFiscalCode());
-		
+		if(rewixInvoice.getBillReferenceId() != null) {
+			((ObjectNode)invoice.getData()).put(XRoadsJsonKeys.INVOICE_REFERENCE, rewixInvoice.getBillReferenceId());
+		}
 		ArrayNode vats = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
 		rewixInvoice.getVatAmounts().forEach(vat -> {
-			vats.add(new DecimalFormat("##.00").format(vat.getVat()));
+			vats.add(vat.getVat().toPlainString());
 		});
 		((ObjectNode)invoice.getData()).set(XRoadsJsonKeys.ORDER_ITEM_VAT_KEY, vats);
+		((ObjectNode)invoice.getData()).put(XRoadsJsonKeys.INVOICE_DATE, df.format(rewixInvoice.getDate()));
+		((ObjectNode)invoice.getData()).put(XRoadsJsonKeys.ECREDIT, rewixInvoice.getEcredit().toPlainString());
 
 		((ObjectNode)invoice.getTotals()).put(XRoadsJsonKeys.INVOICE_TOTAL, rewixInvoice.getTotal().toString());
 		((ObjectNode)invoice.getTotals()).put(XRoadsJsonKeys.INVOICE_VAT_TOTAL, rewixInvoice.getVatAmountTotal().toString());

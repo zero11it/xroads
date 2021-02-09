@@ -367,6 +367,7 @@ public class InvoiceBean implements Serializable {
 	private Integer billId;
 	private String billNo;
 	private String billTo;
+	private Integer billReferenceId;
 	private String vatNumber;
 	private String fiscalCode;
 	private String address;
@@ -425,6 +426,10 @@ public class InvoiceBean implements Serializable {
 
 	public String getBillTo() {
 		return billTo;
+	}
+
+	public Integer getBillReferenceId() {
+		return billReferenceId;
 	}
 
 	public String getCity() {
@@ -541,6 +546,10 @@ public class InvoiceBean implements Serializable {
 
 	public void setBillTo(String billTo) {
 		this.billTo = billTo;
+	}
+
+	public void setBillReferenceId(Integer billReferenceId) {
+		this.billReferenceId = billReferenceId;
 	}
 
 	public void setCity(String city) {
