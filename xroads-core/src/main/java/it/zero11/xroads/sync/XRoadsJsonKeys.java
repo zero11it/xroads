@@ -2,6 +2,7 @@ package it.zero11.xroads.sync;
 
 public class XRoadsJsonKeys {
 	public static final String REWIX_ORDER_TRACKING_KEY = "trackings";
+	public static final String REWIX_ORDER_TRACKING_CODE = "trackingcode";
 	public static final String REWIX_ORDER_IVOICE_DOCUMENT_KEY = "invoice";
 	public static final String REWIX_ORDER_PLATFORM_KEY = "platform";
 	public static final String REWIX_ORDER_ORIGIN_KEY = "origin";

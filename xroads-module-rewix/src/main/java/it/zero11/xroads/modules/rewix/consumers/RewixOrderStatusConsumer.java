@@ -37,6 +37,7 @@ public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements E
 //		String oldTracking = old != null ? old.getData().path(XRoadsJsonKeys.REWIX_ORDER_TRACKING_KEY).asText() : null;
 //		if (oldTracking == null) oldTracking = "";
 		String newTracking = order.getData().path(XRoadsJsonKeys.REWIX_ORDER_TRACKING_KEY).asText();
+		String newTrackingCode = order.getData().path(XRoadsJsonKeys.REWIX_ORDER_TRACKING_CODE).asText();
 //		if (newTracking == null) newTracking = "";
 //		String oldInvoice = old != null ? old.getData().path(XRoadsJsonKeys.REWIX_ORDER_IVOICE_DOCUMENT_KEY).asText() : null;
 //		if (oldInvoice == null) oldInvoice = "";
@@ -63,7 +64,7 @@ public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements E
 //				statusChanged = true;
 //				info.setTrackingUrl(newTracking);
 //			}	
-				
+			info.setTrackingCode(newTrackingCode);
 			info.setTrackingUrl(newTracking);	
 			api.updateOrderStatus(info);
 			
