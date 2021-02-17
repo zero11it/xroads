@@ -1,4 +1,4 @@
-	package it.zero11.xroads.modules.rewix.cron;
+package it.zero11.xroads.modules.rewix.cron;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -30,26 +30,25 @@ public class RewixCustomerCron  extends AbstractXRoadsCronRunnable<XRoadsRewixMo
 
 	@Override
 	public void run() {
-		if(xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.ENABLE_EXPORT_CUSTOMERS))
-
+		if(xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.ENABLE_EXPORT_CUSTOMERS)) {
 			api = new RewixAPI(xRoadsModule.getConfiguration().getUsername(), xRoadsModule.getConfiguration().getPassword(), xRoadsModule.getConfiguration().getEndpoint());
+			TimeZone tz = TimeZone.getTimeZone("UTC");
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+			df.setTimeZone(tz);
+			String startSyncDateTime = df.format(new Date(System.currentTimeMillis() - 600 * 1000));
 
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-		df.setTimeZone(tz);
-		String startSyncDateTime = df.format(new Date(System.currentTimeMillis() - 600 * 1000));
-
-		try(InputStream in = api.getCustomers(xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixParamType.LAST_CUSTOMERS_SWYNC))){
-			XMLReader xr = XMLReaderFactory.createXMLReader();
-			RewixCustomerParser rewixCustomerParser = new RewixCustomerParser(xRoadsModule);
-			xr.setContentHandler(rewixCustomerParser);
-			xr.setErrorHandler(rewixCustomerParser);
-			xr.parse(new InputSource(new BufferedInputStream(in)));
-		} catch (RewixAPIException | IOException | SAXException e) {
-			throw new RuntimeException(e);
+			try(InputStream in = api.getCustomers(xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixParamType.LAST_CUSTOMERS_SWYNC))){
+				XMLReader xr = XMLReaderFactory.createXMLReader();
+				RewixCustomerParser rewixCustomerParser = new RewixCustomerParser(xRoadsModule);
+				xr.setContentHandler(rewixCustomerParser);
+				xr.setErrorHandler(rewixCustomerParser);
+				xr.parse(new InputSource(new BufferedInputStream(in)));
+			} catch (RewixAPIException | IOException | SAXException e) {
+				throw new RuntimeException(e);
+			}
+			xRoadsModule.getXRoadsCoreService().updateParam(xRoadsModule, RewixParamType.LAST_CUSTOMERS_SWYNC, startSyncDateTime);
+			log.info("End import Customers");
 		}
-		xRoadsModule.getXRoadsCoreService().updateParam(xRoadsModule, RewixParamType.LAST_CUSTOMERS_SWYNC, startSyncDateTime);
-		log.info("End import Customers");
 	}
 
 }
