@@ -67,7 +67,8 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 				updateCustomerAddresses(customer, rewixId);			
 			}
 
-			if(revision == null || !revision.getPhone().equals(customer.getPhone()) || !revision.getVatNumber().equals(customer.getVatNumber())) {
+			if(revision == null || !revision.getPhone().equals(customer.getPhone()) || !revision.getVatNumber().equals(customer.getVatNumber()) 
+					|| !revision.getData().equals(customer.getData())) {
 				updateCustomerData(customer, rewixId);		
 			}
 
