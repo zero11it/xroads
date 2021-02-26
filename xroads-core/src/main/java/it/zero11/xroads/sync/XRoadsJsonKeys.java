@@ -101,6 +101,7 @@ public class XRoadsJsonKeys {
 	public final static String INVOICE_ORDER_IDS = "orderIds";
 	public final static String INVOICE_DATE = "invoiceDate";
 	public final static String INVOICE_REFERENCE = "invoiceReference";
+	public final static String INVOICE_VAT_SYSTEM_ID = "vat_system_id";
 	
 	public final static String ECREDIT = "ecredit";
 }

@@ -77,6 +77,8 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_UNIT_PRICE_KEY, item.getUnitPrice().toPlainString());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TOTAL_TAXABLE_KEY, item.getTotalTaxable().subtract(item.getTotalDiscount()).toPlainString());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TOTAL_PRICE_KEY, item.getTotalPrice().toPlainString());	
+			lineItem.put(XRoadsJsonKeys.INVOICE_VAT_SYSTEM_ID, item.getVatSystemId());	
+
 			lineItems.set(Integer.toString(i++), lineItem);
 		}
 		invoice.setLineItems(lineItems);
