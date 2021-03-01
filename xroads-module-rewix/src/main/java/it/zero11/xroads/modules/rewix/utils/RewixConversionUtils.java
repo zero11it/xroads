@@ -38,6 +38,7 @@ public class RewixConversionUtils {
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.REWIX_ORDER_PLATFORM_KEY, platform);
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.REWIX_ORDER_ORIGIN_KEY, orderBean.getOrigin());
 		((ObjectNode)order.getData()).put("source",xRoadsModule.getName());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ECREDIT,orderBean.getEcredit());
 		
 		for (PropertyData property : orderBean.getProperties())
 			((ObjectNode)order.getData()).put(property.getKey(), property.getValue());
