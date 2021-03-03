@@ -19,13 +19,32 @@ import it.zero11.xroads.utils.XRoadsUtils;
 
 public class RewixConversionUtils {
 
-	public static Order getOrderFromOrderBean(String platform, OrderBean orderBean, XRoadsRewixModule xRoadsModule) throws SyncException {
+	public static Order getOrderFromOrderBean(String platform, OrderBean orderBean, XRoadsRewixModule xRoadsModule, boolean isRewixCustomerSource) throws SyncException {
 		Order order = XRoadsUtils.getOrderInstance();
 
 		order.setSource("rewix");
 		order.setStatus(0);
 		order.setSourceId(Integer.toString(orderBean.getId()));
-		order.setCustomerSourceId(orderBean.getUsername());
+
+		
+		String customerSourceId = null;
+		if(isRewixCustomerSource) {
+			try {
+				customerSourceId = xRoadsModule.getXRoadsCoreService()
+						.getEntityIdByModuleAndSourceId(Customer.class, xRoadsModule, orderBean.getUsername());
+			} catch (NoResultException e) {
+				customerSourceId = orderBean.getUsername();
+			}			
+		} else {
+			try {
+				customerSourceId = xRoadsModule.getXRoadsCoreService()
+						.getEntityIdByModuleAndSourceId(Customer.class, xRoadsModule, orderBean.getUsername());
+			} catch (NoResultException e) {
+				throw new RuntimeException("Customer not found for order " + orderBean.getId());
+			}
+		}	
+
+		order.setCustomerSourceId(customerSourceId);
 		order.setCustomerEmail(orderBean.getEmail());
 		order.setDispatchTaxable(orderBean.getDispatchFixedTaxable().add(orderBean.getDispatchWeightTaxable()));
 		order.setDispatchVat(orderBean.getDispatchFixedVatAmount().add(orderBean.getDispatchWeightVatAmount()));
@@ -85,7 +104,7 @@ public class RewixConversionUtils {
 			ObjectNode lineItem = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_SKU_KEY, item.getSKU());
 			try {
-			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, xRoadsModule.getXRoadsCoreService().getEntityIdByModuleAndSourceId(Model.class, xRoadsModule, item.getStockModelId().toString()));
+				lineItem.put(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, xRoadsModule.getXRoadsCoreService().getEntityIdByModuleAndSourceId(Model.class, xRoadsModule, item.getStockModelId().toString()));
 			} catch(NoResultException e) {
 				throw new SyncException("Order contains models not present in xroads ");			
 			}
@@ -102,10 +121,10 @@ public class RewixConversionUtils {
 			lineItems.put(Integer.toString(i++), lineItem);
 		}
 		order.setLineItems(lineItems);
-		
+
 		return order;
 	}
-	
+
 	public static Customer getOrUpdateCustomerFromOrder(Order order, Customer customer) {
 		if(customer == null) {
 			customer = XRoadsUtils.getCustomerInstance();
