@@ -167,6 +167,8 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 	public void updateProductTags(Integer rewixId, Product product, ProductRevision revision) throws RewixAPIException, ProductNotFoundException {
 		log.debug("updateProductTags for product " + product.getSku());
 
+		Map<String, Integer> configurationTagMap = getXRoadsModule().getConfiguration().getTagMap();
+
 		Map<String, List<String>> tagMap = new HashMap<>();
 		product.getTags().fields().forEachRemaining(tag -> {
 			if (!tag.getKey().equals("translations") && !tag.getKey().equals("urlkeys")) {
@@ -179,37 +181,23 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 				tagMap.put(tag.getKey(), values);
 			}
 		});
-		if (tagMap.size() > 0) {
+
+		if(configurationTagMap != null && configurationTagMap.size() > 0) {
 			ProductTagsBean tags = new ProductTagsBean();
 			tags.setStockProductId(rewixId);
-			tags.setProductTags(new ArrayList<>());			
-			for (String key : tagMap.keySet()) {					
+			tags.setProductTags(new ArrayList<>());
+			for(Map.Entry<String, Integer> configuratedTag : configurationTagMap.entrySet()) {
 				ProductTagBean tag = new ProductTagBean();
-				Integer tagId = getXRoadsModule().getConfiguration().getTagMap().get(key);
-				if (tagId != null) {
-					tag.setTagId(tagId);					
-					tag.setTagValues(tagMap.get(key));					
-					tags.getProductTags().add(tag);															
-				}
+				tag.setTagId(configuratedTag.getValue());
+				List<String> tagValues = tagMap.get(configuratedTag.getKey());
+				tag.setTagValues(tagValues);			
+				tags.getProductTags().add(tag);
 			}
-			if (revision != null) { //Metto a null quelli scomparsi
 
-				revision.getTags().fields().forEachRemaining(revisionTag -> {
-					if (! tagMap.keySet().contains(revisionTag.getKey())) {
-						ProductTagBean tag = new ProductTagBean();
-						Integer tagId = getXRoadsModule().getConfiguration().getTagMap().get(revisionTag.getKey());
-						if (tagId != null) {
-							tag.setTagId(tagId);					
-							tag.setTagValues(new ArrayList<>());					
-							tags.getProductTags().add(tag);															
-						}
-					}
-				});
-			}
-			
 			api.updateProductTags(tags);
 		}
 	}
+
 	protected void updateProductTagTranslations(Integer rewixId, Product product) throws RewixAPIException {
 		if (product.getData().path("platforms") == null || product.getData().path("platforms").asText().length() == 0 ||
 				! product.getTags().has("translations")) {
