@@ -105,7 +105,11 @@ public class RewixCustomerParser extends DefaultHandler{
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD, attributeValue);
 					break;
 				case "status":
-					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, attributeValue.equals("3") ? false : true);
+					if(attributeValue.equals("3")) {
+						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, false);
+					} else if(attributeValue.equals("2")) {
+						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, true);
+					}
 					break;
 					//					case "title":
 					//
