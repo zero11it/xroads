@@ -92,6 +92,8 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_ITEM_VAT_KEY = "vat";
 	public final static String ORDER_ITEM_TAX_KEY = "tax";
 	public final static String ORDER_ITEM_MODEL_ID_KEY = "model_id";
+	public final static String ORDER_TRACKING_URL = "tracking_url";
+	public final static String ORDER_CARRIER_NAME = "carrier_name";
 	
 	public final static String PAYMENT_GATEWAY = "paymentGateway";
 	

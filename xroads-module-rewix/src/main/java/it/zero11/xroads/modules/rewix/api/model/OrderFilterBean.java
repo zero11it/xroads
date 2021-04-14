@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 @XmlRootElement(name = "orderFilter")
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class OrderFilterBean {
 	private String platformUid;
 	private List<Integer> orderStatuses;
@@ -23,6 +27,9 @@ public class OrderFilterBean {
 	private BigDecimal orderItemTaxableFrom;
 	private BigDecimal orderItemTaxableTo;
 	private String username;
+	
+	private String sort;
+	private String sortDir;
 	
 	private int firstResult;
 	private int maxResult;
@@ -169,5 +176,21 @@ public class OrderFilterBean {
 
 	public void setOrderSubstatusNull(Boolean orderSubstatusNull) {
 		this.orderSubstatusNull = orderSubstatusNull;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	public String getSortDir() {
+		return sortDir;
+	}
+
+	public void setSortDir(String sortDir) {
+		this.sortDir = sortDir;
 	}
 }
