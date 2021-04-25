@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
@@ -115,6 +116,9 @@ public class RewixAPI {
 						configuration.property(ClientProperties.READ_TIMEOUT, 600000);
 						PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 						connectionManager.setDefaultMaxPerRoute(4);
+						// Set soTimeout here to affect socketRead in the phase of ssl handshake. Note that
+				        // the RequestConfig.setSocketTimeout will take effect only after the ssl handshake completed.
+						connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(30000).build());
 						configuration.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
 						configuration.connectorProvider(new ApacheConnectorProvider());
 						
