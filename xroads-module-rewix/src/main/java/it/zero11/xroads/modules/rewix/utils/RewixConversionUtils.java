@@ -64,7 +64,13 @@ public class RewixConversionUtils {
 
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ORDER_NOTES_KEY, orderBean.getNotes());
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ORDER_ADMIN_NOTES_KEY, orderBean.getAdminNotes());
-
+		if(orderBean.getTrackingData() != null) {
+			String carrierName = orderBean.getTrackingData().getCarrierName();
+			if(carrierName != null) {
+				((ObjectNode)order.getData()).put(XRoadsJsonKeys.ORDER_CARRIER_NAME, carrierName);
+			}
+		}
+		
 		ObjectNode anagrafica = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
 		if (orderBean.getAnagrafica() != null) {
 
