@@ -462,7 +462,7 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 			ProductRestrictionsBean productRestrictionsBean = new ProductRestrictionsBean();
 			productRestrictionsBean.setStockProductId(rewixId);
 			productRestrictionsBean.setProductRestrictionsHidden(productHiddenRestrictionsList);
-			productRestrictionsBean.setProductRestrictionsVisible(productHiddenRestrictionsList);
+			productRestrictionsBean.setProductRestrictionsVisible(productVisibleRestrictionsList);
 			api.updateProductRestrictions(productRestrictionsBean);
 		}
 	}
