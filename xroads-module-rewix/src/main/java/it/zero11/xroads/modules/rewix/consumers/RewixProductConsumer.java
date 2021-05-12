@@ -116,6 +116,9 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		rewixProduct.setName(product.getName());
 		rewixProduct.setBrand(product.getBrand());
 		rewixProduct.setIntangible(product.getVirtual());
+		rewixProduct.setIntra(product.getData().path(XRoadsJsonKeys.REWIX_PRODUCT_HARMONIZED_SYSTEM_CODE_KEY).asText());
+		rewixProduct.setSupplierCode(product.getSupplier());
+		
 		if (forceOffline) {
 			rewixProduct.setOnline(false);
 		}else {

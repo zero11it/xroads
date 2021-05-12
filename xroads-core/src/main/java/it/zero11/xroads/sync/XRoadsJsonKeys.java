@@ -12,6 +12,8 @@ public class XRoadsJsonKeys {
 	
 	public static final String REWIX_PRODUCT_VAT_CLASS_KEY = "vatClass";
 	public static final String REWIX_PRODUCT_PRIORITY_KEY = "priority";
+	
+	public static final String REWIX_PRODUCT_HARMONIZED_SYSTEM_CODE_KEY = "hs";
 
 	public static final String REWIX_MODEL_UNLIMITED_KEY = "unlimited";
 	public static final String REWIX_MODEL_INDEX_KEY = "index";
