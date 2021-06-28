@@ -122,12 +122,12 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		rewixModel.setCode(model.getSku());
 		rewixModel.setBarcode(model.getEan() == null ? "": model.getEan());
 		rewixModel.setAdditionalBarcode(model.getAdditionalBarcode());
-		rewixModel.setSize(model.getOptions().path("size").asText());
-		rewixModel.setColor(model.getOptions().path("color").asText());			
+		rewixModel.setOption1(model.getOptions().path("size").asText());
+		rewixModel.setOption2(model.getOptions().path("color").asText());			
 		rewixModel.setStockProductId(rewixProductId);			
 		rewixModel.setBackorder(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_UNLIMITED_KEY).asBoolean());
 		rewixModel.setPriority(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_INDEX_KEY).asInt());
-		rewixModel.setWeight(model.getWeight() != null ? model.getWeight().floatValue() : null);
+		rewixModel.setModelWeight(model.getWeight() != null ? model.getWeight().floatValue() : null);
 		return api.updateProductVariant(rewixModel);
 
 	}
