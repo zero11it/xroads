@@ -108,4 +108,5 @@ public class XRoadsJsonKeys {
 	public final static String INVOICE_VAT_SYSTEM_ID = "vat_system_id";
 	
 	public final static String ECREDIT = "ecredit";
+	public static final String CUSTOMER_EORI_CODE = "eori_code";
 }

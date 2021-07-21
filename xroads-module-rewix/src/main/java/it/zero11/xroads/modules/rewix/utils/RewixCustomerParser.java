@@ -7,6 +7,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.zero11.xroads.model.Customer;
@@ -19,7 +21,8 @@ public class RewixCustomerParser extends DefaultHandler{
 
 	private Customer currentCustomer;
 	private XRoadsRewixModule xroadsModule;
-
+	private SimpleDateFormat dateFromatter = new SimpleDateFormat("yyyy-MM-dd");
+	
 	public RewixCustomerParser(XRoadsRewixModule xroadsModule) {
 		this.xroadsModule = xroadsModule;
 	}
@@ -79,7 +82,7 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "birth":
 					if(attributeValue != null && !attributeValue.isEmpty()) {
 						try {
-							currentCustomer.setDateOfBirth(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss'Z'").parse(attributeValue));
+							currentCustomer.setDateOfBirth(dateFromatter.parse(attributeValue));
 						} catch (ParseException e) {e.printStackTrace();}
 					}
 					break;
@@ -104,12 +107,18 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "loyality_card":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD, attributeValue);
 					break;
+				case "eori_code":
+					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_EORI_CODE, attributeValue);
+					break;
 				case "status":
 					if(attributeValue.equals("3")) {
 						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, false);
 					} else if(attributeValue.equals("2")) {
 						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, true);
 					}
+					break;
+				case "fiscal_code":
+					currentCustomer.setFiscalCode(attributeValue);
 					break;
 					//					case "title":
 					//
@@ -169,13 +178,34 @@ public class RewixCustomerParser extends DefaultHandler{
 					case "cel_prefix":
 						attributeName = XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY;
 						break;
+					case "street":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_NAME_KEY;
+						break;
+					case "cap":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY;
+						break;
 					default:
 						break;
 					}
 					address.put(attributeName, attributeValue);
 				}
 			}
+		} else if(localName.equals("group")) {
+			for (int i = 0; i < attributes.getLength(); i++) {
+				String attributeName = attributes.getLocalName(i);
+				String attributeValue = attributes.getValue(i);
 
+				switch (attributeName) {
+				case "name":
+					JsonNode customerGroups = currentCustomer.getGroups().path(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY);
+					if(customerGroups.isMissingNode() || !customerGroups.isArray()) {
+						((ObjectNode) currentCustomer.getGroups()).set(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY, XRoadsUtils.OBJECT_MAPPER.createArrayNode());
+					}
+					((ArrayNode) currentCustomer.getGroups().get(XRoadsJsonKeys.CUSTOMER_GROUPS_KEY)).add(attributeValue);
+					break;
+
+				}
+			}
 		}
 	}
 
