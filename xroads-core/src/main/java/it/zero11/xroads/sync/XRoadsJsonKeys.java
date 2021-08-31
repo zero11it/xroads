@@ -107,6 +107,11 @@ public class XRoadsJsonKeys {
 	public final static String INVOICE_REFERENCE = "invoiceReference";
 	public final static String INVOICE_VAT_SYSTEM_ID = "vat_system_id";
 	
+	public final static String ITEM_TYPE = "item_type";
+	
+	public final static String PAYMENT_FEE_VAT_AMOUNT = "payment_fee_vat_amount";
+	public final static String PAYMENT_FEE_TAXABLE = "payment_fee_taxable";
+	
 	public final static String ECREDIT = "ecredit";
 	public static final String CUSTOMER_EORI_CODE = "eori_code";
 }

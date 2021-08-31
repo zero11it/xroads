@@ -66,6 +66,7 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 		ObjectNode lineItems = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
 		for (InvoiceItemBean item : rewixInvoice.getItems()) {
 			ObjectNode lineItem = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
+			lineItem.put(XRoadsJsonKeys.ITEM_TYPE, item.getType());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_SKU_KEY, item.getSKU());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, item.getStockModelId() != null ? item.getStockModelId().toString() : null);
 			lineItem.put(XRoadsJsonKeys.INVOICE_ITEM_DISCOUNT, item.getDiscount().toPlainString());

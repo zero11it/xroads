@@ -61,16 +61,22 @@ public class InvoiceBean implements Serializable {
 
 		private Integer productId;
 		private Integer stockModelId;
+		private String type;
 
 		private String SKU;
 		private String brand;
 		private String name;
-		private String color;
-		private String size;
+		private String option1;
+		private String option2;
+		private String option3;
 		private String barcode;
 		private String[] additionalBarcodes;
 		private String madein;
 		private String intra;
+
+		private ProductLocalizations productLocalizations;
+		
+		private ModelLocalizations modelLocalizations;
 
 		@Deprecated
 		private BigDecimal tax;
@@ -98,9 +104,11 @@ public class InvoiceBean implements Serializable {
 		public String getBrand() {
 			return brand;
 		}
-
+		
+		@Deprecated
+		@XmlElement(name="color")
 		public String getColor() {
-			return color;
+			return option2;
 		}
 
 		public BigDecimal getDiscount() {
@@ -135,12 +143,18 @@ public class InvoiceBean implements Serializable {
 			return stockModelId;
 		}
 
+		public String getType() {
+			return type;
+		}
+
 		public Integer getQuantity() {
 			return quantity;
 		}
 
+		@Deprecated
+		@XmlElement(name="size")
 		public String getSize() {
-			return size;
+			return option1;
 		}
 
 		public String getSKU() {
@@ -205,10 +219,6 @@ public class InvoiceBean implements Serializable {
 			this.brand = brand;
 		}
 
-		public void setColor(String color) {
-			this.color = color;
-		}
-
 		public void setDiscount(BigDecimal discount) {
 			this.discount = discount;
 		}
@@ -241,12 +251,12 @@ public class InvoiceBean implements Serializable {
 			this.stockModelId = stockModelId;
 		}
 
-		public void setQuantity(Integer quantity) {
-			this.quantity = quantity;
+		public void setType(String type) {
+			this.type = type;
 		}
 
-		public void setSize(String size) {
-			this.size = size;
+		public void setQuantity(Integer quantity) {
+			this.quantity = quantity;
 		}
 
 		public void setSKU(String sKU) {
@@ -296,6 +306,46 @@ public class InvoiceBean implements Serializable {
 
 		public void setVat(BigDecimal vat) {
 			this.vat = vat;
+		}
+
+		public String getOption1() {
+			return option1;
+		}
+
+		public void setOption1(String option1) {
+			this.option1 = option1;
+		}
+
+		public String getOption2() {
+			return option2;
+		}
+
+		public void setOption2(String option2) {
+			this.option2 = option2;
+		}
+
+		public String getOption3() {
+			return option3;
+		}
+
+		public void setOption3(String option3) {
+			this.option3 = option3;
+		}
+
+		public ProductLocalizations getProductLocalizations() {
+			return productLocalizations;
+		}
+
+		public void setProductLocalizations(ProductLocalizations productLocalizations) {
+			this.productLocalizations = productLocalizations;
+		}
+
+		public ModelLocalizations getModelLocalizations() {
+			return modelLocalizations;
+		}
+
+		public void setModelLocalizations(ModelLocalizations modelLocalizations) {
+			this.modelLocalizations = modelLocalizations;
 		}
 	}
 	public static class InvoiceVat implements Serializable {
