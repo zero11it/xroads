@@ -414,6 +414,20 @@ public Integer updateUserGroup(GroupBean groupBen) throws RewixAPIException, Pro
 	}
 }	
 
+public ProductTagsBean getTags(Long productId) throws RewixAPIException{
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/product/tags/product/" + productId)
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();
+
+	checkResponseStatus("getTags", response);	
+	final ProductTagsBean productTags = response.readEntity(ProductTagsBean.class);	
+	return productTags;
+}
+
 public void updateAddress(String username, AddressBean adressBean) throws RewixAPIException{		
 	final Response response = getRestClient()
 			.target(baseUrl)

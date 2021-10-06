@@ -46,6 +46,7 @@ public class RewixConversionUtils {
 
 		order.setCustomerSourceId(customerSourceId);
 		order.setCustomerEmail(orderBean.getEmail());
+		
 		order.setDispatchTaxable(orderBean.getDispatchFixedTaxable().add(orderBean.getDispatchWeightTaxable()));
 		order.setDispatchVat(orderBean.getDispatchFixedVatAmount().add(orderBean.getDispatchWeightVatAmount()));
 		order.setDispatchTotal(orderBean.getDispatchFixed().add(orderBean.getDispatchWeight()));
@@ -59,8 +60,11 @@ public class RewixConversionUtils {
 		((ObjectNode)order.getData()).put("source",xRoadsModule.getName());
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ECREDIT,orderBean.getEcredit());
 		
-		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_TAXABLE, orderBean.getPaymentFeeTaxable());
-		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_VAT_AMOUNT,orderBean.getPaymentFeeVatAmount());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_TAXABLE, orderBean.getPaymentFeeTaxable().toPlainString());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_VAT_AMOUNT,orderBean.getPaymentFeeVatAmount().toPlainString());
+		
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.DISPATCH_FIXED_TAXABLE, orderBean.getDispatchFixedTaxable().toPlainString());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.DISPATCH_FIXED_VAT_AMOUNT,orderBean.getDispatchFixedVatAmount().toPlainString());
 		
 		for (PropertyData property : orderBean.getProperties())
 			((ObjectNode)order.getData()).put(property.getKey(), property.getValue());
@@ -126,7 +130,8 @@ public class RewixConversionUtils {
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_UNIT_PRICE_KEY, item.getUnitPrice().toPlainString());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TOTAL_TAXABLE_KEY, item.getTotalTaxable().subtract(item.getTotalDiscount()).toPlainString());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TOTAL_PRICE_KEY, item.getTotalPrice().toPlainString());
-			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TAX_KEY, item.getTax().toPlainString());			
+			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_VAT_SYSTEM_KEY, item.getVat_system_id());
+			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TAX_KEY, item.getTax().toPlainString());
 			lineItems.put(Integer.toString(i++), lineItem);
 		}
 		order.setLineItems(lineItems);

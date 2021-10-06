@@ -83,6 +83,7 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_ADMIN_NOTES_KEY ="admin_notes";
 	
 	public final static String ORDER_ITEM_TOTAL_PRICE_KEY = "total_price";
+	public final static String ORDER_ITEM_VAT_SYSTEM_KEY = "vat_system_id";
 	public final static String ORDER_ITEM_TOTAL_TAXABLE_KEY = "total_taxable";
 	public final static String ORDER_ITEM_UNIT_PRICE_KEY = "unit_price";
 	public final static String ORDER_ITEM_UNIT_LISTING_KEY = "unit_listing";
@@ -108,6 +109,9 @@ public class XRoadsJsonKeys {
 	public final static String INVOICE_VAT_SYSTEM_ID = "vat_system_id";
 	
 	public final static String ITEM_TYPE = "item_type";
+	
+	public final static String DISPATCH_FIXED_VAT_AMOUNT = "dispatch_fixed_vat_amount";
+	public final static String DISPATCH_FIXED_TAXABLE = "dispatch_fixed_taxable";
 	
 	public final static String PAYMENT_FEE_VAT_AMOUNT = "payment_fee_vat_amount";
 	public final static String PAYMENT_FEE_TAXABLE = "payment_fee_taxable";
