@@ -52,6 +52,10 @@ public class Order extends AbstractCustomerGroupedEntity {
 
 	@Column(name="payment_gateway")
 	private String paymentGateway;
+	
+	@Type( type = "jsonb-node" )
+	@Column(name="payments")
+	private JsonNode payments;
 
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="shipping_address")
@@ -204,5 +208,13 @@ public class Order extends AbstractCustomerGroupedEntity {
 
 	public void setTotals(JsonNode totals) {
 		this.totals = totals;
+	}
+	
+	public JsonNode getPayments() {
+		return payments;
+	}
+
+	public void setPayments(JsonNode payments) {
+		this.payments = payments;
 	}
 }

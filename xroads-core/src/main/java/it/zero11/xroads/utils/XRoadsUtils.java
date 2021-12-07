@@ -86,6 +86,7 @@ public class XRoadsUtils {
 		final Order order = new Order();
 		order.setInvoiceAddress(OBJECT_MAPPER.createObjectNode());
 		order.setLineItems(OBJECT_MAPPER.createObjectNode());
+		order.setPayments(OBJECT_MAPPER.createArrayNode());
 		order.setTotals(OBJECT_MAPPER.createObjectNode());		
 		order.setShippingAddress(OBJECT_MAPPER.createObjectNode());		
 		order.setData(OBJECT_MAPPER.createObjectNode());

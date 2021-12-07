@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import it.zero11.xroads.modules.rewix.api.model.InvoiceBean.InvoiceAttachmentBean;
 import it.zero11.xroads.modules.rewix.utils.JAXBStringURLEncodedToArray;
 
 @XmlRootElement(name = "order")
@@ -26,13 +27,14 @@ public class OrderBean implements Serializable {
 	private String username;
 	private String email;
 	private AnagraficaData anagrafica; 
-	private String status, substatus;
+	private Integer status, substatus;
 	private Date submitDate;
 	private Date dispatchDate;
 	private DispatchData dispatchData;
 	private InvoiceData billingData;
-	private List<InvoiceData> creditNotes;	
-	private List<OrderPackageBean> packages;	
+	private List<InvoiceData> creditNotes;
+	private List<OrderPackageBean> packages;
+	private List<OrderPaymentBean> payments;
 	private TrackingData trackingData;
 	private List<OrderItemBean> items;
 	private Integer itemsCount;
@@ -279,6 +281,7 @@ public class OrderBean implements Serializable {
 		
 		private String cfpiva;
 		private String validatedVat;
+		private String fiscalCode;
 		private String firstName;
 		private String lastName;
 		private String businessName;
@@ -299,6 +302,7 @@ public class OrderBean implements Serializable {
 		private String country;
 		private String countryCode;
 		private Integer countryId;
+		private String privateNotes;
 		
 		public AnagraficaData(){}
 
@@ -316,6 +320,14 @@ public class OrderBean implements Serializable {
 
 		public void setValidatedVat(String validatedVat) {
 			this.validatedVat = validatedVat;
+		}
+
+		public String getFiscalCode() {
+			return fiscalCode;
+		}
+
+		public void setFiscalCode(String fiscalCode) {
+			this.fiscalCode = fiscalCode;
 		}
 
 		public String getFirstName() {
@@ -477,6 +489,14 @@ public class OrderBean implements Serializable {
 		public void setCountryId(Integer countryId) {
 			this.countryId = countryId;
 		}
+
+		public String getPrivateNotes() {
+			return privateNotes;
+		}
+
+		public void setPrivateNotes(String privateNotes) {
+			this.privateNotes = privateNotes;
+		}
 	}
 	
 	public static class InvoiceData implements Serializable{
@@ -488,6 +508,7 @@ public class OrderBean implements Serializable {
 		private String billNo;
 		private String billTo;
 		private String vatNumber;
+		private String fiscalCode;
 		private String address;
 		private String zip;
 		private String city;
@@ -498,7 +519,7 @@ public class OrderBean implements Serializable {
 		private String paymentInfo;
 		
 		private List<InvoiceAttachmentBean> attachments;
-		
+
 		public InvoiceData(){}
 		
 		public Integer getBillId() {
@@ -524,6 +545,12 @@ public class OrderBean implements Serializable {
 		}
 		public void setVatNumber(String vatNumber) {
 			this.vatNumber = vatNumber;
+		}
+		public String getFiscalCode() {
+			return fiscalCode;
+		}
+		public void setFiscalCode(String fiscalCode) {
+			this.fiscalCode = fiscalCode;
 		}
 		public String getAddress() {
 			return address;
@@ -604,40 +631,6 @@ public class OrderBean implements Serializable {
 		}
 	}
 
-	public static class InvoiceAttachmentBean implements Serializable{
-		private static final long serialVersionUID = 1L;
-		
-		private Integer id;
-		private String name;
-		private String extension;
-		private String url;
-		
-		public Integer getId() {
-			return id;
-		}
-		public void setId(Integer id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getExtension() {
-			return extension;
-		}
-		public void setExtension(String extension) {
-			this.extension = extension;
-		}
-		public String getUrl() {
-			return url;
-		}
-		public void setUrl(String url) {
-			this.url = url;
-		}
-	}
-
 	public static class OrderAttachmentBean implements Serializable{
 		private static final long serialVersionUID = 1L;
 		
@@ -685,8 +678,9 @@ public class OrderBean implements Serializable {
 		private String brand;
 		private String name;
 		private String description;
-		private String color;
-		private String size;
+		private String option1;
+		private String option2;
+		private String option3;
 		private String barcode;
 		private String[] additionalBarcodes;
 		private String madein;
@@ -702,6 +696,7 @@ public class OrderBean implements Serializable {
 		private BigDecimal unitPrice, totalPrice;
 		private BigDecimal discount, totalDiscount;
 		
+		private Integer catalogRuleId;
 		private Integer vat_system_id;
 		private BigDecimal vat;
 		
@@ -876,6 +871,14 @@ public class OrderBean implements Serializable {
 			this.discount = discount;
 		}
 
+		public Integer getCatalogRuleId() {
+			return catalogRuleId;
+		}
+
+		public void setCatalogRuleId(Integer catalogRuleId) {
+			this.catalogRuleId = catalogRuleId;
+		}
+
 		public Integer getVat_system_id() {
 			return vat_system_id;
 		}
@@ -892,20 +895,40 @@ public class OrderBean implements Serializable {
 			this.vat = vat;
 		}
 		
+		@Deprecated
+		@XmlElement(name="color")
 		public String getColor() {
-			return color;
+			return option2;
 		}
-
-		public void setColor(String color) {
-			this.color = color;
-		}
-
+		
+		@Deprecated
+		@XmlElement(name="size")
 		public String getSize() {
-			return size;
+			return option1;
 		}
 
-		public void setSize(String size) {
-			this.size = size;
+		public String getOption1() {
+			return option1;
+		}
+
+		public void setOption1(String option1) {
+			this.option1 = option1;
+		}
+
+		public String getOption2() {
+			return option2;
+		}
+
+		public void setOption2(String option2) {
+			this.option2 = option2;
+		}
+
+		public String getOption3() {
+			return option3;
+		}
+
+		public void setOption3(String option3) {
+			this.option3 = option3;
 		}
 
 		public String getBarcode() {
@@ -949,6 +972,8 @@ public class OrderBean implements Serializable {
 			this.intra = intra;
 		}
 
+		@XmlElementWrapper(name="tags")
+		@XmlElement(name="tag")
 		public List<ProductTag> getTags() {
 			return tags;
 		}
@@ -1015,11 +1040,75 @@ public class OrderBean implements Serializable {
 		}
 	}
 	
+	public static class OrderPaymentBean implements Serializable {
+		private static final long serialVersionUID = 1L;
+		
+		private Integer paymentGwId;
+
+		private Integer ecreditId;
+		
+		private String transactionAccount;
+		
+		private String transactionReference;
+		
+		private BigDecimal amount;
+
+		private Date date;
+
+		public Integer getPaymentGwId() {
+			return paymentGwId;
+		}
+
+		public void setPaymentGwId(Integer paymentGwId) {
+			this.paymentGwId = paymentGwId;
+		}
+
+		public Integer getEcreditId() {
+			return ecreditId;
+		}
+
+		public void setEcreditId(Integer ecreditId) {
+			this.ecreditId = ecreditId;
+		}
+
+		public String getTransactionAccount() {
+			return transactionAccount;
+		}
+
+		public void setTransactionAccount(String transactionAccount) {
+			this.transactionAccount = transactionAccount;
+		}
+
+		public String getTransactionReference() {
+			return transactionReference;
+		}
+
+		public void setTransactionReference(String transactionReference) {
+			this.transactionReference = transactionReference;
+		}
+
+		public BigDecimal getAmount() {
+			return amount;
+		}
+
+		public void setAmount(BigDecimal amount) {
+			this.amount = amount;
+		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
+	}
+	
 	public static class OrderVat implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public OrderVat(){}
-
+	
 		private BigDecimal vat;
 		private Integer vatId;
 		private String vatName;
@@ -1075,11 +1164,11 @@ public class OrderBean implements Serializable {
 		this.id = id;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
@@ -1143,11 +1232,11 @@ public class OrderBean implements Serializable {
 		this.trackingData = trackingData;
 	}
 
-	public String getSubstatus() {
+	public Integer getSubstatus() {
 		return substatus;
 	}
 
-	public void setSubstatus(String substatus) {
+	public void setSubstatus(Integer substatus) {
 		this.substatus = substatus;
 	}
 
@@ -1444,6 +1533,14 @@ public class OrderBean implements Serializable {
 
 	public void setPackages(List<OrderPackageBean> packages) {
 		this.packages = packages;
+	}
+
+	public List<OrderPaymentBean> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<OrderPaymentBean> payments) {
+		this.payments = payments;
 	}
 
 	public Date getLastUpdate() {

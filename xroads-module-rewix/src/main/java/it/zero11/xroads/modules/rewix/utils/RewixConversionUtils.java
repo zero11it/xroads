@@ -4,6 +4,10 @@ import java.sql.Timestamp;
 
 import javax.persistence.NoResultException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.zero11.xroads.model.Customer;
@@ -12,6 +16,7 @@ import it.zero11.xroads.model.Order;
 import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
 import it.zero11.xroads.modules.rewix.api.model.OrderBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderBean.OrderItemBean;
+import it.zero11.xroads.modules.rewix.api.model.OrderBean.OrderPaymentBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderBean.PropertyData;
 import it.zero11.xroads.sync.SyncException;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
@@ -51,6 +56,20 @@ public class RewixConversionUtils {
 		order.setDispatchVat(orderBean.getDispatchFixedVatAmount().add(orderBean.getDispatchWeightVatAmount()));
 		order.setDispatchTotal(orderBean.getDispatchFixed().add(orderBean.getDispatchWeight()));
 		order.setPaymentGateway(orderBean.getPaymentGateway());
+		
+		ArrayNode paymentsArray = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
+		for(OrderPaymentBean paymentBean : orderBean.getPayments()) {
+			ObjectNode xroadsPayment = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_GW_ID, paymentBean.getPaymentGwId());
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_AMOUNT, paymentBean.getAmount());
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_DATE, paymentBean.getDate().toString());
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_ECREDIT_ID, paymentBean.getEcreditId());
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_ACCOUNT, paymentBean.getTransactionAccount());
+			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_REFERENCE, paymentBean.getTransactionReference());
+			paymentsArray.add(xroadsPayment);
+		}
+		order.setPayments(paymentsArray);
+		
 		order.setTotal(orderBean.getTotal());
 		order.setTotalVat(orderBean.getVat_amount());
 		order.setCurrency(orderBean.getCurrency());

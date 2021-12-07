@@ -98,6 +98,13 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_TRACKING_URL = "tracking_url";
 	public final static String ORDER_CARRIER_NAME = "carrier_name";
 	
+	public final static String ORDER_PAYMENT_GW_ID = "payment_gw_id";
+	public final static String ORDER_PAYMENT_ECREDIT_ID = "ecreditId";
+	public final static String ORDER_PAYMENT_TRANSACTION_ACCOUNT = "transaction_account";
+	public final static String ORDER_PAYMENT_TRANSACTION_REFERENCE = "transaction_reference";
+	public final static String ORDER_PAYMENT_AMOUNT = "amount";
+	public final static String ORDER_PAYMENT_DATE = "date";
+	
 	public final static String PAYMENT_GATEWAY = "paymentGateway";
 	
 	public final static String INVOICE_TOTAL = "total";
