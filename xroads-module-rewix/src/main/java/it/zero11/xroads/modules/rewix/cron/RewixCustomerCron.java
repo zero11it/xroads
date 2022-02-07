@@ -22,7 +22,7 @@ import it.zero11.xroads.modules.rewix.api.RewixAPIException;
 import it.zero11.xroads.modules.rewix.model.RewixParamType;
 import it.zero11.xroads.modules.rewix.utils.RewixCustomerParser;
 
-@CronSchedule(hour = {12}, minute = {0}, second = {0})
+@CronSchedule(hour = {}, minute = {0, 15, 30, 45}, second = {0})
 public class RewixCustomerCron  extends AbstractXRoadsCronRunnable<XRoadsRewixModule>{
 
 	private static final Logger log = Logger.getLogger(RewixCustomerCron.class);

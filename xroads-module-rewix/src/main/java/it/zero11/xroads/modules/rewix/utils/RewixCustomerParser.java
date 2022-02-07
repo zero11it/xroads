@@ -111,10 +111,10 @@ public class RewixCustomerParser extends DefaultHandler{
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_EORI_CODE, attributeValue);
 					break;
 				case "status":
-					if(attributeValue.equals("3")) {
-						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, false);
-					} else if(attributeValue.equals("2")) {
+					if(attributeValue.equals("2")) {
 						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, true);
+					} else {
+						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY, false);
 					}
 					break;
 				case "fiscal_code":
