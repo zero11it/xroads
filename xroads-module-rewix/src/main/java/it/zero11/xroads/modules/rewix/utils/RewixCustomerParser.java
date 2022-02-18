@@ -86,6 +86,10 @@ public class RewixCustomerParser extends DefaultHandler{
 						} catch (ParseException e) {e.printStackTrace();}
 					}
 					break;
+				case "validationdate":
+					if(attributeValue != null && !attributeValue.trim().isEmpty()) {
+						((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_VALIDATION_DATE, attributeValue);
+					}
 				case "turnover":
 					((ObjectNode) currentCustomer.getData().get(XRoadsJsonKeys.CUSTOMER_TURNOVER_KEY)).put(attributeName, attributeValue);
 					break;
