@@ -1,6 +1,7 @@
 package it.zero11.xroads.modules.rewix.utils;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
@@ -58,15 +59,18 @@ public class RewixConversionUtils {
 		order.setPaymentGateway(orderBean.getPaymentGateway());
 		
 		ArrayNode paymentsArray = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
-		for(OrderPaymentBean paymentBean : orderBean.getPayments()) {
-			ObjectNode xroadsPayment = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_GW_ID, paymentBean.getPaymentGwId());
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_AMOUNT, paymentBean.getAmount());
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_DATE, paymentBean.getDate().toString());
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_ECREDIT_ID, paymentBean.getEcreditId());
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_ACCOUNT, paymentBean.getTransactionAccount());
-			xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_REFERENCE, paymentBean.getTransactionReference());
-			paymentsArray.add(xroadsPayment);
+		List<OrderPaymentBean> orderPayments = orderBean.getPayments();
+		if(orderPayments != null) {
+			for(OrderPaymentBean paymentBean : orderPayments) {
+				ObjectNode xroadsPayment = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_GW_ID, paymentBean.getPaymentGwId());
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_AMOUNT, paymentBean.getAmount());
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_DATE, paymentBean.getDate().toString());
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_ECREDIT_ID, paymentBean.getEcreditId());
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_ACCOUNT, paymentBean.getTransactionAccount());
+				xroadsPayment.put(XRoadsJsonKeys.ORDER_PAYMENT_TRANSACTION_REFERENCE, paymentBean.getTransactionReference());
+				paymentsArray.add(xroadsPayment);
+			}
 		}
 		order.setPayments(paymentsArray);
 		
