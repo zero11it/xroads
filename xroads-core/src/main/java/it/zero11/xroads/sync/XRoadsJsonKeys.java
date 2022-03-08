@@ -112,6 +112,8 @@ public class XRoadsJsonKeys {
 	
 	public final static String PAYMENT_GATEWAY = "paymentGateway";
 	
+	public final static String STOCK_VIRTUAL = "virtual";
+	
 	public final static String INVOICE_TOTAL = "total";
 	public final static String INVOICE_VAT_TOTAL = "vatTotal";
 	public final static String INVOICE_ITEM_DISCOUNT = "discount";

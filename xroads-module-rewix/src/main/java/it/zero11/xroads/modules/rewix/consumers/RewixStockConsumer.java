@@ -10,6 +10,7 @@ import it.zero11.xroads.modules.rewix.api.model.ProductModelLotsOperationType;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelLotsType;
 import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.SyncException;
+import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
 
 public class RewixStockConsumer extends AbstractRewixConsumer implements EntityConsumer<Stock> {
@@ -29,7 +30,7 @@ public class RewixStockConsumer extends AbstractRewixConsumer implements EntityC
 		
 		ProductModelLotBean productModelLotBean = new ProductModelLotBean();
 		productModelLotBean.setAmount(Math.max(0, stock.getAvailability()));
-		final boolean virtual = stock.getData().path("virtual").asBoolean(false);
+		final boolean virtual = stock.getData().path(XRoadsJsonKeys.STOCK_VIRTUAL).asBoolean(false);
 		if (virtual)
 			productModelLotBean.setType(ProductModelLotsType.VIRTUAL);
 		else
