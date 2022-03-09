@@ -73,6 +73,10 @@ public class Order extends AbstractCustomerGroupedEntity {
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="totals")
 	private JsonNode totals;
+	
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="properties")
+	private JsonNode properties;
 
 	public JsonNode getAnagrafica() {
 		return this.anagrafica;
@@ -217,4 +221,13 @@ public class Order extends AbstractCustomerGroupedEntity {
 	public void setPayments(JsonNode payments) {
 		this.payments = payments;
 	}
+
+	public JsonNode getProperties() {
+		return properties;
+	}
+
+	public void setProperties(JsonNode properties) {
+		this.properties = properties;
+	}
+	
 }

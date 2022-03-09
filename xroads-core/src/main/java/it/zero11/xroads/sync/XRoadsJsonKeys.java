@@ -105,6 +105,11 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_PAYMENT_AMOUNT = "amount";
 	public final static String ORDER_PAYMENT_DATE = "date";
 	
+	public final static String ORDER_PROPERTY_ID = "id";
+	public final static String ORDER_PROPERTY_CONTEXT = "context";
+	public final static String ORDER_PROPERTY_KEY = "key";
+	public final static String ORDER_PROPERTY_VALUE = "value";
+	
 	public final static String PAYMENT_GATEWAY = "paymentGateway";
 	
 	public final static String INVOICE_TOTAL = "total";

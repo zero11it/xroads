@@ -5,9 +5,6 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -159,6 +156,19 @@ public class RewixConversionUtils {
 		}
 		order.setLineItems(lineItems);
 
+		if(orderBean.getProperties() != null) {
+			ArrayNode properties = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
+			for(PropertyData propertyData : orderBean.getProperties()) {
+				 ObjectNode property = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
+				 property.put(XRoadsJsonKeys.ORDER_PROPERTY_ID, propertyData.getId());
+				 property.put(XRoadsJsonKeys.ORDER_PROPERTY_CONTEXT, propertyData.getContext());
+				 property.put(XRoadsJsonKeys.ORDER_PROPERTY_KEY, propertyData.getKey());
+				 property.put(XRoadsJsonKeys.ORDER_PROPERTY_VALUE, propertyData.getValue());
+				 properties.add(property);
+			}
+			order.setProperties(properties);
+		}
+		
 		return order;
 	}
 

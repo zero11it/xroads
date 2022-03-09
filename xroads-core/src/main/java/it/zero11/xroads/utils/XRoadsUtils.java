@@ -92,6 +92,7 @@ public class XRoadsUtils {
 		order.setData(OBJECT_MAPPER.createObjectNode());
 		order.setExternalReferences(OBJECT_MAPPER.createObjectNode());
 		order.setVersion(MODEL_VERSION);
+		order.setProperties(OBJECT_MAPPER.createArrayNode());
 		return order;
 	}
 	
