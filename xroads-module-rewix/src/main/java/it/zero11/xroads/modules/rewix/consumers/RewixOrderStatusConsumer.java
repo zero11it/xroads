@@ -52,7 +52,7 @@ public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements E
 //				statusChanged = true;
 				switch (order.getStatus()) {
 				case 2:
-					info.setSubstatus(Constants.ORDER_READY);
+					info.setSubstatus(Constants.ORDER_TODISPATCH);
 					break;
 				case 3:
 				case 4:
