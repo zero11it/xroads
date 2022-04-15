@@ -37,10 +37,14 @@ public class RewixInvoiceCron extends AbstractXRoadsCronRunnable<XRoadsRewixModu
 		if(xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.ENABLE_EXPORT_INVOICES)) {
 			api = new RewixAPI(xRoadsModule.getConfiguration().getUsername(), xRoadsModule.getConfiguration().getPassword(), xRoadsModule.getConfiguration().getEndpoint());
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			String lastFatturaId = xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixParamType.LAST_INVOICE_ID);
+			InvoiceFilterBean invoiceFilterBean = new InvoiceFilterBean();			
+			invoiceFilterBean.setLastFatturaId(lastFatturaId != null ? Integer.valueOf(lastFatturaId) : null);
 			try {
-				InvoiceListBean invoiceList = api.getInvoiceList(new InvoiceFilterBean());
+				InvoiceListBean invoiceList = api.getInvoiceList(invoiceFilterBean);
 				for(Integer invoiceId : invoiceList.getInvoices()) {
 					importRewixInvoice(api.getInvoice(invoiceId), df);
+					xRoadsModule.getXRoadsCoreService().updateParam(xRoadsModule, RewixParamType.LAST_INVOICE_ID, invoiceId.toString());
 				}
 			} catch (SyncException e1) {
 				log.error("An error ocuring during invoice sync cron : " + e1.getMessage());
