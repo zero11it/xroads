@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.Product;
 import it.zero11.xroads.model.ProductRevision;
 import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
@@ -138,33 +139,73 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 	protected void updateProductImages(Integer rewixId, Product product) throws SyncException {
 		log.debug("updateProductImages for product " + product.getSku());
 
-		List<String> imagesList = new ArrayList<>();
-		for (int i = 0; i < product.getImages().path("urls").size(); i++) {
-			imagesList.add(product.getImages().path("urls").path(i).asText());
-		}			
-		if (imagesList.size() > 0) {
+		List<ProductImageBean> imageListBean = new ArrayList<ProductImageBean>();
+		ProductImagesBean images = new ProductImagesBean();
+		images.setStockProductId(rewixId);
+		images.setProductImages(new ArrayList<ProductImageBean>());
 
-			ProductImagesBean images = new ProductImagesBean();
-			images.setStockProductId(rewixId);
-			images.setProductImages(new ArrayList<>());
-			images.setDeleteExisting(true);
-
-			for (String imagePath : imagesList) {
-				try(InputStream stream = xRoadsModule.getXRoadsCoreService().getResource(new URI(imagePath))){
-					ProductImageBean bean = new ProductImageBean();
-					bean.setData(IOUtils.toByteArray(stream));
-					images.getProductImages().add(bean);	
-				} catch (Exception e) {
-					if (!xRoadsModule.getConfiguration().isIgnoreMissingImages()) {
-						throw new SyncException("Failed to open/download image " + imagePath + " " + e.getMessage());
+		if(product.getImages().isArray()) { // new format
+			for(JsonNode image : product.getImages()) {
+				String uri = image.path("uri").asText(null);
+				String name = image.path("name").asText(null);
+				JsonNode models = image.path("models");
+				
+				Integer[] modelIds = null;
+				if(!models.isMissingNode() && models.isArray()) {
+					modelIds = new Integer[models.size()];
+					for(int i = 0; i < models.size(); i++) {
+						Model m = xRoadsModule.getXRoadsCoreService().getEntity(Model.class, models.get(i).asText());
+						if(m == null || Integer.valueOf(XRoadsUtils.getExternalReferenceId(m, xRoadsModule)) == null) {
+							throw new SyncException("Failed to import images, model : " +  models.get(i).asText() + "not imported !");
+						}
+						modelIds[i] = Integer.valueOf(XRoadsUtils.getExternalReferenceId(m, xRoadsModule));
 					}
 				}
-			}							
+				try(InputStream stream = xRoadsModule.getXRoadsCoreService().getResource(new URI(uri))){
+					ProductImageBean bean = new ProductImageBean();
+					bean.setData(IOUtils.toByteArray(stream));
+					bean.setModelIds(modelIds);
+					bean.setName(name);
+					imageListBean.add(bean);	
+				} catch (Exception e) {
+					if (!xRoadsModule.getConfiguration().isIgnoreMissingImages()) {
+						throw new SyncException("Failed to open/download image " + uri + " " + e.getMessage());
+					}
+				}
+			}
+		} else {
+			// old deprecated format
+			List<String> imagesList = new ArrayList<>();
+			for (int j = 0; j < product.getImages().path("urls").size(); j++) {
+				imagesList.add(product.getImages().path("urls").path(j).asText());
+			}
 
-			if (images.getProductImages().size() > 0) {				
-				api.updateImages(images);				
+			if (imagesList.size() > 0) {
+				for (String imagePath : imagesList) {
+					try(InputStream stream = xRoadsModule.getXRoadsCoreService().getResource(new URI(imagePath))){
+						ProductImageBean bean = new ProductImageBean();
+						bean.setData(IOUtils.toByteArray(stream));
+						imageListBean.add(bean);	
+					} catch (Exception e) {
+						if (!xRoadsModule.getConfiguration().isIgnoreMissingImages()) {
+							throw new SyncException("Failed to open/download image " + imagePath + " " + e.getMessage());
+						}
+					}
+				}
+			}	
+		}
+
+		
+		if (imageListBean.size() > 0) {
+			images.setDeleteExisting(true);
+			for(ProductImageBean image : imageListBean) {
+				images.getProductImages().clear();
+				images.getProductImages().add(image);
+				api.updateImages(images);
+				images.setDeleteExisting(false);
 			}
 		}
+
 	}
 
 	public void updateProductTags(Integer rewixId, Product product, ProductRevision revision) throws RewixAPIException, ProductNotFoundException {

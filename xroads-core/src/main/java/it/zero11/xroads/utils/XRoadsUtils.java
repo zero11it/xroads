@@ -31,6 +31,7 @@ public class XRoadsUtils {
 	public static final List<Class<? extends AbstractEntity>> ENTITIES_CLASSES = Collections.unmodifiableList(
 			Arrays.asList(Product.class, Model.class, Price.class, Stock.class, Customer.class, Order.class));
 	
+	@Deprecated
 	public static Product getProductInstance() {
 		final Product product = new Product();
 		product.setVersion(MODEL_VERSION);
@@ -45,6 +46,25 @@ public class XRoadsUtils {
 		blob.set("urls", OBJECT_MAPPER.createArrayNode());
 		blob.set("binaries", OBJECT_MAPPER.createArrayNode());
 		product.setImages(blob);
+		
+		product.setData(OBJECT_MAPPER.createObjectNode());
+		product.setNames(OBJECT_MAPPER.createObjectNode());
+		product.setRestrictions(OBJECT_MAPPER.createObjectNode());
+		product.setUrlkeys(OBJECT_MAPPER.createObjectNode());
+		return product;
+	}
+	
+	public static Product getV2ProductInstance() {
+		final Product product = new Product();
+		product.setVersion(MODEL_VERSION);
+		product.setDescriptions(OBJECT_MAPPER.createObjectNode());
+		product.setExternalReferences(OBJECT_MAPPER.createObjectNode());
+		ObjectNode tags = OBJECT_MAPPER.createObjectNode();
+		tags.set("translations", OBJECT_MAPPER.createObjectNode());
+		tags.set("urlkeys", OBJECT_MAPPER.createObjectNode());
+		product.setTags(tags);
+
+		product.setImages(OBJECT_MAPPER.createArrayNode());
 		
 		product.setData(OBJECT_MAPPER.createObjectNode());
 		product.setNames(OBJECT_MAPPER.createObjectNode());

@@ -18,6 +18,13 @@ public class ProductImageBean {
 	@XmlSchemaType(name = "base64Binary")
 	@XmlJavaTypeAdapter(JAXBStringBase64ToByteArray.class)
 	private byte[] data;
+	
+	@XmlAttribute
+	private String name;
+	
+	@XmlAttribute
+	@XmlJavaTypeAdapter(value=JAXBStringURLEncodedToIntegerArray.class)
+	private Integer[] modelIds;
 
 	public String getUrl() {
 		return url;
@@ -33,5 +40,21 @@ public class ProductImageBean {
 
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer[] getModelIds() {
+		return modelIds;
+	}
+
+	public void setModelIds(Integer[] modelIds) {
+		this.modelIds = modelIds;
 	}
 }
