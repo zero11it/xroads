@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import it.zero11.xroads.cron.AbstractXRoadsCronRunnable;
@@ -206,16 +212,25 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 
 	@Override
 	public InputStream getResource(URI url) throws SyncException, IOException {
-		if (url.getScheme().equals("xroads")){
-			for(XRoadsModule module : getEnabledModules(false).values()) {
+		if (url.getScheme().equals("xroads")) {
+			for (XRoadsModule module : getEnabledModules(false).values()) {
 				if (module.getName().equals(url.getHost())) {
 					return module.getResource(url);
 				}
 			}
-			
+
 			throw new SyncException("Unknown module " + url.getHost());
-		}else {
-			return url.toURL().openStream();
+		} else {
+			if (url.getScheme().contains("http")) {
+				HttpGet httpget = new HttpGet(url);
+				try (CloseableHttpClient httpClient = HttpClients.createDefault();
+						CloseableHttpResponse response = httpClient.execute(httpget);) {
+					final HttpEntity entity = response.getEntity();
+					return entity.getContent();
+				}
+			} else {
+				return url.toURL().openStream();
+			}
 		}
 	}
 
