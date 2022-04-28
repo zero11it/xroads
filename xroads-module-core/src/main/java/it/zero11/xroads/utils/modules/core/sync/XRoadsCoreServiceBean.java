@@ -1,5 +1,6 @@
 package it.zero11.xroads.utils.modules.core.sync;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -223,11 +225,21 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 		} else {
 			if (url.getScheme().contains("http")) {
 				HttpGet httpget = new HttpGet(url);
-				try (CloseableHttpClient httpClient = HttpClients.createDefault();
-						CloseableHttpResponse response = httpClient.execute(httpget);) {
-					final HttpEntity entity = response.getEntity();
-					return entity.getContent();
-				}
+				CloseableHttpClient httpClient = HttpClients.createDefault();
+				CloseableHttpResponse response = httpClient.execute(httpget);
+
+				return new FilterInputStream(response.getEntity().getContent()) {
+					@Override
+					public void close() throws IOException {
+						try {
+							super.close();
+						} finally {
+							response.close();
+							httpClient.close();
+						}
+					}
+				};
+
 			} else {
 				return url.toURL().openStream();
 			}
