@@ -74,6 +74,7 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_WEBSITE_KEY = "website";
 	public final static String CUSTOMER_SKYPE_KEY = "skype";
 	public final static String CUSTOMER_LOYALITY_CARD = "loyalityCard";
+	public final static String CUSTOMER_ANAGRAFICA_REFERENCE = "anagraficaReference";
 	public final static String CUSTOMER_FISCAL_CODE = "fiscalCode";
 	public final static String CUSTOMER_ROLES = "roles";
 	public final static String CUSTOMER_CONSENTS = "consents";

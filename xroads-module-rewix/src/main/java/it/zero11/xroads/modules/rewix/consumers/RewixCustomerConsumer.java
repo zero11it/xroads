@@ -323,6 +323,10 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD).asText().isEmpty()) {
 			registry.setLoyalityCard(customer.getData().path(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD).asText());
 		}
+		
+		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_ANAGRAFICA_REFERENCE).asText().isEmpty()) {
+			registry.setAnagraficaReference(customer.getData().path(XRoadsJsonKeys.CUSTOMER_ANAGRAFICA_REFERENCE).asText());
+		}
 
 		registry.setVatNumber(customer.getVatNumber());
 

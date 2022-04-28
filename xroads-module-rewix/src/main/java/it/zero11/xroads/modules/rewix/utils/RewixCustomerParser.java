@@ -111,6 +111,10 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "loyality_card":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD, attributeValue);
 					break;
+				case "anagrafica_reference":
+					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_ANAGRAFICA_REFERENCE, attributeValue);
+					break;
+
 				case "eori_code":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_EORI_CODE, attributeValue);
 					break;

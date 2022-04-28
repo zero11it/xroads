@@ -1,17 +1,21 @@
 package it.zero11.xroads.modules.rewix.api.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import it.zero11.xroads.modules.rewix.utils.JAXBStringToLocalDate;
 
 @XmlRootElement(name="anagrafica")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AnagraficaBean {
 	@XmlAttribute
-	private Date birth;
+	@XmlJavaTypeAdapter(value=JAXBStringToLocalDate.class)
+	private LocalDate birth;
 	
 	@XmlAttribute
 	private String businessName;
@@ -51,9 +55,15 @@ public class AnagraficaBean {
 	
 	@XmlAttribute
 	private String validatedVatNumber;
-	
+
 	@XmlAttribute
 	private String vatNumber;
+	
+	@XmlAttribute
+	private String fiscalCode;
+	
+	@XmlAttribute
+	private String eoriCode;
 
 	@XmlAttribute
 	private String website;
@@ -67,11 +77,14 @@ public class AnagraficaBean {
 	@XmlAttribute
 	private String loyalityCard;
 
-	public Date getBirth() {
+	@XmlAttribute
+	private String anagraficaReference;
+
+	public LocalDate getBirth() {
 		return birth;
 	}
 
-	public void setBirth(Date birth) {
+	public void setBirth(LocalDate birth) {
 		this.birth = birth;
 	}
 
@@ -187,6 +200,22 @@ public class AnagraficaBean {
 		this.vatNumber = vatNumber;
 	}
 
+	public String getFiscalCode() {
+		return fiscalCode;
+	}
+
+	public void setFiscalCode(String fiscalCode) {
+		this.fiscalCode = fiscalCode;
+	}
+
+	public String getEoriCode() {
+		return eoriCode;
+	}
+
+	public void setEoriCode(String eoriCode) {
+		this.eoriCode = eoriCode;
+	}
+
 	public String getWebsite() {
 		return website;
 	}
@@ -217,5 +246,13 @@ public class AnagraficaBean {
 
 	public void setLoyalityCard(String loyalityCard) {
 		this.loyalityCard = loyalityCard;
+	}
+
+	public String getAnagraficaReference() {
+		return anagraficaReference;
+	}
+
+	public void setAnagraficaReference(String anagraficaReference) {
+		this.anagraficaReference = anagraficaReference;
 	}
 }
