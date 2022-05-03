@@ -132,13 +132,10 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setAutoConfirmPaymentTermId(null);
 		user.setIgnoreCartRules(false);
 		user.setIgnoreRestrinctions(false);
-		user.setLocaleCode(customer.getLanguageCode());			
+		user.setLocaleCode(customer.getLanguageCode());
 		user.setPermanentDiscount(new BigDecimal(0));
-
-		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).isMissingNode()) {
-			user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_ENABLED_KEY).asBoolean() ? 2 : 3);
-		}
-
+		user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_STATUS_KEY).asInt());
+		
 		List<String> tags = new ArrayList<>();
 		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TAGS_KEY)) {
 			JsonNode tagsArray = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TAGS_KEY);
