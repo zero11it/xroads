@@ -114,7 +114,7 @@ public class RewixConversionUtils {
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY, orderBean.getAnagrafica().getCel_prefix());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_CELL_KEY, orderBean.getAnagrafica().getCel());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_PEC_KEY, orderBean.getAnagrafica().getPec());
-			anagrafica.put(XRoadsJsonKeys.COSTOMER_SDI_KEY, orderBean.getAnagrafica().getSdi());
+			anagrafica.put(XRoadsJsonKeys.CUSTOMER_SDI_KEY, orderBean.getAnagrafica().getSdi());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_NAME_KEY, orderBean.getAnagrafica().getAddress());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY, orderBean.getAnagrafica().getZip());
 			anagrafica.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY, orderBean.getAnagrafica().getCity());

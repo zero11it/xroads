@@ -50,4 +50,14 @@ public class Constants {
 	public static final int ORIGIN_ADMIN = 2;
 	public static final int ORIGIN_SUBSCRIPTION = 3;
 	
+	//User
+	public static final int USER_STATUS_PENDING=1;
+	public static final int USER_STATUS_ENABLED=2;
+	public static final int USER_STATUS_DISABLED=3;
+	public static final int USER_STATUS_WAITING_LIST=4;
+	public static final int USER_STATUS_MISSINGPROFILE=5;
+	public static final int USER_STATUS_MISSINGPROFILE_NOT_VALIDATED=6;
+	public static final int USER_STATUS_MISSINGPROFILE_CAPTCHA_ONLY=7;
+	public static final int USER_STATUS_MISSINGPROFILE_WAITING_EMAIL_CONFIRM=8;
+	
 }

@@ -318,6 +318,14 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		}
 		if (!customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).isMissingNode()) {
 			registry.setPhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_TELL_PREFIX_KEY).asText());
+		}		
+
+		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_PEC_KEY).asText().isEmpty()) {
+			registry.setPec(customer.getData().path(XRoadsJsonKeys.CUSTOMER_PEC_KEY).asText());
+		}
+		
+		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_SDI_KEY).asText().isEmpty()) {
+			registry.setSdi(customer.getData().path(XRoadsJsonKeys.CUSTOMER_SDI_KEY).asText());
 		}
 		
 		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_LOYALITY_CARD).asText().isEmpty()) {
@@ -327,6 +335,9 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		if(!customer.getData().path(XRoadsJsonKeys.CUSTOMER_ANAGRAFICA_REFERENCE).asText().isEmpty()) {
 			registry.setAnagraficaReference(customer.getData().path(XRoadsJsonKeys.CUSTOMER_ANAGRAFICA_REFERENCE).asText());
 		}
+		
+		registry.setFirstName(customer.getFirstname());
+		registry.setLastName(customer.getLastname());
 
 		registry.setVatNumber(customer.getVatNumber());
 

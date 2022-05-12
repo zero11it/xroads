@@ -97,7 +97,7 @@ public class RewixCustomerParser extends DefaultHandler{
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_PEC_KEY, attributeValue);
 					break;
 				case "sdi":
-					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.COSTOMER_SDI_KEY, attributeValue);
+					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_SDI_KEY, attributeValue);
 					break;
 				case "website":
 					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_WEBSITE_KEY, attributeValue);

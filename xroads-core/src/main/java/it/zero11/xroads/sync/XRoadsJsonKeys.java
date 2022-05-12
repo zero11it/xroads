@@ -63,7 +63,7 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_COMPANY_KEY = "company";
 	public final static String CUSTOMER_PEC_KEY = "pec";
 	public final static String CUSTOMER_TITLE_KEY = "title";
-	public final static String COSTOMER_SDI_KEY = "sdi";
+	public final static String CUSTOMER_SDI_KEY = "sdi";
 	public final static String CUSTOMER_CARE_OF_KEY = "careOf";
 	public final static String CUSTOMER_ADDRESSEE_KEY = "addressee";
 	public final static String CUSTOMER_GROUPS_KEY = "groups";
