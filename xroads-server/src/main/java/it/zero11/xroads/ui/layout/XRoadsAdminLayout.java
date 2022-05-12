@@ -26,6 +26,7 @@ import it.zero11.xroads.ui.utils.SessionUtils;
 import it.zero11.xroads.ui.view.CronErrorsView;
 import it.zero11.xroads.ui.view.CustomerView;
 import it.zero11.xroads.ui.view.DashboardView;
+import it.zero11.xroads.ui.view.InvoiceView;
 import it.zero11.xroads.ui.view.LoginView;
 import it.zero11.xroads.ui.view.ModelView;
 import it.zero11.xroads.ui.view.OrderView;
@@ -59,6 +60,7 @@ public class XRoadsAdminLayout extends AppLayoutRouterLayout<AppLayout> implemen
 					.add(new LeftNavigationItem("Stocks", VaadinIcon.STOCK.create(), StockView.class))
 					.add(new LeftNavigationItem("Orders", VaadinIcon.CART_O.create(), OrderView.class))
 					.add(new LeftNavigationItem("Prices", VaadinIcon.EURO.create(), PriceView.class))
+					.add(new LeftNavigationItem("Invoices", VaadinIcon.INVOICE.create(), InvoiceView.class))
 					.add(new LeftNavigationItem("Cron Errors", VaadinIcon.CLOSE.create(), CronErrorsView.class))
 					.add(new LeftNavigationItem("Settings", VaadinIcon.COG.create(), SettingsView.class));
 			
