@@ -79,8 +79,10 @@ public class RewixConversionUtils {
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.REWIX_ORDER_ORIGIN_KEY, orderBean.getOrigin());
 		((ObjectNode)order.getData()).put("source",xRoadsModule.getName());
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ECREDIT,orderBean.getEcredit());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ORDER_VAT,orderBean.getVat());
 		
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_TAXABLE, orderBean.getPaymentFeeTaxable().toPlainString());
+		((ObjectNode)order.getData()).put(XRoadsJsonKeys.ORDER_PAYMENT_TERM_ID, orderBean.getPaymentTermsId());
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.PAYMENT_FEE_VAT_AMOUNT,orderBean.getPaymentFeeVatAmount().toPlainString());
 		
 		((ObjectNode)order.getData()).put(XRoadsJsonKeys.DISPATCH_FIXED_TAXABLE, orderBean.getDispatchFixedTaxable().toPlainString());

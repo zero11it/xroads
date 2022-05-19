@@ -23,6 +23,7 @@ public class OrderBean implements Serializable {
 	
 	private Integer id;
 	private Integer origin;
+	private Integer paymentTermIds;
 	private String externalRef;
 	private String username;
 	private String email;
@@ -1246,6 +1247,14 @@ public class OrderBean implements Serializable {
 
 	public void setOrigin(Integer origin) {
 		this.origin = origin;
+	}
+
+	public Integer getPaymentTermsId() {
+		return paymentTermIds;
+	}
+
+	public void setPaymentTermsId(Integer paymentTermsId) {
+		this.paymentTermIds = paymentTermsId;
 	}
 
 	public String getExternalRef() {

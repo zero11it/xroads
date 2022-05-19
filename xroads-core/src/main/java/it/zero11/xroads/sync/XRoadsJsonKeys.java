@@ -98,6 +98,7 @@ public class XRoadsJsonKeys {
 	public final static String ORDER_ITEM_MODEL_ID_KEY = "model_id";
 	public final static String ORDER_TRACKING_URL = "tracking_url";
 	public final static String ORDER_CARRIER_NAME = "carrier_name";
+	public final static String ORDER_VAT = "vat";
 	
 	public final static String ORDER_PAYMENT_GW_ID = "payment_gw_id";
 	public final static String ORDER_PAYMENT_ECREDIT_ID = "ecreditId";
@@ -115,6 +116,8 @@ public class XRoadsJsonKeys {
 	
 	public final static String STOCK_VIRTUAL = "virtual";
 	
+	public final static String ORDER_PAYMENT_TERM_ID = "payment_term_id";
+	
 	public final static String INVOICE_TOTAL = "total";
 	public final static String INVOICE_VAT_TOTAL = "vatTotal";
 	public final static String INVOICE_ITEM_DISCOUNT = "discount";
@@ -130,6 +133,9 @@ public class XRoadsJsonKeys {
 	
 	public final static String PAYMENT_FEE_VAT_AMOUNT = "payment_fee_vat_amount";
 	public final static String PAYMENT_FEE_TAXABLE = "payment_fee_taxable";
+	public final static String PAYMENT_FEE = "payment_fee";
+	
+	public static final String ITEM_TYPE_DISPATCH = "dispatch_variable";
 	
 	public final static String ECREDIT = "ecredit";
 	public static final String CUSTOMER_EORI_CODE = "eori_code";
