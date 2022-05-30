@@ -3,6 +3,7 @@ package it.zero11.xroads.modules.rewix.consumers;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -153,16 +154,9 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setLocaleCode(customer.getLanguageCode());
 		user.setPermanentDiscount(new BigDecimal(0));
 		user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_STATUS_KEY).asInt());
-		
-		List<String> tags = new ArrayList<>();
-		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TAGS_KEY)) {
-			JsonNode tagsArray = customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TAGS_KEY);
-			tagsArray.fields().forEachRemaining(tag -> {
-				tags.add(tag.getValue().asText());		
-			});		
-		}
 
-		user.setTags(tags);
+		user.setTags(null);
+
 		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY))
 			user.setTradeAgentUsername(customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY).asText());
 
