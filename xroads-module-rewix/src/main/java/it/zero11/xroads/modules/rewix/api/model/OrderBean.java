@@ -707,6 +707,8 @@ public class OrderBean implements Serializable {
 		private String imageURL;
 		
 		private List<ProductTag> tags;
+		
+		private List<ProductTag> modelTags;
 
 		private ProductLocalizations productLocalizations;
 		
@@ -981,6 +983,16 @@ public class OrderBean implements Serializable {
 
 		public void setTags(List<ProductTag> tags) {
 			this.tags = tags;
+		}
+		
+		@XmlElementWrapper(name="modeltags")
+		@XmlElement(name="modeltag")
+		public List<ProductTag> getModelTags() {
+			return modelTags;
+		}
+
+		public void setModelTags(List<ProductTag> modelTags) {
+			this.modelTags = modelTags;
 		}
 
 		public ProductLocalizations getProductLocalizations() {

@@ -1,10 +1,12 @@
 package it.zero11.xroads.modules.rewix.api.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -68,6 +70,17 @@ public class ProductModelBean {
 
 	@XmlAttribute
 	private Integer lockedAmount;
+	
+    @XmlElement(name = "modelTag")
+	private List<ProductTagBean> modelTags;
+
+	public List<ProductTagBean> getModelTags() {
+		return modelTags;
+	}
+
+	public void setModelTags(List<ProductTagBean> modelTags) {
+		this.modelTags = modelTags;
+	}
 
 	public Integer getStockProductId() {
 		return stockProductId;

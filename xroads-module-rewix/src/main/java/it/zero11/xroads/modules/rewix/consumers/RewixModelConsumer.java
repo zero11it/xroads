@@ -2,8 +2,10 @@ package it.zero11.xroads.modules.rewix.consumers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -15,6 +17,9 @@ import it.zero11.xroads.modules.rewix.api.ProductNotFoundException;
 import it.zero11.xroads.modules.rewix.api.RewixAPIException;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductModelUpdateProductBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductTagBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductTagMetaBean;
+import it.zero11.xroads.modules.rewix.api.model.ProductTagMetasBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTranslationBean;
 import it.zero11.xroads.modules.rewix.api.model.ProductTranslationsBean;
 import it.zero11.xroads.sync.EntityConsumer;
@@ -128,8 +133,38 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		rewixModel.setBackorder(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_UNLIMITED_KEY).asBoolean());
 		rewixModel.setPriority(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_INDEX_KEY).asInt());
 		rewixModel.setModelWeight(model.getWeight() != null ? model.getWeight().floatValue() : null);
-		return api.updateProductVariant(rewixModel);
+		
+		List<ProductTagBean> modelTags = new ArrayList<ProductTagBean>();
 
+		{ // process model tags
+			Map<String, Integer> configurationTagMap = getXRoadsModule().getConfiguration().getTagMap();
+			Map<String, List<String>> tagMap = new HashMap<>();
+			model.getTags().fields().forEachRemaining(tag -> {
+				if (!tag.getKey().equals("translations") && !tag.getKey().equals("urlkeys")) {
+					List<String> values = new ArrayList<>();
+					JsonNode content = tag.getValue();
+					if (content.isArray()) {
+						content.elements().forEachRemaining(element -> values.add(element.asText()));
+					} else  if(!content.isNull())
+						values.add(content.asText());
+					tagMap.put(tag.getKey(), values);
+				}
+			});
+			if(configurationTagMap != null && configurationTagMap.size() > 0) {
+				for(Map.Entry<String, Integer> configuratedTag : configurationTagMap.entrySet()) {
+					ProductTagBean tag = new ProductTagBean();
+					tag.setTagId(configuratedTag.getValue());
+					List<String> tagValues = tagMap.get(configuratedTag.getKey());
+					tag.setTagValues(tagValues);			
+					modelTags.add(tag);
+				}
+				if(modelTags.size() > 0) {
+					rewixModel.setModelTags(modelTags);
+				}
+			}
+		}
+
+		return api.updateProductVariant(rewixModel);
 	}
 
 	protected void updateModelTranslations(Integer rewixId, String type, Model model) throws RewixAPIException, ProductNotFoundException {
@@ -178,5 +213,98 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 			translations.setProductTranslations(productTranslations);
 			api.updateProductTranslations(translations);
 		}
+	}
+	
+	protected void updateModelTagTranslations(Integer rewixId, Model model) throws RewixAPIException {
+		if (! model.getTags().has("translations")) {
+			return;
+		}
+
+		//String[] platforms = product.getData().getString("platforms").split(",");		
+		JsonNode urlkeys = model.getTags().path("urlkeys");
+		JsonNode translations = model.getTags().path("translations");
+		if (translations.fields().hasNext() == false) {
+			return;
+		}
+
+		Set<String> tagNames =  new HashSet<>();
+		model.getTags().fields().forEachRemaining(tag -> {
+			tagNames.add(tag.getKey());
+		});
+		//Set<String> langs = translations.fieldNames();
+		tagNames.remove("translations");
+		List<ProductTagMetasBean> beans = new ArrayList<>();
+		for (String tagName : tagNames) {
+			Integer tagId = getXRoadsModule().getConfiguration().getTagMap().get(tagName);
+			if (tagId != null) {
+				JsonNode tagValueNode = model.getTags().path(tagName);
+				String[] values;
+				if(tagValueNode.isArray()) {
+					values = new String[tagValueNode.size()];
+					for(int i = 0; i < tagValueNode.size(); i++) {
+						values[i] = tagValueNode.get(i).asText(null);
+					}
+				} else {
+					values = new String[] {tagValueNode.asText(null)};
+				}
+				
+				for(String tagValue : values) {	
+					if (tagValue != null) {
+						List<ProductTagMetaBean> productTagMetasList = new ArrayList<>();
+						ProductTagMetasBean bean = new ProductTagMetasBean();
+						bean.setTagId(tagId);
+						bean.setTagValue(tagValue);
+						JsonNode langs = translations.path(tagName + "-" + tagValue);
+						if(langs.isMissingNode()) {
+							langs = translations.path(tagName);
+						}
+						
+						if (langs != null && !langs.isMissingNode())
+							langs.fields().forEachRemaining(lang -> {
+								JsonNode platforms = lang.getValue();	
+								if (platforms != null)
+									platforms.fields().forEachRemaining(platform -> {
+										String translation = platform.getValue().asText();
+										ProductTagMetaBean item = new ProductTagMetaBean();
+										item.setLocaleCode(lang.getKey());
+										item.setPlatformUid(platform.getKey());
+										item.setTagTranslation(translation);							
+										if (translation.length() > 1)
+											item.setTagTranslation(translation.substring(0, 1).toUpperCase() + translation.substring(1));
+										else
+											item.setTagTranslation(translation);
+										
+										String urlKey = null;
+										if(!urlkeys.path(tagName + "-" + tagValue).isMissingNode()) {
+											urlKey = urlkeys.path(tagName + "-" + tagValue).path(lang.getKey()).path(platform.getKey()).asText(null);
+										} else {
+											urlKey = urlkeys.path(tagName).path(lang.getKey()).path(platform.getKey()).asText(null);
+										}
+										
+										if (urlKey == null) {
+											urlKey = encodeUrlKey(translation);
+										}
+										item.setUrlKey(urlKey);
+										productTagMetasList.add(item);
+									});
+							});
+						bean.setProductTagMetas(productTagMetasList);	
+						beans.add(bean);
+					}
+				}
+			}								
+		}
+		if (beans.size() > 0) {		
+			for (ProductTagMetasBean bean : beans) {
+				api.updateProductTagMetaTranslations(bean);
+			}
+		}
+	}
+	
+	private static String encodeUrlKey(String translation) {
+        return translation
+                        .toLowerCase()
+                        .replaceAll("[^\\p{L}0-9]", " ")
+                        .replace(" ", "-");
 	}
 }

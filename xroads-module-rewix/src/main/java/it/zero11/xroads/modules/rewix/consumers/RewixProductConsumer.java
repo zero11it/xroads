@@ -265,37 +265,60 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		for (String tagName : tagNames) {
 			Integer tagId = getXRoadsModule().getConfiguration().getTagMap().get(tagName);
 			if (tagId != null) {
-				String tagValue = product.getTags().path(tagName).asText(null);
-				if (tagValue != null) {
-					List<ProductTagMetaBean> productTagMetasList = new ArrayList<>();
-					ProductTagMetasBean bean = new ProductTagMetasBean();
-					bean.setTagId(tagId);
-					bean.setTagValue(tagValue);
-					JsonNode langs = translations.path(tagName);
-					if (langs != null)
-						langs.fields().forEachRemaining(lang -> {
-							JsonNode platforms = lang.getValue();	
-							if (platforms != null)
-								platforms.fields().forEachRemaining(platform -> {
-									String translation = platform.getValue().asText();
-									ProductTagMetaBean item = new ProductTagMetaBean();
-									item.setLocaleCode(lang.getKey());
-									item.setPlatformUid(platform.getKey());
-									item.setTagTranslation(translation);							
-									if (translation.length() > 1)
-										item.setTagTranslation(translation.substring(0, 1).toUpperCase() + translation.substring(1));
-									else
-										item.setTagTranslation(translation);
-									String urlKey = urlkeys.path(tagName).path(lang.getKey()).path(platform.getKey()).asText(null);
-									if (urlKey == null) {
-										urlKey = encodeUrlKey(translation);
-									}
-									item.setUrlKey(urlKey);
-									productTagMetasList.add(item);
-								});
-						});
-					bean.setProductTagMetas(productTagMetasList);	
-					beans.add(bean);
+				JsonNode tagValueNode = product.getTags().path(tagName);
+				String[] values;
+				if(tagValueNode.isArray()) {
+					values = new String[tagValueNode.size()];
+					for(int i = 0; i < tagValueNode.size(); i++) {
+						values[i] = tagValueNode.get(i).asText(null);
+					}
+				} else {
+					values = new String[] {tagValueNode.asText(null)};
+				}
+				
+				for(String tagValue : values) {	
+					if (tagValue != null) {
+						List<ProductTagMetaBean> productTagMetasList = new ArrayList<>();
+						ProductTagMetasBean bean = new ProductTagMetasBean();
+						bean.setTagId(tagId);
+						bean.setTagValue(tagValue);
+						JsonNode langs = translations.path(tagName + "-" + tagValue);
+						if(langs.isMissingNode()) {
+							langs = translations.path(tagName);
+						}
+						
+						if (langs != null && !langs.isMissingNode())
+							langs.fields().forEachRemaining(lang -> {
+								JsonNode platforms = lang.getValue();	
+								if (platforms != null)
+									platforms.fields().forEachRemaining(platform -> {
+										String translation = platform.getValue().asText();
+										ProductTagMetaBean item = new ProductTagMetaBean();
+										item.setLocaleCode(lang.getKey());
+										item.setPlatformUid(platform.getKey());
+										item.setTagTranslation(translation);							
+										if (translation.length() > 1)
+											item.setTagTranslation(translation.substring(0, 1).toUpperCase() + translation.substring(1));
+										else
+											item.setTagTranslation(translation);
+										
+										String urlKey = null;
+										if(!urlkeys.path(tagName + "-" + tagValue).isMissingNode()) {
+											urlKey = urlkeys.path(tagName + "-" + tagValue).path(lang.getKey()).path(platform.getKey()).asText(null);
+										} else {
+											urlKey = urlkeys.path(tagName).path(lang.getKey()).path(platform.getKey()).asText(null);
+										}
+										
+										if (urlKey == null) {
+											urlKey = encodeUrlKey(translation);
+										}
+										item.setUrlKey(urlKey);
+										productTagMetasList.add(item);
+									});
+							});
+						bean.setProductTagMetas(productTagMetasList);	
+						beans.add(bean);
+					}
 				}
 			}								
 		}
