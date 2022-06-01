@@ -43,6 +43,9 @@ public class Model extends AbstractProductGroupedEntity {
 	@Column(name = "weight")
 	private BigDecimal weight;
 	
+	@Column(name = "merchant_code")
+	private String merchantCode;
+	
 	private String name;
 	
 	@Type( type = "jsonb-node" )
@@ -139,4 +142,12 @@ public class Model extends AbstractProductGroupedEntity {
 		this.weight = weight;
 	}
 
+	public String getMerchantCode() {
+		return merchantCode;
+	}
+
+	public void setMerchantCode(String merchantId) {
+		this.merchantCode = merchantId;
+	}
+	
 }

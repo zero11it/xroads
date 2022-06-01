@@ -118,7 +118,7 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		api.moveModelFromProduct(bean);
 	}
 
-	protected Integer updateModelHead(int rewixProductId, Integer rewixModelId, Product product, Model model) throws RewixAPIException {
+	protected Integer updateModelHead(int rewixProductId, Integer rewixModelId, Product product, Model model) throws SyncException {
 		log.debug("updateModelHead for model " + model.getSku());
 
 		ProductModelBean rewixModel = new ProductModelBean();
@@ -133,6 +133,19 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		rewixModel.setBackorder(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_UNLIMITED_KEY).asBoolean());
 		rewixModel.setPriority(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_INDEX_KEY).asInt());
 		rewixModel.setModelWeight(model.getWeight() != null ? model.getWeight().floatValue() : null);
+
+		
+		Integer merchantId;
+		String merchantCode = model.getMerchantCode();
+		if(merchantCode == null) {
+			merchantId = null;
+		} else {
+			merchantId = xRoadsModule.getConfiguration().getMerchantMap().get(merchantCode);
+			if(merchantId == null) {
+				throw new SyncException("Merchant code " + merchantCode + " not in merchant map !");
+			}
+		}
+		rewixModel.setMerchantId(merchantId);
 		
 		List<ProductTagBean> modelTags = new ArrayList<ProductTagBean>();
 

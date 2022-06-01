@@ -12,8 +12,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import it.zero11.xroads.modules.rewix.utils.JAXBStringURLEncodedToArray;
 
-
-
 @XmlRootElement(name = "productModel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductModelBean {
@@ -64,6 +62,9 @@ public class ProductModelBean {
 
 	@XmlAttribute
 	private Float modelWeight;
+
+	@XmlAttribute
+	private Integer merchantId;
 
 	@XmlAttribute
 	private Integer amount;
@@ -204,6 +205,14 @@ public class ProductModelBean {
 
 	public void setModelWeight(Float modelWeight) {
 		this.modelWeight = modelWeight;
+	}
+
+	public Integer getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
 	}
 
 	public Integer getAmount() {

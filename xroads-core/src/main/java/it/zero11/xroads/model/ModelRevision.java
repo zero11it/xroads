@@ -33,6 +33,9 @@ public class ModelRevision extends AbstractEntityRevision<Model> {
 
 	@Column(name="product_source_id")
 	private String productSourceId;
+	
+	@Column(name = "merchant_code")
+	private String merchantCode;
 
 	private String sku;
 	
@@ -111,4 +114,13 @@ public class ModelRevision extends AbstractEntityRevision<Model> {
 	public void setTags(JsonNode tags) {
 		this.tags = tags;
 	}
+	
+	public String getMerchantCode() {
+		return merchantCode;
+	}
+
+	public void setMerchantCode(String merchantId) {
+		this.merchantCode = merchantId;
+	}
+	
 }

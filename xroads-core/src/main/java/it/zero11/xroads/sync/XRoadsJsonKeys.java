@@ -7,6 +7,7 @@ public class XRoadsJsonKeys {
 	public static final String REWIX_ORDER_PLATFORM_KEY = "platform";
 	public static final String REWIX_ORDER_ORIGIN_KEY = "origin";
 	public static final String REWIX_CUSTOMER_TRADE_AGENT_KEY = "tradeAgent";
+	public static final String REWIX_CUSTOMER_MERCHANT_KEY = "merchant";
 	public static final String REWIX_CUSTOMER_TAGS_KEY = "tags";
 	public static final String REWIX_CUSTOMER_PLATFORMS_KEY = "platforms";
 	

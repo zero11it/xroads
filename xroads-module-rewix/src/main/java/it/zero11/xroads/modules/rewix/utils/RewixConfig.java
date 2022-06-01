@@ -29,6 +29,7 @@ public class RewixConfig {
 	private List<Integer> orderStatusToSync = new ArrayList<>();
 	private List<Integer> orderSubStatusToSync = new ArrayList<>();
 	private Map<String, Integer> tagMap;
+	private Map<String, Integer> merchantMap;
 	
 	public RewixConfig(XRoadsRewixModule module) {
 		endpoint = module.getXRoadsCoreService().getParameter(module, RewixParamType.ENDPOINT);
@@ -69,6 +70,9 @@ public class RewixConfig {
 
 		JsonNode tagMapJson = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.TAG_MAP);
 		tagMap = XRoadsUtils.OBJECT_MAPPER.convertValue(tagMapJson, new TypeReference<Map<String, Integer>>(){});
+		
+		JsonNode merchantMapJson = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.MERCHANT_MAP);
+		merchantMap = XRoadsUtils.OBJECT_MAPPER.convertValue(merchantMapJson, new TypeReference<Map<String, Integer>>(){});		
 	}
 	
 	public String getEndpoint() {
@@ -175,4 +179,9 @@ public class RewixConfig {
 	public boolean isIgnoreMissingImages() {
 		return ignoreMissingImages;
 	}
+
+	public Map<String, Integer> getMerchantMap() {
+		return merchantMap;
+	}
+	
 }
