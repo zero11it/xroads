@@ -12,6 +12,8 @@ import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.CustomerRevision;
@@ -64,7 +66,8 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 			}
 
 			if(revision == null || !revision.getAddresses().equals(customer.getAddresses())) {
-				updateCustomerAddresses(customer, rewixId);			
+				updateCustomerAddresses(customer, rewixId);		
+				deleteCustomerAddresses(rewixId, customer, revision);
 			}
 
 			if(revision == null || !revision.getPhone().equals(customer.getPhone()) || !revision.getVatNumber().equals(customer.getVatNumber()) 
@@ -104,6 +107,21 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 			updateCustomerAddress(customer, address.getValue(), address.getKey(), rewixId);
 		}
 	}
+	
+	protected void deleteCustomerAddresses(String rewixId, Customer customer, CustomerRevision revision) throws RewixAPIException {
+		if(revision != null && revision.getAddresses() != null) {
+			Iterator<Map.Entry<String, JsonNode>> addresses = revision.getAddresses().fields();
+			ObjectNode customerAddresses = ((ObjectNode) customer.getAddresses());
+			while(addresses.hasNext()) {
+				Map.Entry<String,JsonNode> address = addresses.next();
+				if(customerAddresses.path(address.getKey()).isMissingNode()) {
+					AddressBean addressBean = new AddressBean();
+					addressBean.setType(address.getKey());
+					api.updateAddress(rewixId, addressBean);
+				}
+			}
+		}
+	}
 
 	protected void updateCustomerAddress(Customer customer, JsonNode jsonAddress, String addressType, String rewixId) throws RewixAPIException {
 		log.debug("Updating address for rewix customer" + customer.getSourceId());
@@ -112,14 +130,14 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		address.setType(addressType);
 		address.setAddressee(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESSEE_KEY).asText());
 		address.setCareOf(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_CARE_OF_KEY).asText());
-		address.setStreet(jsonAddress.path("street").asText());
+		address.setStreet(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_NAME_KEY).asText());
 		address.setNumber(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_NUMBER_KEY).asText());
 		address.setZip(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY).asText());
 		address.setCity(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY).asText());
 		address.setProvince(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_PROVINCE_KEY).asText());
 		address.setCountryCode(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY).asText());		
-		address.setMobilePhonePrefix(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).asText());
-		address.setMobilePhone(customer.getPhone().path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).asText());
+		address.setMobilePhonePrefix(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_CELL_PREFIX_KEY).asText());
+		address.setMobilePhone(jsonAddress.path(XRoadsJsonKeys.CUSTOMER_CELL_KEY).asText());
 
 		api.updateAddress(rewixId, address);
 	}

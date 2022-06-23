@@ -141,7 +141,7 @@ public class RewixConversionUtils {
 			try {
 				lineItem.put(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, xRoadsModule.getXRoadsCoreService().getEntityIdByModuleAndSourceId(Model.class, xRoadsModule, item.getStockModelId().toString()));
 			} catch(NoResultException e) {
-				throw new SyncException("Order contains models not present in xroads ");			
+				throw new SyncException("Order contains models that not exists in xroads ");			
 			}
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_DESCRIPTION_KEY, item.getDescription());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_NAME_KEY, item.getName()); 

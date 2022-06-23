@@ -1,0 +1,2 @@
+update customer set addresses = addresses - 'billing' || jsonb_build_object('invoice', addresses->'billing') where addresses ? 'billing';
+update customer set addresses = addresses - 'shipping' || jsonb_build_object('dispatch', addresses->'shipping') where addresses ? 'shipping';

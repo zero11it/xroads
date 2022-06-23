@@ -164,10 +164,13 @@ public class RewixCustomerParser extends DefaultHandler{
 				if(attributeName.equals("type")) {
 					if(attributeValue.equals("invoice")) {
 						((ObjectNode) currentCustomer.getAddresses()).set(XRoadsJsonKeys.CUSTOMER_ADDRESS_BILLING_KEY, address);
-					}
-					if(attributeValue.equals("dispatch")) {
+					}else if(attributeValue.equals("dispatch")) {
 						((ObjectNode) currentCustomer.getAddresses()).set(XRoadsJsonKeys.CUSTOMER_ADDRESS_SHIPPING_KEY, address);
+					} else {
+						((ObjectNode) currentCustomer.getAddresses()).set(attributeValue, address);
 					}
+				} else if(attributeName.equals("address_type")) {
+					//IGNORE THIS FIELD
 				} else {
 					switch (attributeName) {
 					case "countrycode":
@@ -188,6 +191,17 @@ public class RewixCustomerParser extends DefaultHandler{
 					case "cap":
 						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY;
 						break;
+					case "addressee":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESSEE_KEY;
+						break;
+					case "number":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_NUMBER_KEY;
+						break;
+					case "cel":
+						attributeName = XRoadsJsonKeys.CUSTOMER_CELL_KEY;
+						break;
+					case "city":
+						attributeName = XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY;
 					default:
 						break;
 					}

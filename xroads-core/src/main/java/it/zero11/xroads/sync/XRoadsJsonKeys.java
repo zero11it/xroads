@@ -45,9 +45,8 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_TELL_KEY = "tel";
 
 	public static final String CUSTOMER_STATUS_KEY = "status";
-	public static final String CUSTOMER_ADDRESS_TYPE_KEY = "type";
-	public final static String CUSTOMER_ADDRESS_BILLING_KEY = "billing" ;
-	public final static String CUSTOMER_ADDRESS_SHIPPING_KEY = "shipping";
+	public final static String CUSTOMER_ADDRESS_BILLING_KEY = "invoice";
+	public final static String CUSTOMER_ADDRESS_SHIPPING_KEY = "dispatch";
 	public final static String CUSTOMER_ADDRESS_PERSONAL_KEY = "personal";	
 	public final static String CUSTOMER_ADDRESS_NAME_KEY = "address";
 	public final static String CUSTOMER_ADDRESS_ZIP_KEY = "zip";
