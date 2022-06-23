@@ -143,6 +143,7 @@ public class XRoadsUtils {
 		customer.setGroups(OBJECT_MAPPER.createObjectNode());
 		customer.setPaymentTerms(OBJECT_MAPPER.createObjectNode());
 		customer.setVersion(MODEL_VERSION);
+		customer.setTradeAgent(OBJECT_MAPPER.createArrayNode());
 		
 		return customer;
 	}

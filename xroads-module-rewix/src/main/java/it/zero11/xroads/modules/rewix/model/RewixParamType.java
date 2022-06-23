@@ -38,7 +38,8 @@ public enum RewixParamType implements IParamType{
 	ENABLE_EXPORT_INVOICES("false"),
 	LAST_CUSTOMERS_SWYNC(""),
 	LAST_INVOICE_ID(null),
-	MERCHANT_MAP("{}")
+	MERCHANT_MAP("{}"),
+	TRADE_AGENT_MAP("{}")
 	;
 	
 	public final String defaultValue;

@@ -28,6 +28,7 @@ import it.zero11.xroads.modules.rewix.api.model.UserConsentBean;
 import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
 import it.zero11.xroads.modules.rewix.api.model.UserListBean;
+import it.zero11.xroads.modules.rewix.api.model.UserTradeAgentBean;
 import it.zero11.xroads.modules.rewix.utils.GroupSearchBean;
 import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.SyncException;
@@ -92,7 +93,62 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 				updateCustomerConsents(customer, rewixId);
 			}
 
+			if(revision == null || !revision.getTradeAgent().equals(customer.getTradeAgent())) {
+				updateCustomerTradeAgent(customer, rewixId);
+				removeCustomerTradeAgent(customer, revision, rewixId);
+			}
+
 			getXRoadsModule().getXRoadsCoreService().updateExternalReferenceId(xRoadsModule, customer, rewixId);
+		}
+	}
+
+	protected void updateCustomerTradeAgent(Customer customer, String rewixId) throws RewixAPIException {
+		ArrayNode tradeAgents = ((ArrayNode) customer.getTradeAgent());
+		for(int i = 0; i < tradeAgents.size(); i++) {
+			JsonNode tradeAgent = tradeAgents.get(i);
+			String merchantId = tradeAgent.path(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY).asText(null);
+			String tradeAgentUsername = tradeAgent.path("email").asText(null);
+			if(tradeAgentUsername == null && merchantId == null) {
+				return;
+			}
+			if(tradeAgentUsername != null && merchantId == null) {
+				throw new RuntimeException("No merchant associeted for tradeagent " + tradeAgentUsername);
+			}
+			UserTradeAgentBean user = new UserTradeAgentBean();			
+			String tradeAgentRewix= xRoadsModule.getConfiguration().getRewixTradeAgentMap().get(tradeAgentUsername);
+			Integer merchantRewix =  xRoadsModule.getConfiguration().getMerchantMap().get(merchantId);
+			if(tradeAgentUsername != null && tradeAgentRewix == null) {
+				throw new RuntimeException("No mapping for tradeagent " + tradeAgentUsername);
+			}
+			if(merchantId != null && merchantRewix == null) {
+				throw new RuntimeException("No mapping for merchant " + merchantId);
+			}
+			user.setTradeAgentUsername(tradeAgentRewix);
+			api.updateUserMerchantTradeAgent(user, merchantRewix.toString(), rewixId);
+		}		
+	}
+
+	protected void removeCustomerTradeAgent(Customer customer, CustomerRevision revision, String rewixId) throws RewixAPIException {
+		ArrayNode customerTradeAgents = ((ArrayNode) customer.getTradeAgent());
+		ArrayNode revisionTradeAgents = null;
+		if(revision != null && revision.getTradeAgent() != null) {
+			revisionTradeAgents = ((ArrayNode) revision.getTradeAgent());
+			Set<String> merchantSet = new HashSet<String>();
+
+			for(int i = 0; i < customerTradeAgents.size(); i++) {
+				merchantSet.add(customerTradeAgents.get(i).get("email").asText());
+			}
+
+			for(int i = 0; i < revisionTradeAgents.size(); i++) {
+				JsonNode tradeAgent = revisionTradeAgents.get(i);
+				String merchantId = tradeAgent.path("email").asText();
+
+				if(!merchantSet.contains(merchantId)) {
+					UserTradeAgentBean user = new UserTradeAgentBean();
+					user.setTradeAgentUsername(null);
+					api.updateUserMerchantTradeAgent(user, xRoadsModule.getConfiguration().getMerchantMap().get(merchantId).toString(), rewixId);
+				}
+			}
 		}
 	}
 
@@ -156,9 +212,6 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_STATUS_KEY).asInt());
 
 		user.setTags(null);
-
-		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY))
-			user.setTradeAgentUsername(customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY).asText());
 
 		api.updateUserHead(rewixId, user);
 	}

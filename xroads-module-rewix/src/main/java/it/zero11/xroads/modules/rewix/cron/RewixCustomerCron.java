@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
@@ -39,7 +41,14 @@ public class RewixCustomerCron  extends AbstractXRoadsCronRunnable<XRoadsRewixMo
 
 			try(InputStream in = api.getCustomers(xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixParamType.LAST_CUSTOMERS_SWYNC))){
 				XMLReader xr = XMLReaderFactory.createXMLReader();
-				RewixCustomerParser rewixCustomerParser = new RewixCustomerParser(xRoadsModule);
+				
+				Map<String, Integer> merchantMap = xRoadsModule.getConfiguration().getMerchantMap();
+				Map<String, String> reverseMerchantMap = new HashMap<String, String>();
+				for(Map.Entry<String, Integer> entry : merchantMap.entrySet()){
+					reverseMerchantMap.put(entry.getValue().toString(), entry.getKey());
+				}
+				
+				RewixCustomerParser rewixCustomerParser = new RewixCustomerParser(xRoadsModule, reverseMerchantMap);
 				xr.setContentHandler(rewixCustomerParser);
 				xr.setErrorHandler(rewixCustomerParser);
 				xr.parse(new InputSource(new BufferedInputStream(in)));

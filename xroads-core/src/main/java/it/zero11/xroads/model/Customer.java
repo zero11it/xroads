@@ -58,6 +58,10 @@ public class Customer extends AbstractEntity implements Serializable {
 
 	@Column(name="vat_number")
 	private String vatNumber;
+	
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="trade_agent")
+	private JsonNode tradeAgent;
 
 	public Customer() {
 	}
@@ -172,6 +176,14 @@ public class Customer extends AbstractEntity implements Serializable {
 
 	public void setPaymentTerms(JsonNode paymentTerms) {
 		this.paymentTerms = paymentTerms;
+	}
+
+	public JsonNode getTradeAgent() {
+		return tradeAgent;
+	}
+
+	public void setTradeAgent(JsonNode tradeagent) {
+		this.tradeAgent = tradeagent;
 	}
 	
 }

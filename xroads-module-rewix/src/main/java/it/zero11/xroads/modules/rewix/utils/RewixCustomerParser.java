@@ -2,7 +2,10 @@ package it.zero11.xroads.modules.rewix.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -22,15 +25,19 @@ public class RewixCustomerParser extends DefaultHandler{
 	private Customer currentCustomer;
 	private XRoadsRewixModule xroadsModule;
 	private SimpleDateFormat dateFromatter = new SimpleDateFormat("yyyy-MM-dd");
+	private Map<String, String> reverseMerchantMap;
+	private Map<String, ObjectNode> tradeagentMap;
 	
-	public RewixCustomerParser(XRoadsRewixModule xroadsModule) {
+	public RewixCustomerParser(XRoadsRewixModule xroadsModule, Map<String, String> reverseMerchantMap) {
 		this.xroadsModule = xroadsModule;
+		this.reverseMerchantMap = reverseMerchantMap;
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if(localName.equals("user")) {
 			currentCustomer = XRoadsUtils.getCustomerInstance();
+			tradeagentMap = new TreeMap<String, ObjectNode>();
 			((ObjectNode) currentCustomer.getData()).set(XRoadsJsonKeys.CUSTOMER_TURNOVER_KEY, XRoadsUtils.OBJECT_MAPPER.createObjectNode());
 			for (int i = 0; i < attributes.getLength(); i++) {
 				String attributeName = attributes.getLocalName(i);
@@ -224,6 +231,24 @@ public class RewixCustomerParser extends DefaultHandler{
 
 				}
 			}
+		} else if(localName.equals("tradeAgent")) {
+			ObjectNode tradeAgent = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				String attributeName = attributes.getLocalName(i);
+				String attributeValue = attributes.getValue(i);
+				switch (attributeName) {
+				case "merchant":
+					tradeAgent.put(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY, reverseMerchantMap.get(attributeValue));
+					break;
+				case "email":
+					tradeAgent.put("email", attributeValue);
+					break;
+				}
+			}
+			if(!tradeAgent.has(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY)) {
+				throw new RuntimeException("No merchant for tradeagent " + tradeAgent.get("email").toString());
+			}
+			tradeagentMap.put(tradeAgent.get(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY).toString(), tradeAgent);
 		}
 	}
 
@@ -231,6 +256,9 @@ public class RewixCustomerParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if(localName.equals("user")) {
 			try {
+				for(ObjectNode tradeAgent : tradeagentMap.values()) {
+					((ArrayNode) currentCustomer.getTradeAgent()).add(tradeAgent);
+				}
 				xroadsModule.getXRoadsCoreService().consume(xroadsModule, currentCustomer);
 			} catch (SyncException e) {
 				throw new RuntimeException(e);

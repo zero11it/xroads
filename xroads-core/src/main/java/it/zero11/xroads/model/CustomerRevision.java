@@ -60,6 +60,10 @@ public class CustomerRevision extends AbstractEntityRevision<Customer> {
 	@Column(name="vat_number")
 	private String vatNumber;
 
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="trade_agent")
+	private JsonNode tradeAgent;
+	
 	public JsonNode getAddresses() {
 		return this.addresses;
 	}
@@ -170,6 +174,14 @@ public class CustomerRevision extends AbstractEntityRevision<Customer> {
 
 	public void setPaymentTerms(JsonNode paymentTerms) {
 		this.paymentTerms = paymentTerms;
+	}
+
+	public JsonNode getTradeAgent() {
+		return tradeAgent;
+	}
+
+	public void setTradeagent(JsonNode tradeAgent) {
+		this.tradeAgent = tradeAgent;
 	}
 
 }

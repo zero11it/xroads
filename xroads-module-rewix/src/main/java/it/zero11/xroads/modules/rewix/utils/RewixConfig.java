@@ -29,6 +29,7 @@ public class RewixConfig {
 	private List<Integer> orderStatusToSync = new ArrayList<>();
 	private List<Integer> orderSubStatusToSync = new ArrayList<>();
 	private Map<String, Integer> tagMap;
+	private Map<String, String> rewixTradeAgentMap;
 	private Map<String, Integer> merchantMap;
 	
 	public RewixConfig(XRoadsRewixModule module) {
@@ -70,6 +71,9 @@ public class RewixConfig {
 
 		JsonNode tagMapJson = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.TAG_MAP);
 		tagMap = XRoadsUtils.OBJECT_MAPPER.convertValue(tagMapJson, new TypeReference<Map<String, Integer>>(){});
+		
+		JsonNode tradeAgentMap = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.TRADE_AGENT_MAP);
+		rewixTradeAgentMap = XRoadsUtils.OBJECT_MAPPER.convertValue(tradeAgentMap, new TypeReference<Map<String, String>>(){});
 		
 		JsonNode merchantMapJson = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.MERCHANT_MAP);
 		merchantMap = XRoadsUtils.OBJECT_MAPPER.convertValue(merchantMapJson, new TypeReference<Map<String, Integer>>(){});		
@@ -162,6 +166,10 @@ public class RewixConfig {
 
 	public void setOrderStatusToSync(List<Integer> orderStatusToSync) {
 		this.orderStatusToSync = orderStatusToSync;
+	}
+
+	public Map<String, String> getRewixTradeAgentMap() {
+		return rewixTradeAgentMap;
 	}
 
 	public List<Integer> getOrderSubStatusToSync() {

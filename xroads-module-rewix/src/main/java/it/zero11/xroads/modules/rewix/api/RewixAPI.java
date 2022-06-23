@@ -18,9 +18,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -62,6 +59,7 @@ import it.zero11.xroads.modules.rewix.api.model.UserBean;
 import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
 import it.zero11.xroads.modules.rewix.api.model.UserListBean;
+import it.zero11.xroads.modules.rewix.api.model.UserTradeAgentBean;
 import it.zero11.xroads.modules.rewix.api.model.ValueWithKey;
 
 
@@ -157,6 +155,22 @@ public class RewixAPI {
 			return user;
 		}catch (UnsupportedEncodingException e) {
 			throw new RewixAPIException(-1, e.getMessage());
+		}
+	}
+	
+	public void updateUserMerchantTradeAgent(UserTradeAgentBean userBean, String merchantId, String tradeAgentUsername) throws RewixAPIException {		
+		final Response response = getRestClient()
+				.target(baseUrl)
+				.path("/restful/user/merchant/" + merchantId + "/tradeagent/" + tradeAgentUsername)
+				.request()
+				.header("Authorization", getAuthorizationHeader())
+				.accept(MediaType.APPLICATION_XML)
+				.post(Entity.xml(userBean));
+
+		checkResponseStatus("updateUserMerchantTradeAgent", response);
+		final OperationResponseBean p = response.readEntity(OperationResponseBean.class);
+		if (!p.getStatus()) {
+			throw new RewixAPIException(200, p.getMessage());
 		}
 	}
 	
