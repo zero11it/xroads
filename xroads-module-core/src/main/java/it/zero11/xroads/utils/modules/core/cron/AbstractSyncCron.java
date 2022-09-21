@@ -63,7 +63,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 				for (TG entity:entityGroup) {
 					EntityDao.getInstance().updateExternalReferenceLastError(entity, module, e);
 				}
-			}catch (Exception e) {
+			}catch (Throwable e) {
 				for (TG entity:entityGroup) {
 					EntityDao.getInstance().updateExternalReferenceLastError(entity, module, e);
 				}
@@ -82,7 +82,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 				afterConsume(entity);
 			}catch (SyncException e) {
 				EntityDao.getInstance().updateExternalReferenceLastError(entity, module, e);
-			}catch (Exception e) {
+			}catch (Throwable e) {
 				EntityDao.getInstance().updateExternalReferenceLastError(entity, module, e);
 			}
 		});

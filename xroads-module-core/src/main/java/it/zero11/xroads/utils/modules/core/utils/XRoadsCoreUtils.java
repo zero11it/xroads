@@ -106,7 +106,7 @@ public class XRoadsCoreUtils {
 		((ObjectNode)entity.getExternalReferences()).set(moduleName, value);
 	}
 	
-	public static void setExternalReferenceLastError(AbstractEntity entity, String moduleName, Exception e) {
+	public static void setExternalReferenceLastError(AbstractEntity entity, String moduleName, Throwable e) {
 		ObjectNode value = (ObjectNode) entity.getExternalReferences().get(moduleName);
 		
 		if (value == null) {

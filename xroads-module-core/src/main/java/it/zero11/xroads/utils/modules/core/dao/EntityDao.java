@@ -175,7 +175,7 @@ public class EntityDao {
 		});
 	}
 
-	public <T extends AbstractEntity> void updateExternalReferenceLastError(T entity, XRoadsModule module, Exception e) {
+	public <T extends AbstractEntity> void updateExternalReferenceLastError(T entity, XRoadsModule module, Throwable e) {
 		updateEntityInTransaction(entity, (persistedEntity)->{
 			XRoadsCoreUtils.setExternalReferenceLastError(persistedEntity, module.getName(), e);
 		});
