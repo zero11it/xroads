@@ -2,6 +2,9 @@ package it.zero11.xroads.modules.rewix.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -49,8 +52,8 @@ public class RewixCustomerParser extends DefaultHandler{
 				case "email":
 					currentCustomer.setEmail(attributeValue);
 					break;
-				case XRoadsJsonKeys.CUSTOMER_TAGS_KEY:
-					((ObjectNode) currentCustomer.getData()).put(XRoadsJsonKeys.CUSTOMER_TAGS_KEY, attributeValue);
+				case "tags":
+					((ObjectNode) currentCustomer.getData()).set(XRoadsJsonKeys.CUSTOMER_TAGS_KEY, getCustomerTags(attributeValue));
 					break;
 				case "firstname":
 					currentCustomer.setFirstname(attributeValue);
@@ -223,4 +226,21 @@ public class RewixCustomerParser extends DefaultHandler{
 			}
 		}
 	}
+	
+	private ArrayNode getCustomerTags(String tagsString) {
+		ArrayNode tags = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
+		if (tagsString == null || tagsString.isEmpty()) {
+			return tags;
+		}
+		List<String> tagList = new ArrayList<>();
+		for (String tag : tagsString.split(",")) {
+			if (!tag.startsWith("group:") && !tag.startsWith("consent:")) {
+				tagList.add(tag);
+			}
+		}
+		Collections.sort(tagList);
+		tagList.forEach(tags::add);
+		return tags;
+	}
+	
 }
