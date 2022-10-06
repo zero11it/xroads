@@ -15,6 +15,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.CustomerRevision;
@@ -210,8 +211,20 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setLocaleCode(customer.getLanguageCode());
 		user.setPermanentDiscount(new BigDecimal(0));
 		user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_STATUS_KEY).asInt());
-
-		user.setTags(null);
+		
+		List<String> tags = new ArrayList<>();
+		if(customer.getData().path(XRoadsJsonKeys.CUSTOMER_TAGS_KEY).isArray()) {
+			ArrayNode tagsArray = ((ArrayNode) customer.getData().path(XRoadsJsonKeys.CUSTOMER_TAGS_KEY));
+			for(int i = 0; i < tagsArray.size(); i++) {
+				String tagValue = tagsArray.get(i).asText(null);
+				if(tagValue != null) {
+					tags.add(tagValue);
+				}
+			}
+		}
+		user.setTags(tags);
+		if (customer.getData().has(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY))
+			user.setTradeAgentUsername(customer.getData().get(XRoadsJsonKeys.REWIX_CUSTOMER_TRADE_AGENT_KEY).asText());
 
 		api.updateUserHead(rewixId, user);
 	}
