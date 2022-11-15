@@ -3,7 +3,6 @@ package it.zero11.xroads.modules.rewix.consumers;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.CustomerRevision;
