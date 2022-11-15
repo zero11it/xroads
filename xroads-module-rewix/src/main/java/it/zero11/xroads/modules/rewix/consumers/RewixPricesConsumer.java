@@ -64,7 +64,7 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 			List<String> pricePlatforms;
 			if(!price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().trim().isEmpty()) {
 				pricePlatforms = Arrays.asList(price.getData().path(XRoadsJsonKeys.REWIX_CUSTOMER_PLATFORMS_KEY).asText().split(","));
-			}else {
+			} else {
 				pricePlatforms = xRoadsModule.getConfiguration().getOrderPlatforms();
 			}
 			for(String platform : pricePlatforms) {
@@ -79,6 +79,9 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				srewixPrice.setSize(price.getData().path("option1").asText(null));
 				srewixPrice.setColor(price.getData().path("option2").asText(null));
 				srewixPrice.setMinimumQuantity(price.getMinQuantity());
+				if(!price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).isMissingNode()) {
+					srewixPrice.setPricePriority(price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).asInt());
+				}
 				taxables.add(srewixPrice);
 				platformsWithoutPrice.remove(platform);
 			}
