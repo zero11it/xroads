@@ -172,7 +172,6 @@
 								<pluginExecutionFilter>
 									<groupId>com.vaadin</groupId>
 									<artifactId>vaadin-maven-plugin</artifactId>
-									<versionRange>1.6</versionRange>
 									<goals>
 										<goal>prepare-frontend</goal>
 									</goals>

@@ -426,7 +426,21 @@ public Integer updateUserGroup(GroupBean groupBen) throws RewixAPIException, Pro
 	}else {
 		throw new RewixAPIException(200, p.getMessage());
 	}
-}	
+}		
+
+public ProductBean getProduct(Long productId) throws RewixAPIException{
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/product/id/" + productId)
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();
+
+	checkResponseStatus("getProduct", response);	
+	final ProductBean productBean = response.readEntity(ProductBean.class);	
+	return productBean;
+}
 
 public ProductTagsBean getTags(Long productId) throws RewixAPIException{
 	final Response response = getRestClient()
