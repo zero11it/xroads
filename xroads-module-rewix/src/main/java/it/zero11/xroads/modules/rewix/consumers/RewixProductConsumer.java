@@ -57,6 +57,9 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		if (rewixIdStr == null) {
 			rewixId = updateProductHead(product, true);
 		}else {
+			if(revision == null && !xRoadsModule.getConfiguration().isEnableFullRewixProductUpdate()) {
+				throw new RuntimeException("Revision is null and ENABLE_FULL_REWIX_UPDATE_PRODUCT is false, is not possibile update product !");
+			}
 			rewixId = Integer.parseInt(rewixIdStr);
 		}
 
@@ -276,7 +279,7 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 					values = new String[] {tagValueNode.asText(null)};
 				}
 				
-				for(String tagValue : values) {	
+				for(String tagValue : values) {
 					if (tagValue != null) {
 						List<ProductTagMetaBean> productTagMetasList = new ArrayList<>();
 						ProductTagMetasBean bean = new ProductTagMetasBean();

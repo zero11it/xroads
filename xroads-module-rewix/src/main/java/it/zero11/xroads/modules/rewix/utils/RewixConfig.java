@@ -31,6 +31,7 @@ public class RewixConfig {
 	private Map<String, Integer> tagMap;
 	private Map<String, String> rewixTradeAgentMap;
 	private Map<String, Integer> merchantMap;
+	private boolean enableFullRewixProductUpdate;
 	
 	public RewixConfig(XRoadsRewixModule module) {
 		endpoint = module.getXRoadsCoreService().getParameter(module, RewixParamType.ENDPOINT);
@@ -77,6 +78,8 @@ public class RewixConfig {
 		
 		JsonNode merchantMapJson = module.getXRoadsCoreService().getParameterAsJsonNode(module, RewixParamType.MERCHANT_MAP);
 		merchantMap = XRoadsUtils.OBJECT_MAPPER.convertValue(merchantMapJson, new TypeReference<Map<String, Integer>>(){});		
+		
+		enableFullRewixProductUpdate = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_FULL_REWIX_UPDATE_PRODUCT);
 	}
 	
 	public String getEndpoint() {
@@ -190,6 +193,10 @@ public class RewixConfig {
 
 	public Map<String, Integer> getMerchantMap() {
 		return merchantMap;
+	}
+
+	public boolean isEnableFullRewixProductUpdate() {
+		return enableFullRewixProductUpdate;
 	}
 	
 }

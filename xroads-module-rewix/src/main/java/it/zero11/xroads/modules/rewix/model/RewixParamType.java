@@ -39,7 +39,8 @@ public enum RewixParamType implements IParamType{
 	LAST_CUSTOMERS_SWYNC(""),
 	LAST_INVOICE_ID(null),
 	MERCHANT_MAP("{}"),
-	TRADE_AGENT_MAP("{}")
+	TRADE_AGENT_MAP("{}"),
+	ENABLE_FULL_REWIX_UPDATE_PRODUCT("true"),
 	;
 	
 	public final String defaultValue;
