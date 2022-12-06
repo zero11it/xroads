@@ -76,8 +76,8 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				srewixPrice.setTaxable(price.getSellPrice());
 				srewixPrice.setPlatformUid(platform.trim());	
 				srewixPrice.setCountry(price.getCountry());	
-				srewixPrice.setSize(price.getData().path("option1").asText(null));
-				srewixPrice.setColor(price.getData().path("option2").asText(null));
+				srewixPrice.setOption1(price.getData().path("option1").asText(null));
+				srewixPrice.setOption2(price.getData().path("option2").asText(null));
 				srewixPrice.setMinimumQuantity(price.getMinQuantity());
 				if(!price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).isMissingNode()) {
 					srewixPrice.setPricePriority(price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).asInt());
