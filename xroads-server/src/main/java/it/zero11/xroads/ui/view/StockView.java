@@ -4,6 +4,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.Route;
 
 import it.zero11.xroads.model.Stock;
+import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.ui.abstractview.AbstractEntityGridView;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 
@@ -24,6 +25,11 @@ public class StockView extends AbstractEntityGridView<Stock>{
 		.setAutoWidth(false)
 		.setFlexGrow(0)
 		.setHeader("Availability");
+	}
+
+	@Override
+	protected boolean enableforce(XRoadsModule module) {
+		return true;
 	}
 
 }

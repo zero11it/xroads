@@ -27,6 +27,7 @@ import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.ModuleOrder;
 import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.modules.XRoadsModule;
+import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
@@ -210,8 +211,9 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 				Date lastErrorDate = stringToDateFormatter.parse(entity.getExternalReferences().path(moduleComboBox.getValue().getName()).path(XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE).asText());
 				diff = (int) ((new Date(System.currentTimeMillis()).getTime() - lastErrorDate.getTime()) / (60 * 1000)) ;
 			} catch (Exception e2) {}
-			boolean forceSyncPerDate = diff > 0 && diff < 60;
-			if((externalVersion == entity.getVersion()) || forceSyncPerDate) {
+			boolean forceSyncPerDate = diff > 0 && diff < 60;			
+			
+			if(enableforce(moduleComboBox.getValue()) && ((externalVersion == entity.getVersion()) || forceSyncPerDate)) {
 				Button forceSyncButton = new Button("FORCE", VaadinIcon.REFRESH.create(), e -> {
 					if(forceSyncPerDate) {
 						EntityDao.getInstance().updateExternalReferenceIdAndVersion(entity, moduleComboBox.getValue(), id, externalVersion);
@@ -241,4 +243,6 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 
 	public abstract void addColumns(Grid<T> grid);
 
+	protected abstract boolean enableforce(XRoadsModule module);
+	
 }

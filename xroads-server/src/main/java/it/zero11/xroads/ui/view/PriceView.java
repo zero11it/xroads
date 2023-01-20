@@ -4,6 +4,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.Route;
 
 import it.zero11.xroads.model.Price;
+import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.ui.abstractview.AbstractEntityGridView;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 
@@ -20,6 +21,11 @@ public class PriceView extends AbstractEntityGridView<Price>{
 	public void addColumns(Grid<Price> grid) {
 		grid.addColumn(Price::getBuyPrice).setHeader("Price");
 		grid.addColumn(Price::getCountry).setHeader("Country");
+	}
+
+	@Override
+	protected boolean enableforce(XRoadsModule module) {
+		return true;
 	}
 
 }

@@ -46,26 +46,29 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 
 	@Override
 	public void consume(Product product) throws SyncException{
+		Integer version = XRoadsUtils.getExternalReferenceVersion(product, xRoadsModule);
+		
 		final ProductRevision revision = getXRoadsModule().getXRoadsCoreService().getEntityRevision(ProductRevision.class,
-				product.getSourceId(),
-				XRoadsUtils.getExternalReferenceVersion(product, xRoadsModule));
-
+				product.getSourceId(), version);
+		
+		if(version == null) {
+			version = -1;
+		}
+		
 		log.info("Updating rewix product " + product.getSku());
 
 		final String rewixIdStr = XRoadsUtils.getExternalReferenceId(product, xRoadsModule);
 		final int rewixId;
 		if (rewixIdStr == null) {
 			rewixId = updateProductHead(product, true);
+			log.debug("Updating rewix product external reference " + product.getSku() + " --> " + rewixId);
+			getXRoadsModule().getXRoadsCoreService().updateExternalReferenceIdAndVersion(xRoadsModule, product, Integer.toString(rewixId), version);
 		}else {
 			if(revision == null && !xRoadsModule.getConfiguration().isEnableFullRewixProductUpdate()) {
 				throw new RuntimeException("Revision is null and ENABLE_FULL_REWIX_UPDATE_PRODUCT is false, is not possibile update product !");
 			}
 			rewixId = Integer.parseInt(rewixIdStr);
 		}
-
-		log.debug("Updating rewix product external reference " + product.getSku() + " --> " + rewixId);
-		getXRoadsModule().getXRoadsCoreService().updateExternalReferenceIdAndVersion(xRoadsModule, product, Integer.toString(rewixId), -1);
-		//FIXME: set version to -1 only if id changed or no version present
 		
 		boolean failed = true;
 		try {
