@@ -27,9 +27,13 @@ public class OrderFilterBean {
 	private BigDecimal orderItemTaxableFrom;
 	private BigDecimal orderItemTaxableTo;
 	private String username;
+	private String search;
+	
+	private List<Integer> merchantIds;
+	private Integer logisticsId;
 	
 	private String sort;
-	private String sortDir;
+	private Boolean sortAsc;
 	
 	private int firstResult;
 	private int maxResult;
@@ -162,6 +166,30 @@ public class OrderFilterBean {
 		this.username = username;
 	}
 	
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+
+	public List<Integer> getMerchantIds() {
+		return merchantIds;
+	}
+
+	public void setMerchantIds(List<Integer> merchantIds) {
+		this.merchantIds = merchantIds;
+	}
+
+	public Integer getLogisticsId() {
+		return logisticsId;
+	}
+
+	public void setLogisticsId(Integer logisticsId) {
+		this.logisticsId = logisticsId;
+	}
+
 	public List<Integer> getOrderSubstatuses() {
 		return orderSubstatuses;
 	}
@@ -186,11 +214,11 @@ public class OrderFilterBean {
 		this.sort = sort;
 	}
 
-	public String getSortDir() {
-		return sortDir;
+	public Boolean getSortAsc() {
+		return sortAsc;
 	}
 
-	public void setSortDir(String sortDir) {
-		this.sortDir = sortDir;
+	public void setSortAsc(Boolean sortAsc) {
+		this.sortAsc = sortAsc;
 	}
 }

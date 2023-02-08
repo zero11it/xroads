@@ -1,5 +1,8 @@
 package it.zero11.xroads.modules.rewix.cron;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 
 import it.zero11.xroads.cron.AbstractXRoadsCronRunnable;
@@ -50,6 +53,11 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 		orderFilterBean.setPlatformUid(platform);
 		orderFilterBean.setMaxResult(1000);
 		orderFilterBean.setOrderStatuses(xRoadsModule.getConfiguration().getOrderStatusToSync());
+		
+		Map<String, Integer> merchantMap = xRoadsModule.getConfiguration().getMerchantMap();
+		if(merchantMap != null && merchantMap.size() > 0) {
+			orderFilterBean.setMerchantIds(merchantMap.values().stream().collect(Collectors.toList()));
+		}
 		if (xRoadsModule.getConfiguration().getOrderSubStatusToSync().size() > 0) {
 			orderFilterBean.setOrderSubstatuses(xRoadsModule.getConfiguration().getOrderSubStatusToSync());
 		}
