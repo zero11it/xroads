@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -56,6 +57,8 @@ public interface XRoadsCoreService {
 
 	<T extends AbstractProductGroupedEntity> void consumeProductGroupped(XRoadsModule module, String groupId, List<T> value) throws SyncException;
 
+	<T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass, Date scheduledTime);
+	
 	<T extends AbstractXRoadsCronRunnable<?>> void addScheduleNowIfNotScheduled(Class<T> cronClass);
 	
 	BigInteger getNextXRoadSequenceNumber();

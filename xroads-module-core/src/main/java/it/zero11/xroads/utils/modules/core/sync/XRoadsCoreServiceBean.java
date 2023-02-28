@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,11 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 			});
 			return enabledModules;
 		}, false);
+	}
+	
+	@Override
+	public <T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass, Date scheduledTime) {
+		CronDao.getInstance().addSchedule(cronClass.getSimpleName(), null, scheduledTime, false);		
 	}
 	
 	@Override
