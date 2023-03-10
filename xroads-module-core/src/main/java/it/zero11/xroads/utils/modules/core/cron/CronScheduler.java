@@ -186,7 +186,7 @@ public class CronScheduler extends Thread {
 						wait(60000);
 					}
 				}
-				while(cronThreadPoolExecutor.getActiveCount() == cronThreadPoolExecutor.getMaximumPoolSize()){
+				while(!shutdown && cronThreadPoolExecutor.getActiveCount() == cronThreadPoolExecutor.getMaximumPoolSize()){
 					synchronized (this) {
 						wait(60000);
 					}
