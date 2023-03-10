@@ -28,6 +28,7 @@ import it.zero11.xroads.model.AbstractModelGroupedEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.ModuleOrder;
 import it.zero11.xroads.model.ModuleStatus;
+import it.zero11.xroads.model.Order;
 import it.zero11.xroads.model.Product;
 import it.zero11.xroads.model.Stock;
 import it.zero11.xroads.modules.XRoadsModule;
@@ -104,6 +105,8 @@ public class EntityDao {
 			sql += (" where online = true");
 		} else if(Stock.class.isAssignableFrom(entityClass)) {
 			sql += (" where availability > 0");
+		} else if(Order.class.isAssignableFrom(entityClass)) {
+			sql += (" where status in (5, 2, 3001, 3002)");
 		} else {
 			throw new UnsupportedOperationException();
 		}
