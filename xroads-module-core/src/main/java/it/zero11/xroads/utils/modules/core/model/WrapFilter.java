@@ -1,9 +1,12 @@
 package it.zero11.xroads.utils.modules.core.model;
 
+import java.io.Serializable;
+
 import it.zero11.xroads.model.ModuleStatus;
 
-public class WrapFilter {
-
+public class WrapFilter implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	ModuleStatus moduleStatus;
 	String searchKey;
 	

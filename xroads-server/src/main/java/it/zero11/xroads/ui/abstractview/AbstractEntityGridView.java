@@ -46,7 +46,7 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 	private TextField searchBar;
 	private SimpleDateFormat stringToDateFormatter;
 	private SimpleDateFormat dateToStringFormatter;
-	private static WrapFilter filters;
+	private WrapFilter filters;
 
 	public AbstractEntityGridView(Class<T> typeParameterClass) {
 		filters = new WrapFilter();
@@ -61,7 +61,11 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 		super.onAttach(attachEvent);
 
 		List<XRoadsModule> modulesList = XRoadsCoreServiceBean.getInstance().getEnabledModules(false).values().stream().filter(xRoadsModule -> XRoadsUtils.moduleHasConsumer(xRoadsModule, typeParameterClass)).collect(Collectors.toList());
-
+		if (modulesList.size() == 0) {
+			add(new Paragraph("No consumer configured"));
+			return;
+		}
+		
 		genericGrid = new Grid<>();
 		dataProvider = DataProvider.fromFilteringCallbacks(
 				query -> {

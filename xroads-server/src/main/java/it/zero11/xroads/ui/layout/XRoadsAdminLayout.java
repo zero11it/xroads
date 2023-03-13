@@ -15,8 +15,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.server.VaadinRequest;
@@ -34,10 +32,8 @@ import it.zero11.xroads.ui.view.ProductView;
 import it.zero11.xroads.ui.view.SettingsView;
 import it.zero11.xroads.ui.view.StockView;
 
-@Push
-@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @JsModule("./theming/custom.js") 
-public class XRoadsAdminLayout extends AppLayoutRouterLayout<AppLayout> implements BeforeEnterObserver, XRoadsPageConfigurator {
+public class XRoadsAdminLayout extends AppLayoutRouterLayout<AppLayout> implements BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
     private Class<? extends AppLayout> variant = LeftLayouts.LeftResponsiveHybrid.class;
 	private Span title;
