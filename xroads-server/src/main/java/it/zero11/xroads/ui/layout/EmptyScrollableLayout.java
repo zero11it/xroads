@@ -3,16 +3,14 @@ package it.zero11.xroads.ui.layout;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.router.RouterLayout;
 
 /**
  * The main layout contains the header with the navigation buttons, and the
  * child views below that.
  */
-@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @JsModule("./theming/custom.js") 
-public class EmptyScrollableLayout extends Div implements RouterLayout, XRoadsPageConfigurator{
+public class EmptyScrollableLayout extends Div implements RouterLayout{
 
 	private static final long serialVersionUID = 1L;
 

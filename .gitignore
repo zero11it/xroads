@@ -4,3 +4,5 @@
 .settings
 /target/
 /bin/
+/xroads-server/frontend/generated/
+/xroads-server/frontend/index.html

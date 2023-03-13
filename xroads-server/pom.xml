@@ -48,13 +48,19 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.annotation</groupId>
+					<artifactId>javax.annotation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Menu layout -->
 		<!-- https://appreciated-collection.herokuapp.com/app-layout/ -->
 		<dependency>
 			<groupId>com.github.appreciated</groupId>
 			<artifactId>app-layout-addon</artifactId>
-			<version>4.0.0.rc5</version>
+			<version>22.0.0-rc1-zero11</version>
 		</dependency>
 
 		<dependency>
