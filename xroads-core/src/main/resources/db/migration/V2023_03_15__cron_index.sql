@@ -1,0 +1,1 @@
+CREATE index concurrently cron_status_idx ON public.cron (status,scheduled_time);
