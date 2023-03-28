@@ -8,7 +8,7 @@ import it.zero11.xroads.utils.modules.core.utils.ReportEmailTemplateRenderer;
 import it.zero11.xroads.utils.modules.core.utils.SMTPUtils;
 import it.zero11.xroads.utils.modules.core.utils.ReportEmailTemplateRenderer.EmailReport;
 
-@CronSchedule(hour={}, minute={0,30}, second={0}, onDeploy=false)
+@CronSchedule(hour={0, 4, 8, 12, 16, 20}, minute={0}, second={0}, onDeploy=false)
 public class EmailReportCron implements Runnable {
 	@Override
 	public void run() {
