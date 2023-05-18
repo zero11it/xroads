@@ -60,6 +60,7 @@ import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
 import it.zero11.xroads.modules.rewix.api.model.UserListBean;
 import it.zero11.xroads.modules.rewix.api.model.UserTradeAgentBean;
+import it.zero11.xroads.modules.rewix.api.model.UserUpdateBean;
 import it.zero11.xroads.modules.rewix.api.model.ValueWithKey;
 
 
@@ -471,7 +472,7 @@ public void updateAddress(String username, AddressBean adressBean) throws RewixA
 	}
 }	
 
-public void updateUserHead(String username, UserBean userBean) throws RewixAPIException {		
+public void updateUserHead(String username, UserUpdateBean userBean) throws RewixAPIException {		
 	final Response response = getRestClient()
 			.target(baseUrl)
 			.path("/restful/user/user/" + username)

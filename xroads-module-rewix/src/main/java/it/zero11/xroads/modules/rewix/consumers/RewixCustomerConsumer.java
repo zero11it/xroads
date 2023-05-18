@@ -28,6 +28,7 @@ import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;
 import it.zero11.xroads.modules.rewix.api.model.UserListBean;
 import it.zero11.xroads.modules.rewix.api.model.UserTradeAgentBean;
+import it.zero11.xroads.modules.rewix.api.model.UserUpdateBean;
 import it.zero11.xroads.modules.rewix.utils.GroupSearchBean;
 import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.SyncException;
@@ -201,7 +202,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 	protected void updateCustomerHead(Customer customer, String rewixId) throws RewixAPIException {
 		log.debug("Updating head for rewix customer " + customer.getSourceId());
 
-		UserBean user = new UserBean();
+		UserUpdateBean user = new UserUpdateBean();
 		user.setEmail(customer.getEmail());		
 		user.setAutoConfirmPaymentTermId(null);
 		user.setIgnoreCartRules(false);
@@ -209,6 +210,7 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		user.setLocaleCode(customer.getLanguageCode());
 		user.setPermanentDiscount(new BigDecimal(0));
 		user.setStatus(customer.getData().path(XRoadsJsonKeys.CUSTOMER_STATUS_KEY).asInt());
+		user.setSendStatusUpdateEmail(true);
 		
 		List<String> tags = new ArrayList<>();
 		if(customer.getData().path(XRoadsJsonKeys.CUSTOMER_TAGS_KEY).isArray()) {
