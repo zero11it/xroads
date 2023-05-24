@@ -133,20 +133,30 @@ public class RewixCustomerConsumer extends AbstractRewixConsumer implements Enti
 		ArrayNode revisionTradeAgents = null;
 		if(revision != null && revision.getTradeAgent() != null) {
 			revisionTradeAgents = ((ArrayNode) revision.getTradeAgent());
-			Set<String> merchantSet = new HashSet<String>();
-
-			for(int i = 0; i < customerTradeAgents.size(); i++) {
-				merchantSet.add(customerTradeAgents.get(i).get("email").asText());
-			}
-
 			for(int i = 0; i < revisionTradeAgents.size(); i++) {
-				JsonNode tradeAgent = revisionTradeAgents.get(i);
-				String merchantId = tradeAgent.path("email").asText();
-
-				if(!merchantSet.contains(merchantId)) {
+				JsonNode revisionTradeAgent = revisionTradeAgents.get(i);
+				String revisionTradeagentEmail = revisionTradeAgent.path("email").asText();
+				Integer revisionMerchantId = xRoadsModule.getConfiguration().getMerchantMap()
+						.get(revisionTradeAgent.path(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY).asText(""));
+				if(revisionMerchantId == null) {
+					throw new RuntimeException("Is not possible to remove " + revisionTradeagentEmail + " for merchant "
+							+ revisionMerchantId + " beacuse not exists in merchant map!");
+				}
+				boolean toRemove = true;
+				for (int j = 0; j < customerTradeAgents.size(); j++) {
+					JsonNode customerTradeAgent = customerTradeAgents.get(j);
+					String customerTradeagentEmail = customerTradeAgent.path("email").asText();
+					Integer customerMerchantId = xRoadsModule.getConfiguration().getMerchantMap()
+							.get(customerTradeAgent.path(XRoadsJsonKeys.REWIX_CUSTOMER_MERCHANT_KEY).asText(""));
+					if(revisionTradeagentEmail.equals(customerTradeagentEmail) && revisionMerchantId.equals(customerMerchantId)) {
+						toRemove = false;
+						break;
+					}
+				}
+				if(toRemove) {
 					UserTradeAgentBean user = new UserTradeAgentBean();
 					user.setTradeAgentUsername(null);
-					api.updateUserMerchantTradeAgent(user, xRoadsModule.getConfiguration().getMerchantMap().get(merchantId).toString(), rewixId);
+					api.updateUserMerchantTradeAgent(user, revisionMerchantId.toString(), rewixId);
 				}
 			}
 		}
