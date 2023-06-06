@@ -164,9 +164,9 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 			if(!entity.getExternalReferences().path(moduleComboBox.getValue().getName()).path(XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE).asText().isEmpty())
 				return error;
 			externalReferenceVersion = entity.getExternalReferences().path(moduleComboBox.getValue().getName()).path(XRoadsJsonKeys.EXTERNAL_REFERENCE_VERSION).asInt();
-			if( externalReferenceVersion != null && (entity.getVersion() != externalReferenceVersion))
+			if( externalReferenceVersion != null && (!entity.getVersion().equals(externalReferenceVersion)))
 				return "Not Imported";
-			if( externalReferenceVersion != null && (entity.getVersion() == externalReferenceVersion))
+			if( externalReferenceVersion != null && (entity.getVersion().equals(externalReferenceVersion)))
 				return "Ok";
 			return "Not Processed";
 		}).setHeader("Status");
