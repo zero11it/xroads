@@ -443,6 +443,20 @@ public ProductBean getProduct(Long productId) throws RewixAPIException{
 	return productBean;
 }
 
+public ProductBean getProduct(String sku) throws RewixAPIException{
+	final Response response = getRestClient()
+			.target(baseUrl)
+			.path("/restful/product/sku/" + sku)
+			.request()
+			.header("Authorization", getAuthorizationHeader())
+			.accept(MediaType.APPLICATION_XML)
+			.get();
+
+	checkResponseStatus("getProduct", response);	
+	final ProductBean productBean = response.readEntity(ProductBean.class);	
+	return productBean;
+}
+
 public ProductTagsBean getTags(Long productId) throws RewixAPIException{
 	final Response response = getRestClient()
 			.target(baseUrl)
