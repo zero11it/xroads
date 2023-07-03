@@ -20,6 +20,8 @@ import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 import it.zero11.xroads.utils.modules.core.utils.LocalCache;
 import it.zero11.xroads.utils.modules.core.utils.LocalCache.LocalCacheType;
+import it.zero11.xroads.utils.modules.core.utils.LocalCache.TTL;
+import it.zero11.xroads.utils.modules.core.utils.LocalCache.UpdateMode;
 import it.zero11.xroads.utils.modules.core.utils.TransactionWrapper;
 
 public class ParamDao {
@@ -81,9 +83,7 @@ public class ParamDao {
 	
 	public String getParameter(XRoadsModule module, IParamType paramType, final boolean cached){
 		LocalCache localCache = LocalCache.getInstance();
-		String parval = localCache.getOrGenerate(getCacheKey(module, paramType), (cached) ? LocalCache.LONG_CACHE_TIME : LocalCache.FORCE_REGENERATION_CACHE_TIME, new LocalCache.LocalCacheGenerator<String>() {
-			@Override
-			public String generate() {
+		String parval = localCache.getOrGenerate(getCacheKey(module, paramType), UpdateMode.CALLER_THREAD, (cached) ? TTL.LONG : TTL.FORCE_UPDATE, () -> {
 				EntityManager em = EntityManagerUtils.createEntityManager();
 				try {
 					Param param = em.createQuery("from Param where name = :name ", Param.class)
@@ -99,8 +99,7 @@ public class ParamDao {
 				}finally {
 					em.close();
 				}
-			}
-		}, true);
+		});
 		return parval;
 	}
 	

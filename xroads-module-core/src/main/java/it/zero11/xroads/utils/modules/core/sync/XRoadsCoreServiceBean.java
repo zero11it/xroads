@@ -48,6 +48,8 @@ import it.zero11.xroads.utils.modules.core.dao.ParamDao;
 import it.zero11.xroads.utils.modules.core.model.ParamType;
 import it.zero11.xroads.utils.modules.core.model.WrapFilter;
 import it.zero11.xroads.utils.modules.core.utils.LocalCache;
+import it.zero11.xroads.utils.modules.core.utils.LocalCache.TTL;
+import it.zero11.xroads.utils.modules.core.utils.LocalCache.UpdateMode;
 import it.zero11.xroads.utils.modules.core.utils.XRoadsCoreUtils;
 
 public class XRoadsCoreServiceBean implements XRoadsCoreService {
@@ -65,7 +67,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	}
 
 	public Map<String, XRoadsModule> getEnabledModules(boolean includeCore){
-		return LocalCache.getInstance().getOrGenerate("XROADSMODULES" + includeCore, LocalCache.LONG_CACHE_TIME, ()->{
+		return LocalCache.getInstance().getOrGenerate("XROADSMODULES" + includeCore, UpdateMode.BACKGROUND,  TTL.LONG, ()->{
 			Map<String, XRoadsModule> enabledModules = new HashMap<String, XRoadsModule>();
 			if (includeCore) {
 				XRoadsCoreModule core = XRoadsCoreModule.INSTANCE;
@@ -82,7 +84,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 				}
 			});
 			return enabledModules;
-		}, false);
+		});
 	}
 	
 	@Override
