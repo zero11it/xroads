@@ -341,91 +341,94 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 
 		List<ProductTranslationsBean> beans = new ArrayList<>();
 
-		Map<String, Map<String, String>> descriptionMap = new HashMap<>(); //LANG CODE -> PLATFORM:DESCRIPTION
 		{
-			product.getDescriptions().fields().forEachRemaining(description -> {
-				Map<String, String> platforms = new HashMap<>();
-				description.getValue().fields().forEachRemaining(platform -> {
-					platforms.put(platform.getKey(), product.getDescriptions().path(description.getKey()).path(platform.getKey()).asText());
-				});
-				descriptionMap.put(description.getKey(), platforms);
-			});
 			ProductTranslationsBean translations = new ProductTranslationsBean();
 			translations.setType(0); //Description
 			translations.setValue(null);
 			translations.setStockProductId(rewixId);	
-			List<ProductTranslationBean> productTranslations = new ArrayList<>();
-			for (String lang : descriptionMap.keySet()) {
-				for (String platform : descriptionMap.get(lang).keySet()) {
-					ProductTranslationBean translation = new ProductTranslationBean();
-					translation.setLocaleCode(lang);
-					translation.setTranslation(descriptionMap.get(lang).get(platform));
-					translation.setPlatformUid(platform);
-					productTranslations.add(translation);					
+			translations.setProductTranslations(new ArrayList<>());
+			product.getDescriptions().fields().forEachRemaining(langDescriptionKeyNode -> {
+				JsonNode langNode = langDescriptionKeyNode.getValue();
+				if (!langNode.isMissingNode()) {
+					if (langNode.isContainerNode()) {
+						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
+							ProductTranslationBean translation = new ProductTranslationBean();
+							translation.setLocaleCode(langDescriptionKeyNode.getKey());
+							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
+							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
+							translations.getProductTranslations().add(translation);
+						});
+					} else {
+						ProductTranslationBean translation = new ProductTranslationBean();
+						translation.setLocaleCode(langDescriptionKeyNode.getKey());
+						translation.setTranslation(langNode.asText(null));
+						translations.getProductTranslations().add(translation);
+					}
 				}
-			}
-			translations.setProductTranslations(productTranslations);
-			if (descriptionMap.size() > 0)
+			});
+			if (translations.getProductTranslations().size() > 0)
 				beans.add(translations);
 		}
-
-
-		Map<String, Map<String, String>> namesMap = new HashMap<>(); //LANG CODE -> PLATFORM:DESCRIPTION
+		
+		
 		{
-			product.getNames().fields().forEachRemaining(productName -> {
-				Map<String, String> platforms = new HashMap<>();
-				productName.getValue().fields().forEachRemaining(platform -> {
-					platforms.put(platform.getKey(), productName.getValue().path(platform.getKey()).asText());
-				});
-				namesMap.put(productName.getKey(), platforms);
-			});
 			ProductTranslationsBean translations = new ProductTranslationsBean();
 			translations.setType(3); //Name
 			translations.setValue(null);
 			translations.setStockProductId(rewixId);
-			List<ProductTranslationBean> productTranslations = new ArrayList<>();
-			for (String lang : namesMap.keySet()) {
-				for (String platform : namesMap.get(lang).keySet()) {
-					ProductTranslationBean translation = new ProductTranslationBean();
-					translation.setLocaleCode(lang);
-					translation.setTranslation(namesMap.get(lang).get(platform));
-					translation.setPlatformUid(platform);
-					productTranslations.add(translation);					
+			translations.setProductTranslations(new ArrayList<>());
+			product.getNames().fields().forEachRemaining(langNameKeyNode -> {
+				JsonNode langNode = langNameKeyNode.getValue();
+				if (!langNode.isMissingNode()) {
+					if (langNode.isContainerNode()) {
+						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
+							ProductTranslationBean translation = new ProductTranslationBean();
+							translation.setLocaleCode(langNameKeyNode.getKey());
+							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
+							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
+							translations.getProductTranslations().add(translation);
+						});
+					} else {
+						ProductTranslationBean translation = new ProductTranslationBean();
+						translation.setLocaleCode(langNameKeyNode.getKey());
+						translation.setTranslation(langNode.asText(null));
+						translations.getProductTranslations().add(translation);
+					}
 				}
-			}
-			translations.setProductTranslations(productTranslations);
-			if (namesMap.size() > 0)
+			});
+			if (translations.getProductTranslations().size() > 0)
 				beans.add(translations);
 		}
 		
-		Map<String, Map<String, String>> urlKeysMap = new HashMap<>(); //LANG CODE -> PLATFORM:DESCRIPTION
+		
 		{
-			product.getUrlkeys().fields().forEachRemaining(urlkey -> {
-				Map<String, String> platforms = new HashMap<>();
-				urlkey.getValue().fields().forEachRemaining(platform -> {
-					platforms.put(platform.getKey(), urlkey.getValue().path(platform.getKey()).asText());
-				});
-				urlKeysMap.put(urlkey.getKey(), platforms);
-			});
 			ProductTranslationsBean translations = new ProductTranslationsBean();
 			translations.setType(7); // URLkey
 			translations.setValue(null);
-			translations.setStockProductId(rewixId);
-			List<ProductTranslationBean> productTranslations = new ArrayList<>();
-			for (String lang : urlKeysMap.keySet()) {
-				for (String platform : urlKeysMap.get(lang).keySet()) {
-					ProductTranslationBean translation = new ProductTranslationBean();
-					translation.setLocaleCode(lang);
-					translation.setTranslation(urlKeysMap.get(lang).get(platform));
-					translation.setPlatformUid(platform);
-					productTranslations.add(translation);					
+			translations.setStockProductId(rewixId);	
+			translations.setProductTranslations(new ArrayList<>());
+			product.getUrlkeys().fields().forEachRemaining(langUrlKeyKeyNode -> {
+				JsonNode langNode = langUrlKeyKeyNode.getValue();
+				if (!langNode.isMissingNode()) {
+					if (langNode.isContainerNode()) {
+						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
+							ProductTranslationBean translation = new ProductTranslationBean();
+							translation.setLocaleCode(langUrlKeyKeyNode.getKey());
+							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
+							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
+							translations.getProductTranslations().add(translation);
+						});
+					} else {
+						ProductTranslationBean translation = new ProductTranslationBean();
+						translation.setLocaleCode(langUrlKeyKeyNode.getKey());
+						translation.setTranslation(langNode.asText(null));
+						translations.getProductTranslations().add(translation);
+					}
 				}
-			}
-			translations.setProductTranslations(productTranslations);
-			if (urlKeysMap.size() > 0)
+			});
+			if (translations.getProductTranslations().size() > 0)
 				beans.add(translations);
-		}
-		
+		}		
 
 		if (beans.size() > 0) {			
 			for (ProductTranslationsBean bean : beans) {
