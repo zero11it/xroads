@@ -233,19 +233,21 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 				HttpGet httpget = new HttpGet(url);
 				CloseableHttpClient httpClient = HttpClients.createDefault();
 				CloseableHttpResponse response = httpClient.execute(httpget);
-
-				return new FilterInputStream(response.getEntity().getContent()) {
-					@Override
-					public void close() throws IOException {
-						try {
-							super.close();
-						} finally {
-							response.close();
-							httpClient.close();
+				if (response.getStatusLine().getStatusCode() == 200) {
+					return new FilterInputStream(response.getEntity().getContent()) {
+						@Override
+						public void close() throws IOException {
+							try {
+								super.close();
+							} finally {
+								response.close();
+								httpClient.close();
+							}
 						}
-					}
-				};
-
+					};
+				}else {
+					throw new SyncException("Failed GET status " + response.getStatusLine().getStatusCode());
+				}
 			} else {
 				return url.toURL().openStream();
 			}
