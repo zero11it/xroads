@@ -3,6 +3,7 @@ package it.zero11.xroads.utils.modules.core.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
@@ -27,7 +28,7 @@ public class MarkupRuleUtils {
 	 * @return
 	 */
 	private static boolean match(XRoadsModule xRoadsModule, MarkupRuleBean rule,
-			Map<String, BigDecimal> markupPriceTypToPriceeMap, Map<String, String> tagsValueMap) {
+			Map<String, BigDecimal> markupPriceTypToPriceeMap, Map<String, List<String>> tagsValueMap) {
 
 		if (rule.getProperties() == null)
 			return true;
@@ -109,7 +110,7 @@ public class MarkupRuleUtils {
 	
 	public static BigDecimal applyRule(XRoadsModule xRoadsModule, SortedSet<MarkupRuleBean> rules,
 			Map<String, BigDecimal> markupPriceTypToPriceeMap, String minMarkupPriceType,
-			Map<String, String> tagsValueMap, BigDecimal exchangeRate) {
+			Map<String, List<String>> tagsValueMap, BigDecimal exchangeRate) {
 		try{
 			final MarkupRuleBean rule = selectMarkupRule(xRoadsModule, rules, markupPriceTypToPriceeMap, tagsValueMap);
 			return applyRule(xRoadsModule, markupPriceTypToPriceeMap, minMarkupPriceType, rule, exchangeRate);
@@ -119,7 +120,7 @@ public class MarkupRuleUtils {
 	}
 	
 	private static MarkupRuleBean selectMarkupRule(XRoadsModule xRoadsModule, SortedSet<MarkupRuleBean> rules,
-			Map<String, BigDecimal> markupPriceTypToPriceeMap, Map<String, String> tagsValueMap) {
+			Map<String, BigDecimal> markupPriceTypToPriceeMap, Map<String, List<String>> tagsValueMap) {
 		for (MarkupRuleBean markupRule : rules) {
 			if (MarkupRuleUtils.match(xRoadsModule, markupRule, markupPriceTypToPriceeMap, tagsValueMap))
 				return markupRule;
