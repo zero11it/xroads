@@ -82,6 +82,19 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				if(!price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).isMissingNode()) {
 					srewixPrice.setPricePriority(price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).asInt());
 				}
+				
+				Integer merchantId;
+				String merchantCode = price.getMerchantCode();
+				if(merchantCode == null) {
+					merchantId = null;
+				} else {
+					merchantId = xRoadsModule.getConfiguration().getMerchantMap().get(merchantCode);
+					if(merchantId == null) {
+						throw new SyncException("Merchant code " + merchantCode + " not in merchant map !");
+					}
+				}
+				srewixPrice.setMerchantId(merchantId);
+				
 				taxables.add(srewixPrice);
 				platformsWithoutPrice.remove(platform);
 			}

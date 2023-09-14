@@ -42,6 +42,9 @@ public class Price extends AbstractProductGroupedEntity {
 
 	@Column(name="suggested_price")
 	private BigDecimal suggestedPrice;
+	
+	@Column(name="merchant_code")
+	private String merchantCode;
 
 	public BigDecimal getBuyPrice() {
 		return this.buyPrice;
@@ -121,6 +124,14 @@ public class Price extends AbstractProductGroupedEntity {
 
 	public void setSuggestedPrice(BigDecimal suggestedPrice) {
 		this.suggestedPrice = suggestedPrice;
+	}
+
+	public String getMerchantCode() {
+		return merchantCode;
+	}
+
+	public void setMerchantCode(String merchantCode) {
+		this.merchantCode = merchantCode;
 	}
 
 }

@@ -57,9 +57,10 @@ public class XRoadsCoreUtils {
 				Model::getProductSourceId, Model::getSku, Model::getSourceId, Model::getTags, Model::getWeight, Model::getMerchantCode) || changedMethodsArray(m1, m2, Model::getAdditionalBarcode);				
 	}
 	
-	public static boolean priceHasChanged(Price p1, Price p2){
-		return changedMethods(p1, p2, Price::getBuyPrice, Price::getCountry, Price::getCustomerSourceId, Price::getData, Price::getDiscountedPrice, 
-				Price::getListingGroup, Price::getMinQuantity, Price::getProductSourceId, Price::getRetailPrice, Price::getSellPrice, Price::getSuggestedPrice);			
+	public static boolean priceHasChanged(Price p1, Price p2) {
+		return changedMethods(p1, p2, Price::getBuyPrice, Price::getCountry, Price::getCustomerSourceId, Price::getData,
+				Price::getDiscountedPrice, Price::getListingGroup, Price::getMinQuantity, Price::getProductSourceId,
+				Price::getRetailPrice, Price::getSellPrice, Price::getSuggestedPrice, Price::getMerchantCode);
 	}
 	
 	public static boolean stockHasChanged(Stock p1, Stock p2){

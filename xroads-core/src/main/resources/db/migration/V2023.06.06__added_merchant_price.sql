@@ -1,0 +1,1 @@
+ALTER TABLE public.price ADD merchant_code character varying(255);
