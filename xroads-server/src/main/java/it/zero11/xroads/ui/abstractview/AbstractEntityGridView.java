@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -40,7 +39,7 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 	private Grid<T> genericGrid;
 	private HorizontalLayout topBar;
 	private Select<ModuleStatus> filterSelect;
-	protected ComboBox<XRoadsModule> moduleComboBox;
+	protected Select<XRoadsModule> moduleComboBox;
 	private DataProvider<T, WrapFilter> dataProvider;
 	private ConfigurableFilterDataProvider<T, Void, WrapFilter> configurableDataProvider;
 	private TextField searchBar;
@@ -100,6 +99,8 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 		
 		
 		filterSelect = new Select<>();
+		filterSelect.setEmptySelectionAllowed(true);
+		filterSelect.setEmptySelectionCaption("All status");
 		topBar.setWidth("100%");
 		filterSelect.setLabel("FILTER");
 		filterSelect.setItems(ModuleStatus.values());
@@ -111,16 +112,16 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 			configurableDataProvider.setFilter(filters);
 		});
 
-		moduleComboBox = new ComboBox<>();
+		moduleComboBox = new Select<>();
 		moduleComboBox.setLabel("MODULE");
 		moduleComboBox.setItems(modulesList);
-		moduleComboBox.setItemLabelGenerator(module -> module.getName());
+		moduleComboBox.setTextRenderer(module -> module.getName());
 		moduleComboBox.setValue(modulesList.size() > 0 ? modulesList.get(0) : null);
 		moduleComboBox.addValueChangeListener(event -> {
 			dataProvider.refreshAll();
 		});
 
-		genericGrid.setDataProvider(configurableDataProvider);
+		genericGrid.setItems(configurableDataProvider);
 		genericGrid.addColumn(T::getSourceId)
 		.setWidth("220px")
 		.setAutoWidth(false)
