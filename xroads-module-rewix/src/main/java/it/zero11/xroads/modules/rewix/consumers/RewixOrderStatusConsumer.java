@@ -20,6 +20,7 @@ import it.zero11.xroads.modules.rewix.api.model.OrderAttachmentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UpdateDropshippingOrderStatusBean;
 import it.zero11.xroads.modules.rewix.utils.Constants;
 import it.zero11.xroads.sync.EntityConsumer;
+import it.zero11.xroads.sync.XRoadsConstants;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 
 public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements EntityConsumer<Order> {
@@ -50,15 +51,13 @@ public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements E
 //			boolean statusChanged = false;
 //			if (! old.getStatus().equals(order.getStatus())) {
 //				statusChanged = true;
-				switch (order.getStatus()) {
-				case 2:
-					info.setSubstatus(Constants.ORDER_TODISPATCH);
-					break;
-				case 3:
-				case 4:
-					info.setSubstatus(Constants.ORDER_DISPATCHED);
-					break;
-				}				
+			
+			switch (order.getStatus()) {
+				case XRoadsConstants.ORDER_CONFIRMED -> info.setSubstatus(Constants.ORDER_TODISPATCH);
+				case XRoadsConstants.ORDER_WORKING_ON -> info.setSubstatus(Constants.ORDER_WORKING_ON);
+				case XRoadsConstants.ORDER_DISPATCHED -> info.setSubstatus(Constants.ORDER_DISPATCHED);
+			}
+			
 //			}											
 //			if (! oldTracking.equals(newTracking)) {
 //				statusChanged = true;
