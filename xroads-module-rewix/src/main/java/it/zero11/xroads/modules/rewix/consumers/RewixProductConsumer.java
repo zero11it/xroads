@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -59,7 +60,7 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 
 		final String rewixIdStr = XRoadsUtils.getExternalReferenceId(product, xRoadsModule);
 		final int rewixId;
-		if (rewixIdStr == null) {
+		if (StringUtils.isEmpty(rewixIdStr)) {
 			rewixId = updateProductHead(product, true);
 			log.debug("Updating rewix product external reference " + product.getSku() + " --> " + rewixId);
 			getXRoadsModule().getXRoadsCoreService().updateExternalReferenceIdAndVersion(xRoadsModule, product, Integer.toString(rewixId), version);
@@ -136,7 +137,7 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		rewixProduct.setVatClassId(xRoadsModule.getConfiguration().getVat().get(product.getData().path(XRoadsJsonKeys.REWIX_PRODUCT_VAT_CLASS_KEY).asText()));
 
 		final String id = XRoadsUtils.getExternalReferenceId(product, xRoadsModule);
-		if (id != null)
+		if (StringUtils.isNotEmpty(id))
 			rewixProduct.setStockProductId(Integer.parseInt(id));
 
 		return api.updateProduct(rewixProduct);
