@@ -25,6 +25,7 @@ public class Price extends AbstractProductGroupedEntity {
     @Column(columnDefinition = "jsonb", name="data")
 	private JsonNode data;
 
+	@Deprecated
 	@Column(name="discounted_price")
 	private BigDecimal discountedPrice;
 
@@ -78,10 +79,12 @@ public class Price extends AbstractProductGroupedEntity {
 		this.data = data;
 	}
 
+	@Deprecated
 	public BigDecimal getDiscountedPrice() {
 		return this.discountedPrice;
 	}
 
+	@Deprecated
 	public void setDiscountedPrice(BigDecimal discountedPrice) {
 		this.discountedPrice = discountedPrice;
 	}
