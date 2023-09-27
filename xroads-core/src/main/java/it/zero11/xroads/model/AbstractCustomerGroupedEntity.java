@@ -5,7 +5,8 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class AbstractCustomerGroupedEntity extends AbstractEntity{
-
+	private static final long serialVersionUID = 1L;
+	
 	@Column(name="customer_source_id")
 	private String customerSourceId;
 

@@ -20,7 +20,8 @@ public class XRoadsRestApplication extends ResourceConfig{
 			Set<Class<? extends XRoadsWebservice<?>>> webservices = module.getWebservices();
 			for (Class<? extends XRoadsWebservice<?>> webservice : webservices) {
 				try {
-					XRoadsWebservice<XRoadsModule> webserviceInstance = (XRoadsWebservice<XRoadsModule>) webservice.newInstance();
+					@SuppressWarnings("unchecked")
+					XRoadsWebservice<XRoadsModule> webserviceInstance = (XRoadsWebservice<XRoadsModule>) webservice.getConstructor().newInstance();
 					webserviceInstance.setXRoadsModule(module);
 					register(webserviceInstance);
 				}catch (Exception e) {

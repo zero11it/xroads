@@ -22,7 +22,6 @@ import it.zero11.xroads.modules.rewix.api.ProductNotFoundException;
 import it.zero11.xroads.modules.rewix.api.RewixAPIException;
 import it.zero11.xroads.modules.rewix.api.model.AddressBean;
 import it.zero11.xroads.modules.rewix.api.model.AnagraficaBean;
-import it.zero11.xroads.modules.rewix.api.model.UserBean;
 import it.zero11.xroads.modules.rewix.api.model.UserConsentBean;
 import it.zero11.xroads.modules.rewix.api.model.UserConsentsBean;
 import it.zero11.xroads.modules.rewix.api.model.UserCreateBean;

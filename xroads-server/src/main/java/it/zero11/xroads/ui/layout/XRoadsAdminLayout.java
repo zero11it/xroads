@@ -37,7 +37,6 @@ import it.zero11.xroads.ui.view.StockView;
 public class XRoadsAdminLayout extends AppLayoutRouterLayout<AppLayout> implements BeforeEnterObserver {
 	private static final long serialVersionUID = 1L;
     private Class<? extends AppLayout> variant = LeftLayouts.LeftResponsiveHybrid.class;
-	private Span title;
 
 	public XRoadsAdminLayout() {
 		Object user = SessionUtils.getLoggedUser(VaadinSession.getCurrent());

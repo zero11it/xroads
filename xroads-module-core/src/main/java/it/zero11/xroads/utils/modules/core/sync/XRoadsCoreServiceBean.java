@@ -3,6 +3,7 @@ package it.zero11.xroads.utils.modules.core.sync;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.Collection;
@@ -76,10 +77,10 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 			JsonNode modules = ParamDao.getInstance().getParameterAsJsonNode(XRoadsCoreModule.INSTANCE, ParamType.MODULES);
 			modules.fields().forEachRemaining((Map.Entry<String, JsonNode> entry) -> {
 				try {
-					XRoadsModule xRoadsModule = (XRoadsModule) Class.forName(entry.getValue().asText()).newInstance();
+					XRoadsModule xRoadsModule = (XRoadsModule) Class.forName(entry.getValue().asText()).getConstructor().newInstance();
 					xRoadsModule.configure(entry.getKey(), XRoadsCoreServiceBean.getInstance());
 					enabledModules.put(xRoadsModule.getName(), xRoadsModule);
-				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					throw new RuntimeException(e);
 				}
 			});

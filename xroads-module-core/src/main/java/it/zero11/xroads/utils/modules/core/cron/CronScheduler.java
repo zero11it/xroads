@@ -147,7 +147,7 @@ public class CronScheduler extends Thread {
 								String error = null;
 
 								try{
-									Runnable cronInstance = cronEntry.getValue().newInstance();
+									Runnable cronInstance = cronEntry.getValue().getConstructor().newInstance();
 									if (cronInstance instanceof XRoadsCronRunnable){
 										((XRoadsCronRunnable) cronInstance).setXRoadsModule(cronEntry.getKey());
 									}
