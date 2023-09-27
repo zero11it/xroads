@@ -106,7 +106,7 @@ public class EntityDao {
 		} else if(Stock.class.isAssignableFrom(entityClass)) {
 			sql += (" where availability > 0");
 		} else if(Order.class.isAssignableFrom(entityClass)) {
-			sql += (" where status in (5, 2, 3001, 3002)");
+			sql += (" where status in (0, 2, 3)");
 		} else {
 			throw new UnsupportedOperationException();
 		}
