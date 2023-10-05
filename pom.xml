@@ -11,7 +11,7 @@
     <name>Xroads Parent</name>
  
 	<properties>
-		<revision>3.1.12</revision>
+		<revision>3.1.13</revision>
 		<javax.servlet.api.version>3.1.0</javax.servlet.api.version>
 		<vaadin.version>23.3.7</vaadin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
