@@ -31,6 +31,8 @@ public class RewixStockConsumer extends AbstractRewixConsumer implements EntityC
 		ProductModelLotBean productModelLotBean = new ProductModelLotBean();
 		productModelLotBean.setAmount(Math.max(0, stock.getAvailability()));
 		final boolean virtual = stock.getData().path(XRoadsJsonKeys.STOCK_VIRTUAL).asBoolean(false);
+		final String stockLotCost = stock.getData().path(XRoadsJsonKeys.STOCK_COST).asText("0");
+		
 		if (virtual)
 			productModelLotBean.setType(ProductModelLotsType.VIRTUAL);
 		else
@@ -40,7 +42,7 @@ public class RewixStockConsumer extends AbstractRewixConsumer implements EntityC
 		productModelLotBean.setReference("");	
 		productModelLotBean.setSupplierId(xRoadsModule.getConfiguration().getSuppliers().get(stock.getSupplier()));
 		productModelLotBean.setWarehouseId(xRoadsModule.getConfiguration().getWarehouses().get(stock.getWarehouse()));
-		productModelLotBean.setCost(BigDecimal.ZERO);
+		productModelLotBean.setCost(new BigDecimal(stockLotCost));
 		
 		final String id = XRoadsUtils.getExternalReferenceId(model, xRoadsModule);
 		if (id == null) {
