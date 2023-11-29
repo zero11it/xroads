@@ -1,15 +1,18 @@
 package it.zero11.xroads.ui.view;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 
 import it.zero11.xroads.model.Product;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
 import it.zero11.xroads.ui.abstractview.AbstractEntityGridView;
+import it.zero11.xroads.ui.layout.XRoadsShowInMenuBar;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 
 @Route(value = "products", layout = XRoadsAdminLayout.class)
+@XRoadsShowInMenuBar(name = "Products", icon = {VaadinIcon.PACKAGE}, order = 20)
 public class ProductView  extends AbstractEntityGridView<Product>{
 
 	private static final long serialVersionUID = 1L;

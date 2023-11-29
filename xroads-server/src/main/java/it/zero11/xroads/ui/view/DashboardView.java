@@ -1,7 +1,6 @@
 package it.zero11.xroads.ui.view;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -12,12 +11,14 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.modules.XRoadsModule;
+import it.zero11.xroads.ui.layout.XRoadsShowInMenuBar;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 import it.zero11.xroads.utils.XRoadsAsyncUtils;
 import it.zero11.xroads.utils.XRoadsUtils;
@@ -26,6 +27,7 @@ import it.zero11.xroads.utils.modules.core.model.EntityStatus;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
 @Route(value = "dashboard", layout = XRoadsAdminLayout.class)
+@XRoadsShowInMenuBar(name = "Dashboard", icon = {VaadinIcon.DASHBOARD}, order = 10)
 public class DashboardView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -101,7 +103,7 @@ public class DashboardView extends VerticalLayout {
 						status.setModule(xRoadsModule.getName());
 						data.put(entityClass,status);
 					}
-				} 
+				}
 			}
 			historyData.add(data);
 			if (historyData.size() > 10) {

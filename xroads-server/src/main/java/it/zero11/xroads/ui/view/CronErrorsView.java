@@ -3,24 +3,25 @@ package it.zero11.xroads.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 
 import it.zero11.xroads.model.Cron;
 import it.zero11.xroads.modules.XRoadsModule;
+import it.zero11.xroads.ui.layout.XRoadsShowInMenuBar;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
 @Route(value = "errors", layout = XRoadsAdminLayout.class)
+@XRoadsShowInMenuBar(name = "Cron Errors", icon = {VaadinIcon.CLOSE}, order = 90)
 public class CronErrorsView   extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
