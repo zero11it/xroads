@@ -1,0 +1,9 @@
+*.DS_Store
+.classpath
+.project
+/.settings/
+/target/
+/node_modules/
+/bin/
+/frontend/generated/
+/frontend/index.html

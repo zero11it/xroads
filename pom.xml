@@ -64,6 +64,7 @@
 	    <module>xroads-server</module>
 	    <module>xroads-module-core</module>
 	    <module>xroads-module-rewix</module>
+	    <module>xroads-server-war</module>
   </modules>
 
     <dependencies>
