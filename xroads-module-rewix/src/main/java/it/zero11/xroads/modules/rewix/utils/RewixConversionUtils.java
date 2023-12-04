@@ -54,6 +54,7 @@ public class RewixConversionUtils {
 		order.setDispatchVat(orderBean.getDispatchFixedVatAmount().add(orderBean.getDispatchWeightVatAmount()));
 		order.setDispatchTotal(orderBean.getDispatchFixed().add(orderBean.getDispatchWeight()));
 		order.setPaymentGateway(orderBean.getPaymentGateway());
+		order.setRewixMerchantId(orderBean.getMerchantId());
 		
 		ArrayNode paymentsArray = XRoadsUtils.OBJECT_MAPPER.createArrayNode();
 		List<OrderPaymentBean> orderPayments = orderBean.getPayments();

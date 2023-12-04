@@ -52,6 +52,8 @@ public class OrderBean implements Serializable {
 	private List<OrderVat> vatAmounts;
 	
 	private Integer vatReliefId;
+	private Integer groupId;
+	private Integer merchantId;
 
 	private BigDecimal dispatchFixed, dispatchWeight;
 	private BigDecimal dispatchFixedTaxable, dispatchWeightTaxable;
@@ -1355,6 +1357,22 @@ public class OrderBean implements Serializable {
 
 	public void setVatReliefId(Integer vatReliefId) {
 		this.vatReliefId = vatReliefId;
+	}
+
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+
+	public Integer getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
 	}
 
 	public Integer getItemsCount() {

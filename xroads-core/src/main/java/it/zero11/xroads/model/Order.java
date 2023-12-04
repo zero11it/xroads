@@ -77,6 +77,9 @@ public class Order extends AbstractCustomerGroupedEntity {
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="properties")
 	private JsonNode properties;
+	
+	@Column(name="rewix_merchant_id")
+	private Integer rewixMerchantId;
 
 	public JsonNode getAnagrafica() {
 		return this.anagrafica;
@@ -228,6 +231,14 @@ public class Order extends AbstractCustomerGroupedEntity {
 
 	public void setProperties(JsonNode properties) {
 		this.properties = properties;
+	}
+
+	public Integer getRewixMerchantId() {
+		return rewixMerchantId;
+	}
+
+	public void setRewixMerchantId(Integer rewixMerchantId) {
+		this.rewixMerchantId = rewixMerchantId;
 	}
 	
 }

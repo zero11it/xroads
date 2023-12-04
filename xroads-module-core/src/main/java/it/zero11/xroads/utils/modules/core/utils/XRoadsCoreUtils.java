@@ -71,7 +71,8 @@ public class XRoadsCoreUtils {
 	public static boolean orderkHasChanged(Order p1, Order p2){		
 		//FIXME what are the necessary parameters?
 		return changedMethods(p1, p2, Order::getCurrency, Order::getDispatchTotal, Order::getShippingAddress, 
-				Order::getData, Order::getSourceId, Order::getTotal, Order::getStatus, Order::getCustomerSourceId, Order::getCustomerEmail);
+				Order::getData, Order::getSourceId, Order::getTotal, Order::getStatus, Order::getCustomerSourceId, Order::getCustomerEmail,
+				Order::getRewixMerchantId);
 	}
 	
 	public static boolean customerHasChanged(Customer p1, Customer p2){
