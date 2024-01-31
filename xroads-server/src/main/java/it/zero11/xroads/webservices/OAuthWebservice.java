@@ -47,7 +47,7 @@ public class OAuthWebservice extends HttpServlet{
 					.setClientSecret(ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.OAUTH_CLIENT_SECRET)) 	
 					.setRedirectURI(getOAuthRedirectURL())
 					.setCode(oauthAuthzResponse.getCode())
-					.buildQueryMessage();
+					.buildBodyMessage();
 
 			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
