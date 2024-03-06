@@ -134,15 +134,21 @@ public class RewixConversionUtils {
 		order.setShippingAddress(dispatch);
 		
 		int i = 1;
+		boolean orderWithXRoadsModels = false;
 		ObjectNode lineItems = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
 		for (OrderItemBean item : orderBean.getItems()) {
 			ObjectNode lineItem = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
-			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_SKU_KEY, item.getSKU());
 			try {
 				lineItem.put(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, xRoadsModule.getXRoadsCoreService().getEntityIdByModuleAndSourceId(Model.class, xRoadsModule, item.getStockModelId().toString()));
+				orderWithXRoadsModels = true;
 			} catch(NoResultException e) {
-				throw new SyncException("Order contains models that not exists in xroads ");			
+				if(xRoadsModule.getConfiguration().isEnableMixedOrders()) {
+					lineItem.set(XRoadsJsonKeys.ORDER_ITEM_MODEL_ID_KEY, null);
+				} else {
+					throw new SyncException("Order contains models that not exists in xroads.");
+				}
 			}
+			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_SKU_KEY, item.getSKU());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_DESCRIPTION_KEY, item.getDescription());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_NAME_KEY, item.getName()); 
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_QUANTITY_KEY, item.getQuantity());
@@ -154,7 +160,10 @@ public class RewixConversionUtils {
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TOTAL_PRICE_KEY, item.getTotalPrice().toPlainString());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_VAT_SYSTEM_KEY, item.getVat_system_id());
 			lineItem.put(XRoadsJsonKeys.ORDER_ITEM_TAX_KEY, item.getTax().toPlainString());
-			lineItems.put(Integer.toString(i++), lineItem);
+			lineItems.set(Integer.toString(i++), lineItem);
+		}
+		if(!orderWithXRoadsModels) { // skip order (no xroads models in this order
+			return null;
 		}
 		order.setLineItems(lineItems);
 

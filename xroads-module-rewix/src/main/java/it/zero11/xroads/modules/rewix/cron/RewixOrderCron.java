@@ -87,12 +87,13 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 		}
 		boolean isRewixCustomerSource = xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.IS_REWIX_CUSTOMER_SOURCE);
 		Order order = RewixConversionUtils.getOrderFromOrderBean(platform, api.getOrder(Long.valueOf(info.getOrder_id())), xRoadsModule, isRewixCustomerSource);
+		if(order != null) { // skip when return null
+			Customer customer = xRoadsModule.getXRoadsCoreService().getEntity(Customer.class, order.getCustomerSourceId());
+			customer = RewixConversionUtils.getOrUpdateCustomerFromOrder(order, customer);
 
-		Customer customer = xRoadsModule.getXRoadsCoreService().getEntity(Customer.class, order.getCustomerSourceId());
-		customer = RewixConversionUtils.getOrUpdateCustomerFromOrder(order, customer);
-
-		xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, customer);
-		xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, order);
+			xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, customer);
+			xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, order);
+		}
 	}
 
 }

@@ -32,6 +32,7 @@ public class RewixConfig {
 	private Map<String, String> rewixTradeAgentMap;
 	private Map<String, Integer> merchantMap;
 	private boolean enableFullRewixProductUpdate;
+	private boolean enableMixedOrders;
 	
 	public RewixConfig(XRoadsRewixModule module) {
 		endpoint = module.getXRoadsCoreService().getParameter(module, RewixParamType.ENDPOINT);
@@ -80,6 +81,7 @@ public class RewixConfig {
 		merchantMap = XRoadsUtils.OBJECT_MAPPER.convertValue(merchantMapJson, new TypeReference<Map<String, Integer>>(){});		
 		
 		enableFullRewixProductUpdate = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_FULL_REWIX_UPDATE_PRODUCT);
+		enableMixedOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_MIXED_ORDERS);
 	}
 	
 	public String getEndpoint() {
@@ -198,5 +200,9 @@ public class RewixConfig {
 	public boolean isEnableFullRewixProductUpdate() {
 		return enableFullRewixProductUpdate;
 	}
-	
+
+	public boolean isEnableMixedOrders() {
+		return enableMixedOrders;
+	}
+
 }

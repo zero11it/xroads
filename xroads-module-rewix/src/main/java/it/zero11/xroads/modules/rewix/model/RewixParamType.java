@@ -41,6 +41,7 @@ public enum RewixParamType implements IParamType{
 	MERCHANT_MAP("{}"),
 	TRADE_AGENT_MAP("{}"),
 	ENABLE_FULL_REWIX_UPDATE_PRODUCT("true"),
+	ENABLE_MIXED_ORDERS("false")
 	;
 	
 	public final String defaultValue;
