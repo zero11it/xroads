@@ -11,7 +11,7 @@ import it.zero11.xroads.ui.layout.XRoadsShowInMenuBar;
 import it.zero11.xroads.ui.layout.XRoadsAdminLayout;
 
 @Route(value = "customers", layout = XRoadsAdminLayout.class)
-@XRoadsShowInMenuBar(name = "Models", icon = {VaadinIcon.USERS}, order = 40)
+@XRoadsShowInMenuBar(name = "Customers", icon = {VaadinIcon.USERS}, order = 40)
 public class CustomerView extends AbstractEntityGridView<Customer>{
 
 	private static final long serialVersionUID = 1L;
