@@ -17,6 +17,7 @@ public enum ParamType implements IParamType{
 	CRON_POOL_SETTING("{}"),
 	MODULES("{}"),
 	AUTO_RETRY_INTERVAL_MINUTES("60"),
+	LOCALE_BUNDLE_PREFIX("default"),
 	;
 	
 	public final String defaultValue;

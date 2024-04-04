@@ -1,4 +1,4 @@
-package it.zero11.rewix.sync.ui.components;
+package it.zero11.xroads.ui.components;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
