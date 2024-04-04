@@ -140,7 +140,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	}
 
 	@Override
-	public <T extends AbstractEntity> void updateEntityInTransaction(T entity, XRoadsModule module, Consumer<T> consumer) {
+	public <T extends AbstractEntity> void updateEntityInTransaction(T entity, XRoadsModule module, Consumer<T> consumer) throws SyncException {
 		EntityDao.getInstance().updateEntityInTransaction(entity, module, consumer);
 	}
 	

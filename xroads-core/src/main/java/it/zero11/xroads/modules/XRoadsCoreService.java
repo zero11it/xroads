@@ -45,7 +45,7 @@ public interface XRoadsCoreService {
 	
 	<T extends AbstractEntity> String getEntityIdByModuleAndSourceId(Class<T> entityClass, XRoadsModule module, String sourceId);
 
-	<T extends AbstractEntity> void updateEntityInTransaction(T entity, XRoadsModule module, Consumer<T> consumer);
+	<T extends AbstractEntity> void updateEntityInTransaction(T entity, XRoadsModule module, Consumer<T> consumer) throws SyncException;
 	
 	<T extends AbstractEntity> void updateExternalReference(XRoadsModule module, T entity);
 

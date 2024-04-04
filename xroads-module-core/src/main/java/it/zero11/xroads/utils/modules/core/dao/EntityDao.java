@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 
+import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
@@ -148,18 +150,20 @@ public class EntityDao {
 	}
 	
 	public <T extends AbstractEntity> void updateEntityInTransaction(T entity, XRoadsModule module, Consumer<T> consumer) {
-		updateEntityInTransaction(entity, (persistedEntity)->{
+		updateEntityInTransaction(entity, (em, persistedEntity)->{
 			consumer.accept(persistedEntity);
-			persistedEntity.setVersion(persistedEntity.getVersion() + 1); 
-			XRoadsCoreUtils.setExternalReference(persistedEntity, module.getName(), XRoadsUtils.getExternalReferenceId(persistedEntity, module), persistedEntity.getVersion());
+			if (em.unwrap(Session.class).isDirty()) {
+				persistedEntity.setVersion(persistedEntity.getVersion() + 1); 
+				XRoadsCoreUtils.setExternalReference(persistedEntity, module.getName(), XRoadsUtils.getExternalReferenceId(persistedEntity, module), persistedEntity.getVersion());
+			}
 		});
 	}
 	
-	private <T extends AbstractEntity> void updateEntityInTransaction(T entity, Consumer<T> consumer) {
+	private <T extends AbstractEntity> void updateEntityInTransaction(T entity, BiConsumer<EntityManager, T> consumer) {
 		try(TransactionWrapper tw = new TransactionWrapper()){
 			@SuppressWarnings("unchecked")
 			T persistedEntity = tw.getEm().find((Class<T>) entity.getClass(), entity.getSourceId(), LockModeType.PESSIMISTIC_WRITE);
-			consumer.accept(persistedEntity);
+			consumer.accept(tw.getEm(), persistedEntity);
 			tw.commit();
 		}
 	}
@@ -173,13 +177,13 @@ public class EntityDao {
 	}
 
 	public <T extends AbstractEntity> void updateExternalReferenceIdAndVersion(T entity, XRoadsModule module, String id, int version) {
-		updateEntityInTransaction(entity, (persistedEntity)->{
+		updateEntityInTransaction(entity, (em, persistedEntity)->{
 			XRoadsCoreUtils.setExternalReference(persistedEntity, module.getName(), id, version);
 		});
 	}
 
 	public <T extends AbstractEntity> void updateExternalReferenceLastError(T entity, XRoadsModule module, Throwable e) {
-		updateEntityInTransaction(entity, (persistedEntity)->{
+		updateEntityInTransaction(entity, (em, persistedEntity)->{
 			XRoadsCoreUtils.setExternalReferenceLastError(persistedEntity, module.getName(), e);
 		});
 	}
@@ -440,6 +444,7 @@ public class EntityDao {
 	}
 
 	public <T extends AbstractEntity> boolean consume(XRoadsModule module, T entity, BiFunction<T, T, Boolean> hasChangesFuction) {
+		@SuppressWarnings("unchecked")
 		Class<T> entityClass = (Class<T>) entity.getClass();
 		boolean changed = false;
 		try(TransactionWrapper tw = new TransactionWrapper()){
@@ -468,6 +473,7 @@ public class EntityDao {
 	}
 
 	public <T extends AbstractProductGroupedEntity> boolean consumeProductGroupped(XRoadsModule module, String groupId, List<T> entities, BiFunction<T, T, Boolean> hasChangesFuction) {
+		@SuppressWarnings("unchecked")
 		Class<T> entityClass = (Class<T>) entities.get(0).getClass();
 
 		boolean toUpdateAll = false;
