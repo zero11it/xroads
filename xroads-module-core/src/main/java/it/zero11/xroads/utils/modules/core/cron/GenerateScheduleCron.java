@@ -1,8 +1,8 @@
 package it.zero11.xroads.utils.modules.core.cron;
 
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +14,9 @@ import it.zero11.xroads.utils.modules.core.utils.ClusterSettingsUtils;
 
 @CronSchedule(hour={}, minute={0,5,10,15,20,25,30,35,40,45,50,55}, second={0}, onDeploy=true, force=true)
 public class GenerateScheduleCron implements Runnable{
+
+	private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
+
 	@Override
 	public void run() {
 		Date scheduleFrom;
@@ -58,24 +61,21 @@ public class GenerateScheduleCron implements Runnable{
 	}
 
 	private Date getNextSchedule(CronSchedule cronSchedule, Date scheduleFrom, Date scheduleTo) {
-		Calendar calendarMaxValue = new GregorianCalendar(); 
-		calendarMaxValue.setTime(scheduleTo);
-		calendarMaxValue.set(Calendar.MILLISECOND, 0);
+		ZonedDateTime calendarMaxValue = ZonedDateTime.ofInstant(scheduleTo.toInstant(), UTC_ZONE_ID);
+		calendarMaxValue = calendarMaxValue.withNano(0);
 
-		Calendar currentCalendar = new GregorianCalendar(); 
-		currentCalendar.setTime(scheduleFrom);
-		currentCalendar.set(Calendar.MILLISECOND, 0);
-		currentCalendar.add(Calendar.SECOND, 1);
+		ZonedDateTime currentCalendar = ZonedDateTime.ofInstant(scheduleFrom.toInstant(), UTC_ZONE_ID); 
+		currentCalendar = currentCalendar.withNano(0);
+		currentCalendar = currentCalendar.plusSeconds(1L);
 
 		while (true) {
-			if(currentCalendar.after(calendarMaxValue)) {
+			if(currentCalendar.isAfter(calendarMaxValue)) {
 				return null;
 			}
 			
-			int t = 0;
-
 			{
-				int sec = currentCalendar.get(Calendar.SECOND);
+				int sec = currentCalendar.getSecond();
+				int origianlSec = sec;
 
 				Integer nextSecond = getNextValue(cronSchedule.second(), sec, 59);
 				if (nextSecond != null) {
@@ -86,20 +86,22 @@ public class GenerateScheduleCron implements Runnable{
 					}else{
 						sec = 0;
 					}
-					currentCalendar.set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE) + 1);
 				}
-				currentCalendar.set(Calendar.SECOND, sec);
+				if (sec < origianlSec) {
+					currentCalendar = currentCalendar.withSecond(sec);
+					currentCalendar = currentCalendar.plusMinutes(1L);
+				}else if (sec > origianlSec) {
+					currentCalendar = currentCalendar.withSecond(sec);
+				}
 			}
 
 			{
-				int min = currentCalendar.get(Calendar.MINUTE);
-				int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
-				t = -1;
+				int min = currentCalendar.getMinute();
+				int origianlMin = min;
 
 				// get minute.................................................
 				Integer nextMinute = getNextValue(cronSchedule.minute(), min, 59);
 				if (nextMinute != null) {
-					t = min;
 					min = nextMinute.intValue();
 				} else {
 					if (cronSchedule.minute().length > 0) {
@@ -107,56 +109,52 @@ public class GenerateScheduleCron implements Runnable{
 					}else{
 						min = 0;
 					}
-					hr++;
 				}
-				if (min != t) {
-					currentCalendar.set(Calendar.SECOND, 0);
-					currentCalendar.set(Calendar.MINUTE, min);
-					setCalendarHour(currentCalendar, hr);
+				if (min < origianlMin) {
+					currentCalendar = currentCalendar.withSecond(0);
+					currentCalendar = currentCalendar.withMinute(min);
+					currentCalendar = currentCalendar.plusHours(1L);
+					continue;
+				}else if (min > origianlMin) {
+					currentCalendar = currentCalendar.withSecond(0);
+					currentCalendar = currentCalendar.withMinute(min);
 					continue;
 				}
-				currentCalendar.set(Calendar.MINUTE, min);
 			}
 			// get hour...................................................
 			{
-				int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
-				int day = currentCalendar.get(Calendar.DAY_OF_MONTH);
-				t = -1;
+				int hour = currentCalendar.getHour();
+				int originalHour = hour;
 
-				Integer nextHour = getNextValue(cronSchedule.hour(), hr, 23);
+				Integer nextHour = getNextValue(cronSchedule.hour(), hour, 23);
 				if (nextHour != null) {
-					t = hr;
-					hr = nextHour.intValue();
+					hour = nextHour.intValue();
 				} else {
 					if (cronSchedule.hour().length > 0) {
-						hr = cronSchedule.hour()[0];
+						hour = cronSchedule.hour()[0];
 					}else{
-						hr = 0;
+						hour = 0;
 					}
-					day++;
 				}
-				if (hr != t) {
-					currentCalendar.set(Calendar.SECOND, 0);
-					currentCalendar.set(Calendar.MINUTE, 0);
-					currentCalendar.set(Calendar.DAY_OF_MONTH, day);
-					setCalendarHour(currentCalendar, hr);
+				if (hour < originalHour) {
+					currentCalendar = currentCalendar.withSecond(0);
+					currentCalendar = currentCalendar.withMinute(0);
+					currentCalendar = currentCalendar.withHour(hour);
+					currentCalendar = currentCalendar.plusDays(1L);
+					continue;
+				}else if (hour > originalHour) {
+					currentCalendar = currentCalendar.withSecond(0);
+					currentCalendar = currentCalendar.withMinute(0);
+					currentCalendar = currentCalendar.withHour(hour);
 					continue;
 				}
-				currentCalendar.set(Calendar.HOUR_OF_DAY, hr);
 			}
 
-			if(currentCalendar.after(calendarMaxValue)) {
+			if(currentCalendar.isAfter(calendarMaxValue)) {
 				return null;
 			}else{
-				return currentCalendar.getTime();
+				return Date.from(currentCalendar.toInstant());
 			}
-		}
-	}
-
-	private void setCalendarHour(Calendar cal, int hour) {
-		cal.set(java.util.Calendar.HOUR_OF_DAY, hour);
-		if (cal.get(java.util.Calendar.HOUR_OF_DAY) != hour && hour != 24) {
-			cal.set(java.util.Calendar.HOUR_OF_DAY, hour + 1);
 		}
 	}
 
