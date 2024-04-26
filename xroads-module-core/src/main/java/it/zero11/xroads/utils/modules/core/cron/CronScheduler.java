@@ -3,6 +3,7 @@ package it.zero11.xroads.utils.modules.core.cron;
 import java.util.AbstractMap;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -128,7 +129,7 @@ public class CronScheduler extends Thread {
 			for (Map.Entry<String, Class<? extends Runnable>> entry:xRoadsModule.getCrons().entrySet()){
 				CronSchedule cronSchedule = entry.getValue().getAnnotation(CronSchedule.class);
 				if (cronSchedule.onDeploy()){
-					CronDao.getInstance().addSchedule(entry.getValue().getSimpleName(), ClusterSettingsUtils.INSTANCE_NAME, new Date(), true);
+					CronDao.getInstance().addSchedule(entry.getValue().getSimpleName(), xRoadsModule.getName(), ClusterSettingsUtils.INSTANCE_NAME, new Date(), true);
 				}
 			}
 		}
@@ -140,7 +141,7 @@ public class CronScheduler extends Thread {
 					if (!cron.getForceExecution() && cron.getScheduledTime().before(new Date(new Date().getTime() - MAX_EXECUTION_DELAY))){
 						CronDao.getInstance().failed(cron, "Cron too late");
 					}else{
-						Entry<XRoadsModule, Class<? extends Runnable>> cronEntry = getCronEntry(cron.getName());
+						Entry<XRoadsModule, Class<? extends Runnable>> cronEntry = getCronEntry(cron);
 						
 						if (cronEntry != null){
 							cronThreadPoolExecutor.execute(()->{
@@ -204,14 +205,15 @@ public class CronScheduler extends Thread {
 		}
 	}
 
-	private Entry<XRoadsModule, Class<? extends Runnable>> getCronEntry(String name) {
+	private Entry<XRoadsModule, Class<? extends Runnable>> getCronEntry(Cron cron) {
 		for (XRoadsModule xRoadsModule : XRoadsCoreServiceBean.getInstance().getEnabledModules(true).values()) {
-			Class<? extends Runnable> cronClass = xRoadsModule.getCrons().get(name);
-			if (cronClass != null) {
-				return new AbstractMap.SimpleEntry<>(xRoadsModule, cronClass);
+			if(Objects.equals(cron.getxRoadsModule(), xRoadsModule.getName())) {
+				Class<? extends Runnable> cronClass = xRoadsModule.getCrons().get(cron.getName());
+				if (cronClass != null) {
+					return new AbstractMap.SimpleEntry<>(xRoadsModule, cronClass);
+				}
 			}
 		}
-		
 		return null;
 	}
 

@@ -1,0 +1,1 @@
+ALTER TABLE public.cron ADD xroads_module character varying(255);

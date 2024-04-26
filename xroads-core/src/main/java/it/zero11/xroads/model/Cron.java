@@ -39,6 +39,9 @@ public class Cron implements Serializable {
 	
 	private String node;
 	
+	@Column(name="xroads_module")
+	private String xRoadsModule;
+	
 	@Column(name="error", columnDefinition = "text")
 	private String error;
 	
@@ -116,4 +119,13 @@ public class Cron implements Serializable {
 	public void setForceExecution(Boolean forceExecution) {
 		this.forceExecution = forceExecution;
 	}
+
+	public String getxRoadsModule() {
+		return xRoadsModule;
+	}
+
+	public void setxRoadsModule(String xRoadsModule) {
+		this.xRoadsModule = xRoadsModule;
+	}
+	
 }

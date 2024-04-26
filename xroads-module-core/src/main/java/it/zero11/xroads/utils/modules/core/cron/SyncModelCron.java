@@ -5,6 +5,7 @@ import java.util.Arrays;
 import it.zero11.xroads.cron.CronSchedule;
 import it.zero11.xroads.model.Model;
 import it.zero11.xroads.model.Stock;
+import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
 
@@ -19,7 +20,7 @@ public class SyncModelCron extends AbstractSyncCron<Model> {
 	@Override
 	protected void afterConsume(Model entity) {
 		if (EntityDao.getInstance().updateExternalReferenceMarkForRetryInAllModulesByModelGroup(Stock.class, Arrays.asList(entity.getSourceId()))) {
-			CronDao.getInstance().addScheduleNowIfNotScheduled(SyncStockCron.class.getSimpleName());
+			CronDao.getInstance().addScheduleNowIfNotScheduled(SyncStockCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 		}
 	}
 

@@ -36,6 +36,7 @@ import it.zero11.xroads.model.Stock;
 import it.zero11.xroads.modules.XRoadsCoreService;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.SyncException;
+import it.zero11.xroads.utils.XRoadsUtils;
 import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.cron.SyncCustomerCron;
 import it.zero11.xroads.utils.modules.core.cron.SyncModelCron;
@@ -89,13 +90,13 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	}
 	
 	@Override
-	public <T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass, Date scheduledTime) {
-		CronDao.getInstance().addSchedule(cronClass.getSimpleName(), null, scheduledTime, false);		
+	public <T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass,  XRoadsModule module, Date scheduledTime) {
+		CronDao.getInstance().addSchedule(cronClass.getSimpleName(), null, null, scheduledTime, false);		
 	}
 	
 	@Override
-	public <T extends AbstractXRoadsCronRunnable<?>> void addScheduleNowIfNotScheduled(Class<T> cronClass) {
-		CronDao.getInstance().addScheduleNowIfNotScheduled(cronClass.getSimpleName());
+	public <T extends AbstractXRoadsCronRunnable<?>> void addScheduleNowIfNotScheduled(Class<T> cronClass, XRoadsModule module) {
+		CronDao.getInstance().addScheduleNowIfNotScheduled(cronClass.getSimpleName(), module.getName());
 	}
 
 	@Override
@@ -165,29 +166,29 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	public <T extends AbstractEntity> void consume(XRoadsModule module, T entity) throws SyncException {
 		if (entity instanceof Product) {
 			if (EntityDao.getInstance().consume(module, (Product) entity, XRoadsCoreUtils::productHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncProductCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncProductCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if (entity instanceof Model) {
 			if (EntityDao.getInstance().consume(module, (Model) entity, XRoadsCoreUtils::modelHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncModelCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncModelCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if (entity instanceof Price) {
 			if (EntityDao.getInstance().consume(module, (Price) entity, XRoadsCoreUtils::priceHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncPriceCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncPriceCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if (entity instanceof Stock) {
 			if (EntityDao.getInstance().consume(module, (Stock) entity, XRoadsCoreUtils::stockHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncStockCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncStockCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if (entity instanceof Customer) {
 			if (EntityDao.getInstance().consume(module, (Customer) entity, XRoadsCoreUtils::customerHasChanged)) {
 				//FIXME
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncCustomerCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncCustomerCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if(entity instanceof Order) {	
 			if (EntityDao.getInstance().consume(module, (Order) entity, XRoadsCoreUtils::orderkHasChanged)) {
 				//FIXME add cron here
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncOrderCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncOrderCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if(entity instanceof Invoice) {	
 			if (EntityDao.getInstance().consume(module, (Invoice) entity, XRoadsCoreUtils::invoiceHasChanged)) {
@@ -203,11 +204,11 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	public <T extends AbstractProductGroupedEntity> void consumeProductGroupped(XRoadsModule module, String groupId, List<T> entities) throws SyncException {
 		if (entities.get(0) instanceof Model) {
 			if (EntityDao.getInstance().consumeProductGroupped(module, groupId, (List<Model>) entities, XRoadsCoreUtils::modelHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncModelCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncModelCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else if (entities.get(0) instanceof Price) {
 			if (EntityDao.getInstance().consumeProductGroupped(module, groupId, (List<Price>) entities, XRoadsCoreUtils::priceHasChanged)) {
-				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncPriceCron.class.getSimpleName());
+				CronDao.getInstance().addScheduleNowIfNotScheduled(SyncPriceCron.class.getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 			}
 		}else {
 			throw new SyncException("Entity not supported");

@@ -57,9 +57,9 @@ public interface XRoadsCoreService {
 
 	<T extends AbstractProductGroupedEntity> void consumeProductGroupped(XRoadsModule module, String groupId, List<T> value) throws SyncException;
 
-	<T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass, Date scheduledTime);
+	<T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass, XRoadsModule module, Date scheduledTime);
 	
-	<T extends AbstractXRoadsCronRunnable<?>> void addScheduleNowIfNotScheduled(Class<T> cronClass);
+	<T extends AbstractXRoadsCronRunnable<?>> void addScheduleNowIfNotScheduled(Class<T> cronClass, XRoadsModule module);
 	
 	BigInteger getNextXRoadSequenceNumber();
 

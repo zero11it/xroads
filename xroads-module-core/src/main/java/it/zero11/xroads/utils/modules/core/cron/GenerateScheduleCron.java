@@ -36,7 +36,7 @@ public class GenerateScheduleCron implements Runnable{
 				CronSchedule cronSchedule = entry.getValue().getAnnotation(CronSchedule.class);
 				Date nextSchedule = getNextSchedule(cronSchedule, scheduleFrom, scheduleTo);
 				while(nextSchedule != null){
-					addSchedule(entry.getKey(), cronSchedule, nextSchedule);
+					addSchedule(entry.getKey(), xRoadsModule.getName(), cronSchedule, nextSchedule);
 					nextSchedule = getNextSchedule(cronSchedule, nextSchedule, scheduleTo);
 				}
 			}
@@ -45,17 +45,17 @@ public class GenerateScheduleCron implements Runnable{
 		CronDao.getInstance().cleanSchedule(CronScheduler.CLEAN_DELAY_SUCCESS, CronScheduler.CLEAN_DELAY_FAILED);
 	}
 
-	private void addSchedule(String name, CronSchedule cronSchedule, Date scheduledTime) {
+	private void addSchedule(String name, String xRoadsModule, CronSchedule cronSchedule, Date scheduledTime) {
 		if (CronScheduler.FORCE_CURRENT_NODE){
-			CronDao.getInstance().addSchedule(name, ClusterSettingsUtils.INSTANCE_NAME, scheduledTime, cronSchedule.force());
+			CronDao.getInstance().addSchedule(name, xRoadsModule, ClusterSettingsUtils.INSTANCE_NAME, scheduledTime, cronSchedule.force());
 		}else{
 			if (cronSchedule.allNodes()){
 				List<String> currentNodes = CronDao.getInstance().getCurrentNodeList();
 				for (String node:currentNodes){
-					CronDao.getInstance().addSchedule(name, node, scheduledTime, cronSchedule.force());
+					CronDao.getInstance().addSchedule(name, xRoadsModule, node, scheduledTime, cronSchedule.force());
 				}
 			}else{ 
-				CronDao.getInstance().addSchedule(name, null, scheduledTime, cronSchedule.force());
+				CronDao.getInstance().addSchedule(name, xRoadsModule, null, scheduledTime, cronSchedule.force());
 			}
 		}
 	}

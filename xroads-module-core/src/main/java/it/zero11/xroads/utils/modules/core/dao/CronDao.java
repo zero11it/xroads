@@ -76,16 +76,17 @@ public class CronDao {
 		}
 	}
 
-	public void addScheduleNowIfNotScheduled(String name) {
+	public void addScheduleNowIfNotScheduled(String name, String xRoadsModule) {
 		if (!CronDao.getInstance().isPendingExecution(name)){
-			CronDao.getInstance().addSchedule(name, null, new Date(), false);
+			CronDao.getInstance().addSchedule(name, xRoadsModule, null, new Date(), false);
 		}
 	}
 	
-	public synchronized void addSchedule(String name, String node, Date scheduledTime, boolean force) {
+	public synchronized void addSchedule(String name, String xRoadsModule, String node, Date scheduledTime, boolean force) {
 		try (TransactionWrapper etw = new TransactionWrapper()){
 			Cron cron = new Cron();
 			cron.setName(name);
+			cron.setxRoadsModule(xRoadsModule);
 			cron.setStatus(Cron.PENDING);
 			cron.setNode(node);
 			cron.setScheduledTime(scheduledTime);

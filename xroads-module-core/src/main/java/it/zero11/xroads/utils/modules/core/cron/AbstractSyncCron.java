@@ -13,6 +13,7 @@ import it.zero11.xroads.sync.EntityConsumer;
 import it.zero11.xroads.sync.EntityProductGroupedConsumer;
 import it.zero11.xroads.sync.SyncException;
 import it.zero11.xroads.utils.XRoadsAsyncUtils;
+import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.dao.CronDao;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
 import it.zero11.xroads.utils.modules.core.model.WrapFilter;
@@ -29,7 +30,7 @@ public abstract class AbstractSyncCron<T extends AbstractEntity> implements Runn
 		}
 		
 		if (hasEntityToProcess) {
-			CronDao.getInstance().addScheduleNowIfNotScheduled(getClass().getSimpleName());
+			CronDao.getInstance().addScheduleNowIfNotScheduled(getClass().getSimpleName(), XRoadsCoreModule.INSTANCE.getName());
 		}
 	}
 
