@@ -48,8 +48,9 @@ public class XRoadsCoreUtils {
 	
 	public static boolean productHasChanged(Product p1, Product p2) {
 		return changedMethods(p1, p2, Product::getBrand, Product::getCost, Product::getData, Product::getDescriptions, Product::getEan, 
-				Product::getImages, Product::getName, Product::getNames, Product::getSku, Product::getSourceId, Product::getSupplier,
-				Product::getTags, Product::getVirtual, Product::getOnline, Product::getRestrictions, Product::getUrlkeys);
+				Product::getImages, Product::getName, Product::getNames, Product::getOption1, Product::getOption2,
+				Product::getOption3, Product::getSku, Product::getSourceId, Product::getSupplier, Product::getTags,
+				Product::getVirtual, Product::getOnline, Product::getRestrictions, Product::getUrlkeys);
 	}
 	
 	public static boolean modelHasChanged(Model m1, Model m2){

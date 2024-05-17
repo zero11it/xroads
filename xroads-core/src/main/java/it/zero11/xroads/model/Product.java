@@ -39,6 +39,18 @@ public class Product extends AbstractEntity {
     @Column(columnDefinition = "jsonb", name="names")
 	private JsonNode names;
 
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="option1")
+	private JsonNode option1;
+
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="option2")
+	private JsonNode option2;
+
+	@Type( type = "jsonb-node" )
+    @Column(columnDefinition = "jsonb", name="option3")
+	private JsonNode option3;
+
 	private Boolean online;
 
 	private String sku;
@@ -121,6 +133,30 @@ public class Product extends AbstractEntity {
 
 	public void setNames(JsonNode names) {
 		this.names = names;
+	}
+
+	public JsonNode getOption1() {
+		return option1;
+	}
+
+	public void setOption1(JsonNode option1) {
+		this.option1 = option1;
+	}
+
+	public JsonNode getOption2() {
+		return option2;
+	}
+
+	public void setOption2(JsonNode option2) {
+		this.option2 = option2;
+	}
+
+	public JsonNode getOption3() {
+		return option3;
+	}
+
+	public void setOption3(JsonNode option3) {
+		this.option3 = option3;
 	}
 
 	public Boolean getOnline() {

@@ -49,6 +49,9 @@ public class XRoadsUtils {
 		
 		product.setData(OBJECT_MAPPER.createObjectNode());
 		product.setNames(OBJECT_MAPPER.createObjectNode());
+		product.setOption1(OBJECT_MAPPER.createObjectNode());
+		product.setOption2(OBJECT_MAPPER.createObjectNode());
+		product.setOption3(OBJECT_MAPPER.createObjectNode());
 		product.setRestrictions(OBJECT_MAPPER.createObjectNode());
 		product.setUrlkeys(OBJECT_MAPPER.createObjectNode());
 		return product;
@@ -68,6 +71,9 @@ public class XRoadsUtils {
 		
 		product.setData(OBJECT_MAPPER.createObjectNode());
 		product.setNames(OBJECT_MAPPER.createObjectNode());
+		product.setOption1(OBJECT_MAPPER.createObjectNode());
+		product.setOption2(OBJECT_MAPPER.createObjectNode());
+		product.setOption3(OBJECT_MAPPER.createObjectNode());
 		product.setRestrictions(OBJECT_MAPPER.createObjectNode());
 		product.setUrlkeys(OBJECT_MAPPER.createObjectNode());
 		return product;

@@ -74,7 +74,9 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 		boolean failed = true;
 		try {
 			if (revision == null || !revision.getDescriptions().equals(product.getDescriptions()) 
-					|| !revision.getNames().equals(product.getNames()) || !revision.getUrlkeys().equals(product.getUrlkeys())) {
+					|| !revision.getNames().equals(product.getNames()) || !revision.getUrlkeys().equals(product.getUrlkeys())
+					|| !revision.getOption1().equals(product.getOption1()) || !revision.getOption2().equals(product.getOption2())
+					|| !revision.getOption3().equals(product.getOption3())) {
 				log.debug("Updating rewix product translations " + product.getSku());
 				updateProductTranslations(rewixId, product);
 			}
@@ -341,100 +343,75 @@ public class RewixProductConsumer extends AbstractRewixConsumer implements Entit
 
 		List<ProductTranslationsBean> beans = new ArrayList<>();
 
-		{
-			ProductTranslationsBean translations = new ProductTranslationsBean();
-			translations.setType(0); //Description
-			translations.setValue(null);
-			translations.setStockProductId(rewixId);	
-			translations.setProductTranslations(new ArrayList<>());
-			product.getDescriptions().fields().forEachRemaining(langDescriptionKeyNode -> {
-				JsonNode langNode = langDescriptionKeyNode.getValue();
-				if (!langNode.isMissingNode()) {
-					if (langNode.isContainerNode()) {
-						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
-							ProductTranslationBean translation = new ProductTranslationBean();
-							translation.setLocaleCode(langDescriptionKeyNode.getKey());
-							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
-							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
-							translations.getProductTranslations().add(translation);
-						});
-					} else {
-						ProductTranslationBean translation = new ProductTranslationBean();
-						translation.setLocaleCode(langDescriptionKeyNode.getKey());
-						translation.setTranslation(langNode.asText(null));
-						translations.getProductTranslations().add(translation);
-					}
-				}
-			});
-			if (translations.getProductTranslations().size() > 0)
-				beans.add(translations);
+		// Description
+		ProductTranslationsBean translations = getProductTranslations(rewixId, 0, product.getDescriptions());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
 		}
 		
-		
-		{
-			ProductTranslationsBean translations = new ProductTranslationsBean();
-			translations.setType(3); //Name
-			translations.setValue(null);
-			translations.setStockProductId(rewixId);
-			translations.setProductTranslations(new ArrayList<>());
-			product.getNames().fields().forEachRemaining(langNameKeyNode -> {
-				JsonNode langNode = langNameKeyNode.getValue();
-				if (!langNode.isMissingNode()) {
-					if (langNode.isContainerNode()) {
-						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
-							ProductTranslationBean translation = new ProductTranslationBean();
-							translation.setLocaleCode(langNameKeyNode.getKey());
-							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
-							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
-							translations.getProductTranslations().add(translation);
-						});
-					} else {
-						ProductTranslationBean translation = new ProductTranslationBean();
-						translation.setLocaleCode(langNameKeyNode.getKey());
-						translation.setTranslation(langNode.asText(null));
-						translations.getProductTranslations().add(translation);
-					}
-				}
-			});
-			if (translations.getProductTranslations().size() > 0)
-				beans.add(translations);
+		// Name
+		translations = getProductTranslations(rewixId, 3, product.getNames());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
 		}
 		
+		// Option1
+		translations = getProductTranslations(rewixId, 1, product.getOption1());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
+		}
 		
-		{
-			ProductTranslationsBean translations = new ProductTranslationsBean();
-			translations.setType(7); // URLkey
-			translations.setValue(null);
-			translations.setStockProductId(rewixId);	
-			translations.setProductTranslations(new ArrayList<>());
-			product.getUrlkeys().fields().forEachRemaining(langUrlKeyKeyNode -> {
-				JsonNode langNode = langUrlKeyKeyNode.getValue();
-				if (!langNode.isMissingNode()) {
-					if (langNode.isContainerNode()) {
-						langNode.fields().forEachRemaining(platformDescriptionKeyNode -> {
-							ProductTranslationBean translation = new ProductTranslationBean();
-							translation.setLocaleCode(langUrlKeyKeyNode.getKey());
-							translation.setTranslation(platformDescriptionKeyNode.getValue().asText(null));
-							translation.setPlatformUid(platformDescriptionKeyNode.getKey());
-							translations.getProductTranslations().add(translation);
-						});
-					} else {
-						ProductTranslationBean translation = new ProductTranslationBean();
-						translation.setLocaleCode(langUrlKeyKeyNode.getKey());
-						translation.setTranslation(langNode.asText(null));
-						translations.getProductTranslations().add(translation);
-					}
-				}
-			});
-			if (translations.getProductTranslations().size() > 0)
-				beans.add(translations);
-		}		
+		// Option2
+		translations = getProductTranslations(rewixId, 2, product.getOption2());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
+		}
+		
+		// Option3
+		translations = getProductTranslations(rewixId, 8, product.getOption3());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
+		}
+		
+		// URLkey
+		translations = getProductTranslations(rewixId, 7, product.getUrlkeys());
+		if (translations.getProductTranslations().size() > 0) {
+			beans.add(translations);
+		}
 
 		if (beans.size() > 0) {			
 			for (ProductTranslationsBean bean : beans) {
 				api.updateProductTranslations(bean);
 			}
 		} 
+	}
+
+	private ProductTranslationsBean getProductTranslations(Integer rewixProductId, int translationType, JsonNode translationNode) {
+		ProductTranslationsBean translations = new ProductTranslationsBean();
+		translations.setType(translationType);
+		translations.setValue(null);
+		translations.setStockProductId(rewixProductId);	
+		translations.setProductTranslations(new ArrayList<>());
+		translationNode.fields().forEachRemaining(langKeyNode -> {
+			JsonNode langNode = langKeyNode.getValue();
+			if (!langNode.isMissingNode()) {
+				if (langNode.isContainerNode()) {
+					langNode.fields().forEachRemaining(platformTranslationKeyNode -> {
+						ProductTranslationBean translation = new ProductTranslationBean();
+						translation.setLocaleCode(langKeyNode.getKey());
+						translation.setTranslation(platformTranslationKeyNode.getValue().asText(null));
+						translation.setPlatformUid(platformTranslationKeyNode.getKey());
+						translations.getProductTranslations().add(translation);
+					});
+				} else {
+					ProductTranslationBean translation = new ProductTranslationBean();
+					translation.setLocaleCode(langKeyNode.getKey());
+					translation.setTranslation(langNode.asText(null));
+					translations.getProductTranslations().add(translation);
+				}
+			}
+		});
+		return translations;
 	}
 
 	protected void updateProductRestrictions(Integer rewixId, Product product) throws SyncException {
