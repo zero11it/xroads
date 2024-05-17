@@ -127,6 +127,52 @@ public class RewixSourceProductCron extends AbstractXRoadsCronRunnable<XRoadsRew
 					});
 				}
 
+				// OPTIONS
+				List<String> optionPlatforms = xRoadsModule.getConfiguration().getOptionPlatforms();
+				if(optionPlatforms != null) {
+					ObjectNode option1 = ((ObjectNode) product.getOption1());
+					ObjectNode option2 = ((ObjectNode) product.getOption2());
+					ObjectNode option3 = ((ObjectNode) product.getOption3());
+					
+					localeMap.fields().forEachRemaining(localeConfig -> {
+						String targetLocale = localeConfig.getKey();
+						String supplierLocale = localeConfig.getValue().asText();
+						//option1
+						rewixProduct.getProductLocalizations()
+						.getOption1()
+						.stream()
+						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
+						.findFirst()
+						.ifPresent(localeValue -> {
+							namePlatforms.forEach(platform -> {
+								putLanguage(option1, targetLocale, platform, localeValue.getValue());
+							});
+						});
+						//option2
+						rewixProduct.getProductLocalizations()
+						.getOption2()
+						.stream()
+						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
+						.findFirst()
+						.ifPresent(localeValue -> {
+							namePlatforms.forEach(platform -> {
+								putLanguage(option2, targetLocale, platform, localeValue.getValue());
+							});
+						});
+						//option3
+						rewixProduct.getProductLocalizations()
+						.getOption3()
+						.stream()
+						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
+						.findFirst()
+						.ifPresent(localeValue -> {
+							namePlatforms.forEach(platform -> {
+								putLanguage(option3, targetLocale, platform, localeValue.getValue());
+							});
+						});
+					});
+				}
+
 				// DESCRIPTIONS
 				List<String> descriptionPlatforms = xRoadsModule.getConfiguration().getDescriptionPlatforms();
 				if(descriptionPlatforms != null) {

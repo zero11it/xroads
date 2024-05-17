@@ -33,6 +33,7 @@ public class RewixSourceConfig {
 	private List<String> listingPlatforms = new ArrayList<>();
 	private List<String> descriptionPlatforms = new ArrayList<>();
 	private List<String> namePlatforms = new ArrayList<>();
+	private List<String> optionPlatforms = new ArrayList<>();
 	private Map<String, String> vatClassMap;
 	
 	public RewixSourceConfig(XRoadsRewixSourceModule xRoadsModule) {
@@ -62,6 +63,10 @@ public class RewixSourceConfig {
 		xRoadsModule.getXRoadsCoreService().getParameterAsJsonNode(xRoadsModule, RewixSourceParamType.NAME_PLATFORMS)
 		.elements().forEachRemaining((element) -> {
 			namePlatforms.add(element.asText());
+		});
+		xRoadsModule.getXRoadsCoreService().getParameterAsJsonNode(xRoadsModule, RewixSourceParamType.OPTION_PLATFORMS)
+		.elements().forEachRemaining((element) -> {
+			optionPlatforms.add(element.asText());
 		});
 		tagMap = xRoadsModule.getXRoadsCoreService().getParameterAsJsonNode(xRoadsModule, RewixSourceParamType.TAG_MAP);
 		supplierName = xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixSourceParamType.SUPPLIER_NAME);
@@ -143,6 +148,10 @@ public class RewixSourceConfig {
 
 	public List<String> getNamePlatforms() {
 		return namePlatforms;
+	}
+
+	public List<String> getOptionPlatforms() {
+		return optionPlatforms;
 	}
 
 	public Map<String, String> getVatClassMap() {

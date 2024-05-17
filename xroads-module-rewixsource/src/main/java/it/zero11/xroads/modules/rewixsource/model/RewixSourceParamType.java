@@ -19,6 +19,7 @@ public enum RewixSourceParamType implements IParamType{
 	MARKUP_RULES("{\n" + "\"TAXABLE\" : [],\n" + "\"SUGGESTED\" : [],\n" + "\"RETAIL\" : []\n" + "}"),
 	MIN_MARKUP_BASED_ON_BEST_TAXABLE("false"),
 	NAME_PLATFORMS("[]"),
+	OPTION_PLATFORMS("[]"),
 	PREFIX_SOURCE_ID(""),
 	REWIX_CURRENCY_CONVERSION("1"),
 	REWIX_LOCALE("en_US"),

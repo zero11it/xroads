@@ -27,6 +27,12 @@ public class ProductLocalizations implements Serializable {
 	
 	private List<LocaleValue> urlKey;
 
+	private List<LocaleValue> option1;
+
+	private List<LocaleValue> option2;
+
+	private List<LocaleValue> option3;
+
 	@XmlElementWrapper(name="description")
 	@XmlElement(name="localevalue")
 	public List<LocaleValue> getDescription() {
@@ -85,5 +91,35 @@ public class ProductLocalizations implements Serializable {
 
 	public void setUrlKey(List<LocaleValue> urlKey) {
 		this.urlKey = urlKey;
+	}
+	
+	@XmlElementWrapper(name="option1")
+	@XmlElement(name="localevalue")
+	public List<LocaleValue> getOption1() {
+		return option1;
+	}
+
+	public void setOption1(List<LocaleValue> option1) {
+		this.option1 = option1;
+	}
+	
+	@XmlElementWrapper(name="option2")
+	@XmlElement(name="localevalue")
+	public List<LocaleValue> getOption2() {
+		return option2;
+	}
+
+	public void setOption2(List<LocaleValue> option2) {
+		this.option2 = option2;
+	}
+
+	@XmlElementWrapper(name="option3")
+	@XmlElement(name="localevalue")
+	public List<LocaleValue> getOption3() {
+		return option3;
+	}
+
+	public void setOption3(List<LocaleValue> option3) {
+		this.option3 = option3;
 	}
 }
