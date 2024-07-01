@@ -33,6 +33,7 @@ public class RewixConfig {
 	private Map<String, Integer> merchantMap;
 	private boolean enableFullRewixProductUpdate;
 	private boolean enableMixedOrders;
+	private boolean enableEmptyOrders;
 	
 	public RewixConfig(XRoadsRewixModule module) {
 		endpoint = module.getXRoadsCoreService().getParameter(module, RewixParamType.ENDPOINT);
@@ -82,6 +83,7 @@ public class RewixConfig {
 		
 		enableFullRewixProductUpdate = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_FULL_REWIX_UPDATE_PRODUCT);
 		enableMixedOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_MIXED_ORDERS);
+		enableEmptyOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_EMPTY_ORDERS);
 	}
 	
 	public String getEndpoint() {
@@ -203,6 +205,14 @@ public class RewixConfig {
 
 	public boolean isEnableMixedOrders() {
 		return enableMixedOrders;
+	}
+
+	public boolean isEnableEmptyOrders() {
+		return enableEmptyOrders;
+	}
+
+	public void setEnableEmptyOrders(boolean enableEmptyOrders) {
+		this.enableEmptyOrders = enableEmptyOrders;
 	}
 
 }

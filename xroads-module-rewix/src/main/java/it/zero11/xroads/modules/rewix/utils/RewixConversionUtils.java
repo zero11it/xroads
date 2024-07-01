@@ -135,7 +135,7 @@ public class RewixConversionUtils {
 		order.setShippingAddress(dispatch);
 		
 		int i = 1;
-		boolean orderWithXRoadsModels = false;
+		boolean orderWithXRoadsModels = xRoadsModule.getConfiguration().isEnableEmptyOrders();
 		ObjectNode lineItems = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
 		for (OrderItemBean item : orderBean.getItems()) {
 			ObjectNode lineItem = XRoadsUtils.OBJECT_MAPPER.createObjectNode();
