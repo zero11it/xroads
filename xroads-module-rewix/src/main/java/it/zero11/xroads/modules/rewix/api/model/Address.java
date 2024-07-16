@@ -2,15 +2,6 @@ package it.zero11.xroads.modules.rewix.api.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-@Entity
-@Table(name = "address")
 public class Address  implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -18,13 +9,10 @@ public class Address  implements Serializable {
 	public final static String TYPE_INVOICE 	= "invoice";
 	public final static String TYPE_DISPATCH 	= "dispatch";
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String username;
 	
-	//@Column(insertable=false, updatable=false)
 	private String type;
 	
 	private Integer country_id;
@@ -47,14 +35,12 @@ public class Address  implements Serializable {
 	private String cfpiva;
 	
 
-	@Transient
 	public String getAddress() {
 		String _tmp = String.format("%s %s", (address_type!=null ? address_type :""),
 				(street!=null ? street :""));
 		return  _tmp + (number!=null ? " ,"+number :"");
 	}
 	
-	@Transient
 	public String getFullAddress() {
 		String myprov = (prov == null) ? "" : " (" + prov + ")";
 		String mycity = (city == null) ? "" : " " +city;
@@ -89,12 +75,10 @@ public class Address  implements Serializable {
 		this.prov = prov;
 	}
 
-	@Transient
 	public String getFullname() {
 		return String.format("%s", addressee);
 	}
 	
-	@Transient
 	public String getFullMobile() {
 		return String.format("%s%s", cel_prefix !=null ? cel_prefix : "", 
 				 cel !=null ? cel : "");

@@ -5,39 +5,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.MapKey;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="fatture")
-@NamedQueries({
-@NamedQuery(
-	name="getCreditNotesFromInvoiceId",
-	query="SELECT c FROM Fattura c WHERE c.type='creditnote' AND c.refInvoice=:refInvoice"
-)
-})
 
 public class Fattura {
 	
 	public static final String TYPE_INVOICE 	= "invoice";
 	public static final String TYPE_CREDITNOTE	= "creditnote";
 	
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer fattura_id;
 	
-	@Column(insertable = true, updatable = false)
 	private Integer invoice_no;
-	@Column(insertable = true, updatable = false)
 	private String suffix;
 	
 	private Integer country_id;
@@ -53,21 +31,17 @@ public class Fattura {
 	private String username;
 	private String type=TYPE_INVOICE;
 	
-	@Column(name="lettera_intento")
 	private String letteraIntento;
 	
 	private String payment_info;
 	
-	@Column(name="ref_invoice")
 	private Integer refInvoice;
 	
 	private String currency;
 	private BigDecimal exchange_rate;
 	
-	@Column(name="payment_terms_id")
 	private Integer paymentTermsId;
 	
-	@Column(name="payment_date")
 	private Date paymentDate;
 	
 	public Fattura(){

@@ -91,7 +91,7 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	
 	@Override
 	public <T extends AbstractXRoadsCronRunnable<?>> void addSchedule(Class<T> cronClass,  XRoadsModule module, Date scheduledTime) {
-		CronDao.getInstance().addSchedule(cronClass.getSimpleName(), null, null, scheduledTime, false);		
+		CronDao.getInstance().addSchedule(cronClass.getSimpleName(), module.getName(), null, scheduledTime, false);
 	}
 	
 	@Override

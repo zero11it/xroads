@@ -9,21 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import it.zero11.xroads.modules.rewix.api.model.GhostEnvelope.GhostOrder;
 import it.zero11.xroads.modules.rewix.api.model.GhostEnvelope.GhostOrder.RecipientDetails;
 import it.zero11.xroads.modules.rewix.api.model.GhostEnvelope.GhostOrder.RecipientDetails.Phone;
 
-@Entity
-@Table(name="orders")
 public class Order implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
@@ -179,7 +175,6 @@ public class Order implements Serializable, Cloneable {
 	}
 	
 
-	@Transient
 	public boolean isPayed(){
 		if (status.equals(Order.ORDER_TODISPATCH) || 
 			status.equals(Order.ORDER_BOOKED) ||
@@ -207,8 +202,6 @@ public class Order implements Serializable, Cloneable {
 
 	
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer order_id;
 	
 	private String customer, dest, careof;
@@ -230,7 +223,6 @@ public class Order implements Serializable, Cloneable {
 	
 	private String payment_callback, payment_gw;
 	
-	@Column(name="payment_amount")
 	private BigDecimal paymentAmount; // Excluding gw fee
 	
 	private Integer group_id;
@@ -240,10 +232,8 @@ public class Order implements Serializable, Cloneable {
 	private BigDecimal dispatch_fixed=BigDecimal.ZERO, dispatch_weight=BigDecimal.ZERO;
 	private BigDecimal vat_amount_dispatch_fixed=BigDecimal.ZERO, vat_amount_dispatch_weight=BigDecimal.ZERO;
 	
-	@Column(name="payment_fee")
 	private BigDecimal paymentFee=BigDecimal.ZERO;
 	
-	@Column(name="vat_amount_payment_fee")
 	private BigDecimal vatAmountPaymentFee=BigDecimal.ZERO;
 	
 	@Deprecated
@@ -253,10 +243,8 @@ public class Order implements Serializable, Cloneable {
 	
 	private String admin_notes;
 	
-	@Column(name="payment_terms_id")
 	private Integer paymentTermsId;
 	
-	@Column(name="validated_vat")
 	private String  validatedVat;
 
 	private Integer origin;
@@ -302,18 +290,12 @@ public class Order implements Serializable, Cloneable {
 	}
 
 	
-	@OneToMany(mappedBy="pkey.order_id")
 	private List<OrderInvoice> invoice_list;
 	
-	@OneToMany(mappedBy="pkey.order_id")
-	@MapKey(name="pkey.fattura_id")
 	private Map<Integer, OrderInvoice> invoice_map;
 	
-	@OneToMany(mappedBy="pkey.order_id")
 	private List<OrderProperties> properties;
 	
-	@OneToMany(mappedBy="pkey.order_id")
-	@MapKey(name="pkey.property_id")
 	private Map<Integer, OrderProperties> propertiesMap;
 	
 	public List<OrderInvoice> getInvoice_list() {
@@ -736,7 +718,6 @@ public class Order implements Serializable, Cloneable {
 		this.vat_system_id = vat_system_id;
 	}
 	
-	@Transient
 	public boolean isVatValidated(){
 		return cfpiva!=null && validatedVat!=null && cfpiva.equals(validatedVat);
 	}
