@@ -129,6 +129,7 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 		rewixModel.setAdditionalBarcode(model.getAdditionalBarcode());
 		rewixModel.setOption1(model.getOptions().path("size").asText(null));
 		rewixModel.setOption2(model.getOptions().path("color").asText(null));
+		rewixModel.setOption3(model.getOptions().path("option3").asText(null));
 		rewixModel.setStockProductId(rewixProductId);
 		rewixModel.setBackorder(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_UNLIMITED_KEY).asBoolean());
 		rewixModel.setPriority(model.getData().path(XRoadsJsonKeys.REWIX_MODEL_INDEX_KEY).asInt());

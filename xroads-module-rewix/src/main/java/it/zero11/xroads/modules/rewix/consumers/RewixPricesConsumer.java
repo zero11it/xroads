@@ -68,9 +68,9 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				pricePlatforms = xRoadsModule.getConfiguration().getOrderPlatforms();
 			}
 			for(String platform : pricePlatforms) {
-				ProductTaxableBean srewixPrice = new ProductTaxableBean();		
+				ProductTaxableBean srewixPrice = new ProductTaxableBean();
 				if (price.getListingGroup() != null)
-					srewixPrice.setGroupId(gs.get(new GroupSearchBean(platform.trim(), price.getListingGroup())));							
+					srewixPrice.setGroupId(gs.get(new GroupSearchBean(platform.trim(), price.getListingGroup())));
 				srewixPrice.setRetailPrice(price.getRetailPrice());
 				srewixPrice.setSuggestedPrice(price.getSuggestedPrice());
 				srewixPrice.setTaxable(price.getSellPrice());
@@ -78,6 +78,7 @@ public class RewixPricesConsumer extends AbstractRewixConsumer implements Entity
 				srewixPrice.setCountry(price.getCountry());	
 				srewixPrice.setOption1(price.getData().path("option1").asText(null));
 				srewixPrice.setOption2(price.getData().path("option2").asText(null));
+				srewixPrice.setOption3(price.getData().path("option3").asText(null));
 				srewixPrice.setMinimumQuantity(price.getMinQuantity());
 				if(!price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).isMissingNode()) {
 					srewixPrice.setPricePriority(price.getData().path(XRoadsJsonKeys.REWIX_PRICE_PRIORITY_KEY).asInt());
