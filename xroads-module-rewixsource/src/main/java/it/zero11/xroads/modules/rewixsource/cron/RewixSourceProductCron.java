@@ -144,7 +144,7 @@ public class RewixSourceProductCron extends AbstractXRoadsCronRunnable<XRoadsRew
 						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
 						.findFirst()
 						.ifPresent(localeValue -> {
-							namePlatforms.forEach(platform -> {
+							optionPlatforms.forEach(platform -> {
 								putLanguage(option1, targetLocale, platform, localeValue.getValue());
 							});
 						});
@@ -155,7 +155,7 @@ public class RewixSourceProductCron extends AbstractXRoadsCronRunnable<XRoadsRew
 						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
 						.findFirst()
 						.ifPresent(localeValue -> {
-							namePlatforms.forEach(platform -> {
+							optionPlatforms.forEach(platform -> {
 								putLanguage(option2, targetLocale, platform, localeValue.getValue());
 							});
 						});
@@ -166,7 +166,7 @@ public class RewixSourceProductCron extends AbstractXRoadsCronRunnable<XRoadsRew
 						.filter(localeValue -> localeValue.getLocalecode().equals(supplierLocale))
 						.findFirst()
 						.ifPresent(localeValue -> {
-							namePlatforms.forEach(platform -> {
+							optionPlatforms.forEach(platform -> {
 								putLanguage(option3, targetLocale, platform, localeValue.getValue());
 							});
 						});
