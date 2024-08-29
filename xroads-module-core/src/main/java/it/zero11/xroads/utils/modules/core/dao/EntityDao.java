@@ -389,7 +389,9 @@ public class EntityDao {
 	private String getOrder(ModuleOrder orderBy) {
 		switch (orderBy != null ? orderBy : ModuleOrder.SOURCE_ID) {
 		case LAST_ERROR_DATE:
-			return "ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "' ASC NULLS FIRST";			
+			return "ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE + "' DESC NULLS FIRST";
+		case EXTERNAL_REFERENCE_ID:
+			return "ORDER BY external_references-> (:moduleName) -> '" + XRoadsJsonKeys.EXTERNAL_REFERENCE_ID + "' DESC NULLS FIRST";
 		default:
 			return "ORDER BY source_id";
 		}
