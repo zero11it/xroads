@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import it.zero11.xroads.cron.AbstractXRoadsCronRunnable;
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractEntityRevision;
+import it.zero11.xroads.model.AbstractModelGroupedEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.IParamType;
@@ -264,6 +265,11 @@ public class XRoadsCoreServiceBean implements XRoadsCoreService {
 	@Override
 	public <T extends AbstractProductGroupedEntity> Map<String, List<T>> getEntitiesByProductGroup(Class<T> entityClass, Collection<String> productIds) {
 		return EntityDao.getInstance().getEntitiesByProductGroup(entityClass, productIds);
+	}
+	
+	@Override
+	public <T extends AbstractModelGroupedEntity> Map<String, List<T>> getEntitiesByModelGroup(Class<T> entityClass, Collection<String> modelIds) {
+		return EntityDao.getInstance().getEntitiesByModelGroup(entityClass, modelIds);
 	}
 
 	@Override

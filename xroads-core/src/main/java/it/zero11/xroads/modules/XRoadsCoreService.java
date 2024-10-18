@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import it.zero11.xroads.cron.AbstractXRoadsCronRunnable;
 import it.zero11.xroads.model.AbstractEntity;
 import it.zero11.xroads.model.AbstractEntityRevision;
+import it.zero11.xroads.model.AbstractModelGroupedEntity;
 import it.zero11.xroads.model.AbstractProductGroupedEntity;
 import it.zero11.xroads.model.IParamType;
 import it.zero11.xroads.model.ModuleStatus;
@@ -38,6 +39,8 @@ public interface XRoadsCoreService {
 			Integer externalReferenceVersion);
 
 	<T extends AbstractProductGroupedEntity> Map<String, List<T>> getEntitiesByProductGroup(Class<T> entityClass, Collection<String> productIds);
+	
+	<T extends AbstractModelGroupedEntity> Map<String, List<T>> getEntitiesByModelGroup(Class<T> entityClass, Collection<String> modelIds);
 	
 	<T extends AbstractEntity> List<T> getActiveEntities(Class<T> entityClass, String lastSourceId, int limit );
 	
