@@ -62,6 +62,9 @@ public class Product extends AbstractEntity {
 	private JsonNode tags;
 
 	private Boolean virtual;
+	
+    @Column(name="hidden_from_catalog")
+	private Boolean hiddenFromCatalog;
 
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="restrictions")
@@ -197,6 +200,14 @@ public class Product extends AbstractEntity {
 
 	public void setVirtual(Boolean virtual) {
 		this.virtual = virtual;
+	}
+
+	public Boolean getHiddenFromCatalog() {
+		return hiddenFromCatalog;
+	}
+
+	public void setHiddenFromCatalog(Boolean hiddenFromCatalog) {
+		this.hiddenFromCatalog = hiddenFromCatalog;
 	}
 
 	public JsonNode getRestrictions() {

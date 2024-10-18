@@ -62,6 +62,9 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 
 	private Boolean virtual;
 	
+    @Column(name="hidden_from_catalog")
+	private Boolean hiddenFromCatalog;
+	
 	@Type( type = "jsonb-node" )
     @Column(columnDefinition = "jsonb", name="restrictions")
 	private JsonNode restrictions;
@@ -188,6 +191,14 @@ public class ProductRevision extends AbstractEntityRevision<Product> {
 
 	public void setVirtual(Boolean virtual) {
 		this.virtual = virtual;
+	}
+
+	public Boolean getHiddenFromCatalog() {
+		return hiddenFromCatalog;
+	}
+
+	public void setHiddenFromCatalog(Boolean hiddenFromCatalog) {
+		this.hiddenFromCatalog = hiddenFromCatalog;
 	}
 
 	public JsonNode getRestrictions() {
