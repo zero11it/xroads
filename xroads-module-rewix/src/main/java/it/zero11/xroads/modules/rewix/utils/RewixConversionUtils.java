@@ -131,7 +131,9 @@ public class RewixConversionUtils {
 		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_ZIP_KEY, orderBean.getDispatchData().getZip());
 		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_CITY_KEY, orderBean.getDispatchData().getCity());
 		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_REGION_KEY, orderBean.getDispatchData().getProv());
-		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY, orderBean.getDispatchData().getCountryCode());		
+		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_COUNTRY_KEY, orderBean.getDispatchData().getCountryCode());
+		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_CELL_KEY, orderBean.getDispatchData().getCel());
+		dispatch.put(XRoadsJsonKeys.CUSTOMER_ADDRESS_CELL_KEY_PREFIX, orderBean.getDispatchData().getCelPrefix());
 		order.setShippingAddress(dispatch);
 		
 		int i = 1;

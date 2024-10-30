@@ -56,7 +56,9 @@ public class XRoadsJsonKeys {
 	public final static String CUSTOMER_ADDRESS_CITY_KEY = "city";
 	public final static String CUSTOMER_ADDRESS_PROVINCE_KEY = "province";
 	public final static String CUSTOMER_ADDRESS_REGION_KEY = "region";
-	public final static String CUSTOMER_ADDRESS_COUNTRY_KEY = "country";	
+	public final static String CUSTOMER_ADDRESS_COUNTRY_KEY = "country";
+	public final static String CUSTOMER_ADDRESS_CELL_KEY = "cel";
+	public final static String CUSTOMER_ADDRESS_CELL_KEY_PREFIX = "celPrefix";
 	public final static String CUSTOMER_VAT_NUMBER_KEY = "vatNumber";
 	public final static String CUSTOMER_VALIDATED_VAT_NUMBER_KEY ="validatedVatNumber";
 	public final static String CUSTOMER_FISTNAME_KEY = "firstName";
