@@ -55,6 +55,7 @@ public class RewixOrderStatusConsumer extends AbstractRewixConsumer implements E
 			switch (order.getStatus()) {
 				case XRoadsConstants.ORDER_CONFIRMED -> info.setSubstatus(Constants.ORDER_TODISPATCH);
 				case XRoadsConstants.ORDER_WORKING_ON -> info.setSubstatus(Constants.ORDER_WORKING_ON);
+				case XRoadsConstants.ORDER_READY -> info.setSubstatus(Constants.ORDER_READY);
 				case XRoadsConstants.ORDER_DISPATCHED -> info.setSubstatus(Constants.ORDER_DISPATCHED);
 			}
 			
