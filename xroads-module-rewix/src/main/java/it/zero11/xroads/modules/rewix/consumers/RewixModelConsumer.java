@@ -221,7 +221,6 @@ public class RewixModelConsumer extends AbstractRewixConsumer implements EntityC
 					//if (descriptionMap.get(lang).keySet().size() == 1)
 					translationBean.setPlatformUid(platform);
 					productTranslations.add(translationBean);
-					break;
 				}
 			}
 			translations.setProductTranslations(productTranslations);
