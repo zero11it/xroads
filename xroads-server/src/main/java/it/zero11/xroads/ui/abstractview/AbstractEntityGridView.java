@@ -30,7 +30,10 @@ import it.zero11.xroads.model.ModuleStatus;
 import it.zero11.xroads.modules.XRoadsModule;
 import it.zero11.xroads.sync.XRoadsJsonKeys;
 import it.zero11.xroads.utils.XRoadsUtils;
+import it.zero11.xroads.utils.modules.core.XRoadsCoreModule;
 import it.zero11.xroads.utils.modules.core.dao.EntityDao;
+import it.zero11.xroads.utils.modules.core.dao.ParamDao;
+import it.zero11.xroads.utils.modules.core.model.ParamType;
 import it.zero11.xroads.utils.modules.core.model.WrapFilter;
 import it.zero11.xroads.utils.modules.core.sync.XRoadsCoreServiceBean;
 
@@ -61,13 +64,16 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 
 	// Filters
 	private WrapFilter filters;
+	
+	private Integer autRetryInterval;
 
 	public AbstractEntityGridView(Class<T> typeParameterClass) {
 		filters = new WrapFilter();
 		this.typeParameterClass = typeParameterClass;
 		stringToDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		dateToStringFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		setSizeFull();	
+		autRetryInterval = Integer.valueOf(ParamDao.getInstance().getParameter(XRoadsCoreModule.INSTANCE, ParamType.AUTO_RETRY_INTERVAL_MINUTES, true));
+		setSizeFull();
 	}
 
 	@Override
@@ -233,7 +239,7 @@ public abstract class AbstractEntityGridView<T extends AbstractEntity>  extends 
 				Date lastErrorDate = stringToDateFormatter.parse(entity.getExternalReferences().path(moduleComboBox.getValue().getName()).path(XRoadsJsonKeys.EXTERNAL_REFERENCE_LAST_ERROR_DATE).asText());
 				diff = (int) ((new Date(System.currentTimeMillis()).getTime() - lastErrorDate.getTime()) / (60 * 1000)) ;
 			} catch (Exception e2) {}
-			boolean forceSyncPerDate = diff > 0 && diff < 60;			
+			boolean forceSyncPerDate = diff > 0 && diff < autRetryInterval;
 			
 			if(enableforce(moduleComboBox.getValue()) && ((externalVersion == entity.getVersion()) || forceSyncPerDate)) {
 				Button forceSyncButton = new Button("FORCE", VaadinIcon.REFRESH.create(), e -> {
