@@ -1,5 +1,10 @@
 package it.zero11.xroads.modules.rewix.cron;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -11,10 +16,12 @@ import it.zero11.xroads.model.Customer;
 import it.zero11.xroads.model.Order;
 import it.zero11.xroads.modules.rewix.XRoadsRewixModule;
 import it.zero11.xroads.modules.rewix.api.RewixAPI;
+import it.zero11.xroads.modules.rewix.api.model.OrderBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderFilterBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderListBean;
 import it.zero11.xroads.modules.rewix.api.model.OrderListBean.OrderStatusInfo;
 import it.zero11.xroads.modules.rewix.model.RewixParamType;
+import it.zero11.xroads.modules.rewix.utils.Constants;
 import it.zero11.xroads.modules.rewix.utils.RewixConversionUtils;
 import it.zero11.xroads.sync.SyncException;
 
@@ -23,7 +30,6 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 
 	private static final Logger log = Logger.getLogger(RewixOrderCron.class);
 	private RewixAPI api; 
-	
 	
 	@Override
 	public void run() {
@@ -44,9 +50,7 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 		log.info("End import Orders");
 	}
 
-
-	private void checkOrder(String platform) throws SyncException{
-
+	private void checkOrder(String platform) throws SyncException, ParseException {
 		log.info("Retrieving rewix orders ");
 
 		OrderFilterBean orderFilterBean = new OrderFilterBean();
@@ -73,20 +77,56 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 			}
 		}
 		
+		// dispatched orders
+		boolean syncDispatchedOrders = xRoadsModule.getConfiguration().isEnableSyncDispatchedOrders();
+		if(syncDispatchedOrders) {
+			String lastDispatchedDate = xRoadsModule.getXRoadsCoreService().getParameter(xRoadsModule, RewixParamType.LAST_DISPATCHED_ORDER_DATE);
+			Instant lastDispatchedInstant = null;
+			try {
+				lastDispatchedInstant = Instant.parse(lastDispatchedDate);
+			} catch(Exception e) {
+				exceptionsEncountered.append("Failed to parse LAST_DISPATCHED_ORDER_DATE : " + e.getMessage());
+				throw new SyncException(exceptionsEncountered.toString());
+			}
+			
+			if (ChronoUnit.SECONDS.between(lastDispatchedInstant, Instant.now()) < 60)
+				return;
+
+			lastDispatchedInstant = lastDispatchedInstant.plusMillis(1);
+			orderFilterBean.setDispatchDateFrom(Date.from(lastDispatchedInstant));
+			orderFilterBean.setSort("dispatch_date");
+			orderFilterBean.setSortAsc(true);
+			orderFilterBean.setOrderStatuses(List.of(Constants.ORDER_DISPATCHED));
+	
+			orderListBean = api.getAllOrders(orderFilterBean);
+			boolean updateLastDispatchedDate = true;
+			for (OrderStatusInfo info : orderListBean.getOrders()) {
+				try {
+					OrderBean oBean = processOrder(platform, info);
+					if(oBean != null && updateLastDispatchedDate) {
+						xRoadsModule.getXRoadsCoreService().updateParam(xRoadsModule, 
+								RewixParamType.LAST_DISPATCHED_ORDER_DATE, oBean.getDispatchDate().toInstant().toString());
+					}
+				} catch (Exception e) {
+					updateLastDispatchedDate = false;
+					exceptionsEncountered.append("Order ").append(info.getOrder_id()).append(" ").append(e.getMessage()).append("\n");
+				}
+			}
+		}
+		
 		if(exceptionsEncountered.length() > 0) {
 			throw new SyncException(exceptionsEncountered.toString());
 		}
-
 	}
 
-	public void processOrder(String platform,OrderStatusInfo info) throws SyncException {
-		
+	public OrderBean processOrder(String platform,OrderStatusInfo info) throws SyncException {
 		Order existing = xRoadsModule.getXRoadsCoreService().getEntity(Order.class, Integer.toString(info.getOrder_id()));
 		if (existing != null) {
-			return;
+			return null;
 		}
 		boolean isRewixCustomerSource = xRoadsModule.getXRoadsCoreService().getParameterAsBoolean(xRoadsModule, RewixParamType.IS_REWIX_CUSTOMER_SOURCE);
-		Order order = RewixConversionUtils.getOrderFromOrderBean(platform, api.getOrder(Long.valueOf(info.getOrder_id())), xRoadsModule, isRewixCustomerSource);
+		OrderBean oBean = api.getOrder(Long.valueOf(info.getOrder_id()));
+		Order order = RewixConversionUtils.getOrderFromOrderBean(platform, oBean, xRoadsModule, isRewixCustomerSource);
 		if(order != null) { // skip when return null
 			Customer customer = xRoadsModule.getXRoadsCoreService().getEntity(Customer.class, order.getCustomerSourceId());
 			customer = RewixConversionUtils.getOrUpdateCustomerFromOrder(order, customer);
@@ -94,6 +134,7 @@ public class RewixOrderCron extends AbstractXRoadsCronRunnable<XRoadsRewixModule
 			xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, customer);
 			xRoadsModule.getXRoadsCoreService().consume(xRoadsModule, order);
 		}
+		return oBean;
 	}
 
 }

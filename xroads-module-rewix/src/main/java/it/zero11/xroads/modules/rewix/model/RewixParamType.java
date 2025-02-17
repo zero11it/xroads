@@ -34,6 +34,7 @@ public enum RewixParamType implements IParamType{
 			"}"), 
 	ENABLE_ORDER_STATUS_UPDATE("false"), 
 	ENABLE_EXPORT_CUSTOMERS("false"),
+	ENABLE_SYNC_DISPATCHED_ORDERS("false"),
 	IS_REWIX_CUSTOMER_SOURCE("false"),
 	ENABLE_EXPORT_INVOICES("false"),
 	LAST_CUSTOMERS_SWYNC(""),
@@ -42,7 +43,8 @@ public enum RewixParamType implements IParamType{
 	TRADE_AGENT_MAP("{}"),
 	ENABLE_FULL_REWIX_UPDATE_PRODUCT("true"),
 	ENABLE_MIXED_ORDERS("false"),
-	ENABLE_EMPTY_ORDERS("false")
+	ENABLE_EMPTY_ORDERS("false"),
+	LAST_DISPATCHED_ORDER_DATE(null)
 	;
 	
 	public final String defaultValue;

@@ -34,6 +34,7 @@ public class RewixConfig {
 	private boolean enableFullRewixProductUpdate;
 	private boolean enableMixedOrders;
 	private boolean enableEmptyOrders;
+	private boolean enableSyncDispatchedOrders;
 	
 	public RewixConfig(XRoadsRewixModule module) {
 		endpoint = module.getXRoadsCoreService().getParameter(module, RewixParamType.ENDPOINT);
@@ -84,6 +85,7 @@ public class RewixConfig {
 		enableFullRewixProductUpdate = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_FULL_REWIX_UPDATE_PRODUCT);
 		enableMixedOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_MIXED_ORDERS);
 		enableEmptyOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_EMPTY_ORDERS);
+		enableSyncDispatchedOrders = module.getXRoadsCoreService().getParameterAsBoolean(module, RewixParamType.ENABLE_SYNC_DISPATCHED_ORDERS);
 	}
 	
 	public String getEndpoint() {
@@ -213,6 +215,10 @@ public class RewixConfig {
 
 	public void setEnableEmptyOrders(boolean enableEmptyOrders) {
 		this.enableEmptyOrders = enableEmptyOrders;
+	}
+
+	public boolean isEnableSyncDispatchedOrders() {
+		return enableSyncDispatchedOrders;
 	}
 
 }
